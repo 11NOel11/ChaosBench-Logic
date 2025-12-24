@@ -16,8 +16,8 @@
 
 ## 📊 Quick Results
 
-| Model | Overall Acc | Dialogue Acc | Valid Responses | Speed |
-|-------|-------------|--------------|-----------------|-------|
+| Model | Overall Acc | Dialogue Acc | Valid Responses | Throughput* |
+|-------|-------------|--------------|-----------------|-------------|
 | **LLaMA-3 (zeroshot)** | **91.6%** | **75.5%** | 620/621 | 1.2 items/s ⚠️ |
 | GPT-4 (cot) | 90.2% | 73.7% | 621/621 | ~10 items/s |
 | GPT-4 (zeroshot) | 90.0% | 72.8% | 621/621 | ~15 items/s |
@@ -25,7 +25,9 @@
 | Claude-3.5 (zeroshot) | 88.2% | 68.3% | 621/621 | ~12 items/s |
 | Gemini-2.5 (zeroshot) | 87.9% | 67.6% | 620/621 | ~18 items/s |
 
-⚠️ **Note**: LLaMA-3 70B is significantly slower than other models (~8 minutes for zeroshot, ~55 minutes for chain-of-thought).
+*LLaMA-3 throughput measured with 2 parallel workers (practical real-world speed)
+
+⚠️ **Note**: LLaMA-3 70B takes longer than other models (~8 minutes for zeroshot, ~55 minutes for chain-of-thought).
 
 See [RESULTS.md](RESULTS.md) for detailed analysis.
 

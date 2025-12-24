@@ -47,6 +47,21 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 uv pip install -e .
 ```
 
+**💡 Quick uv Commands:**
+```bash
+# Add a new package
+uv add package-name
+
+# Run Python scripts with uv (without activating venv)
+uv run python run_benchmark.py --model gpt4 --mode zeroshot
+
+# Update dependencies
+uv pip install --upgrade package-name
+
+# Lock dependencies
+uv pip freeze > requirements.txt
+```
+
 ### 4. Configure API Keys
 
 ```bash

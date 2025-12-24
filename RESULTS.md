@@ -26,7 +26,7 @@ Successfully evaluated **6 model configurations** on the ChaosBench-Logic benchm
 - **CoT: 89.5%** - Strong performance, 2nd best in CoT mode
 - **Best Dialogue Accuracy (75.5%)** - Excels at multi-turn consistency
 - **99.8% Response Rate** - Only 1 failed item out of 621
-- **Fast execution** - 8.6 min for zeroshot (comparable to Gemini)
+- **Execution time** - 8.6 min for zeroshot, 55 min for CoT (with 2 parallel workers)
 
 🎯 **Notable Achievements:**
 - LLaMA-3 has the **highest dialogue accuracy** across all models
@@ -158,10 +158,12 @@ GPT-4 CoT:          53.1% ███████████
 
 ### Execution Times
 
-| Model | Mode | Time | Items/sec | Cost Estimate |
-|-------|------|------|-----------|---------------|
-| LLaMA-3 | Zeroshot | 8.6 min | 1.2 | ~$1-2 |
-| LLaMA-3 | CoT | 55 min | 0.2 | ~$5-8 |
+| Model | Mode | Time | Throughput* | Cost Estimate |
+|-------|------|------|-------------|---------------|
+| LLaMA-3 | Zeroshot | 8.6 min | 1.2 items/s | ~$1-2 |
+| LLaMA-3 | CoT | 55 min | 0.2 items/s | ~$5-8 |
+
+*Throughput measured with 2 parallel workers (practical speed)
 | GPT-4 | Zeroshot | ~10 min | 1.0 | ~$3-5 |
 | GPT-4 | CoT | ~30 min | 0.3 | ~$8-12 |
 
@@ -191,7 +193,7 @@ GPT-4 CoT:          53.1% ███████████
 1. **Dialogue Consistency** - Best multi-turn reasoning across all models
 2. **Counterfactual Reasoning** - Strong performance on "what-if" scenarios
 3. **Bias Detection** - Good at identifying logical fallacies and misconceptions
-4. **Speed** - Fast inference (1.2 items/s) comparable to Gemini
+4. **Throughput** - 1.2 items/s (with 2 workers) for zeroshot, 0.2 items/s for CoT
 5. **Cost-Effectiveness** - Lower cost than GPT-4 with comparable performance
 
 ### Weaknesses of LLaMA-3 70B
@@ -272,7 +274,7 @@ Each model directory contains:
 - Overall: GPT-4 Zeroshot (94.0%)
 - Dialogue: LLaMA-3 Zeroshot (75.5%)
 - Cost-Effective: LLaMA-3 Zeroshot (91.6% at ~$1-2)
-- Speed: LLaMA-3 Zeroshot (1.2 items/s)
+- Throughput: LLaMA-3 Zeroshot (1.2 items/s with 2 workers)
 
 **Key Findings:**
 1. All models struggle with compositional reasoning (0%)
