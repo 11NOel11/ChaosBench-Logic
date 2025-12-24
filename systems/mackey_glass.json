@@ -1,0 +1,27 @@
+{
+  "system_id": "mackey_glass",
+  "name": "Mackey–Glass delay system",
+  "category": "chaotic",
+  "equations": "dx/dt = β x(t - τ) / (1 + x(t - τ)^n) - γ x(t)",
+  "parameters": {
+    "beta": 0.2,
+    "gamma": 0.1,
+    "tau": 17.0,
+    "n": 10.0
+  },
+  "description_simple": "A delay differential equation that exhibits chaotic behavior for certain delay and parameter values.",
+  "description_complex": "A deterministic scalar delay differential equation originally proposed to model physiological control with delayed feedback. For specific parameter settings, including sufficiently large delay τ, the system exhibits deterministic chaos, with irregular oscillations, a positive largest Lyapunov exponent, and long-term unpredictability of exact trajectories despite deterministic dynamics.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

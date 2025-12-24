@@ -1,0 +1,27 @@
+{
+  "system_id": "lotka_volterra",
+  "name": "Lotka–Volterra predator–prey model",
+  "category": "non-chaotic",
+  "equations": "dx/dt = α x - β x y; dy/dt = δ x y - γ y",
+  "parameters": {
+    "alpha": 1.0,
+    "beta": 0.5,
+    "gamma": 2.0,
+    "delta": 0.5
+  },
+  "description_simple": "A two-dimensional deterministic model of interacting predator and prey populations that typically exhibits closed orbits in phase space.",
+  "description_complex": "A classical nonlinear model for predator–prey dynamics, defined by coupled first-order differential equations with bilinear interaction terms. In the simplest parameter regime without additional damping or noise, trajectories lie on closed orbits around a neutrally stable equilibrium, yielding regular oscillations without deterministic chaos, strange attractors, or sensitive dependence on initial conditions.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": true
+  }
+}

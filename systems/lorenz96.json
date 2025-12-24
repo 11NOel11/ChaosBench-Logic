@@ -1,0 +1,25 @@
+{
+  "system_id": "lorenz96",
+  "name": "Lorenz-96 model (chaotic regime)",
+  "category": "chaotic",
+  "equations": "dX_i/dt = (X_{i+1} - X_{i-2}) X_{i-1} - X_i + F",
+  "parameters": {
+    "N": 40,
+    "F": 8.0
+  },
+  "description_simple": "A high-dimensional chaotic system widely used in climate and data assimilation research.",
+  "description_complex": "The Lorenz-96 system is a spatially extended ODE defined on a cyclic domain, originally introduced to model simplified atmospheric dynamics. For forcing F = 8, the system exhibits high-dimensional deterministic chaos with multiple positive Lyapunov exponents, strong sensitivity to initial conditions, and statistical predictability of ensemble properties.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

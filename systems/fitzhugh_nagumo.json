@@ -1,0 +1,27 @@
+{
+  "system_id": "fitzhugh_nagumo",
+  "name": "FitzHugh–Nagumo neuron model (limit cycle)",
+  "category": "non-chaotic",
+  "equations": "dv/dt = v - v^3/3 - w + I; dw/dt = ε (v + a - b w)",
+  "parameters": {
+    "epsilon": 0.08,
+    "a": 0.7,
+    "b": 0.8,
+    "I": 0.5
+  },
+  "description_simple": "A neuroscience model that produces periodic spiking but no chaos in standard regimes.",
+  "description_complex": "A two-dimensional reduction of the Hodgkin–Huxley neuron model. With typical parameters, the system exhibits a stable limit cycle corresponding to repetitive firing, but lacks positive Lyapunov exponents or strange attractors. It's a critical contrast to chaotic bursting models like Hindmarsh–Rose.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": true
+  }
+}

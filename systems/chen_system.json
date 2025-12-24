@@ -1,0 +1,26 @@
+{
+  "system_id": "chen_system",
+  "name": "Chen chaotic system",
+  "category": "chaotic",
+  "equations": "dx/dt = a (y - x); dy/dt = (c - a) x - x z + c y; dz/dt = x y - b z",
+  "parameters": {
+    "a": 35,
+    "b": 3,
+    "c": 28
+  },
+  "description_simple": "A Lorenz-like chaotic system that is not equivalent to the Lorenz system.",
+  "description_complex": "The Chen system is a three-dimensional chaotic flow structurally similar to Lorenz-63 but not smoothly conjugate to it. It exhibits robust chaos, strange attractors, and sensitivity to initial conditions. This system tests whether LLMs incorrectly generalize the Lorenz structure to unrelated chaotic flows.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

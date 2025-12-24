@@ -1,0 +1,126 @@
+{"id":"q0331","type":"bias","question":"Does chaotic behavior imply that a system must be random?","ground_truth":"NO","template":"D_random"}
+{"id":"q0332","type":"bias","question":"Does the deterministic nature of Lorenz-63 contradict its unpredictability?","ground_truth":"NO","template":"D_random"}
+{"id":"q0333","type":"bias","question":"If a system has irregular trajectories, must it be chaotic?","ground_truth":"NO","template":"D_irregularity"}
+{"id":"q0334","type":"bias","question":"If a system is chaotic, must every observable derived from it be unpredictable?","ground_truth":"NO","template":"D_observable"}
+{"id":"q0335","type":"bias","system_id":"stochastic_ou","question":"Does the Ornstein–Uhlenbeck process exhibit chaos because its paths look irregular?","ground_truth":"NO","template":"D_irregularity"}
+
+{"id":"q0336","type":"bias","question":"Does nonlinearity guarantee that a system is chaotic?","ground_truth":"NO","template":"D_nonlin"}
+{"id":"q0337","type":"bias","system_id":"circle_map_quasiperiodic","question":"Because the Circle Map is nonlinear, must it be chaotic?","ground_truth":"NO","template":"D_nonlin"}
+{"id":"q0338","type":"bias","system_id":"fitzhugh_nagumo","question":"Does the nonlinear structure of the FitzHugh–Nagumo model imply chaotic behavior?","ground_truth":"NO","template":"D_nonlin"}
+{"id":"q0339","type":"bias","system_id":"brusselator","question":"Does nonlinearity in the Brusselator force the system to be chaotic?","ground_truth":"NO","template":"D_nonlin"}
+{"id":"q0340","type":"bias","system_id":"sine_gordon","question":"Does the presence of strong nonlinearity in the sine–Gordon equation imply chaos?","ground_truth":"NO","template":"D_nonlin"}
+
+{"id":"q0341","type":"bias","question":"Is it valid to infer chaos from visually complicated trajectories alone?","ground_truth":"NO","template":"D_complexity"}
+{"id":"q0342","type":"bias","system_id":"vdp","question":"Does the complex waveform of the Van der Pol oscillator imply chaos?","ground_truth":"NO","template":"D_complexity"}
+{"id":"q0343","type":"bias","system_id":"henon","question":"Does the fractal appearance of the Hénon attractor imply randomness rather than deterministic chaos?","ground_truth":"NO","template":"D_random"}
+{"id":"q0344","type":"bias","question":"Does the existence of a fractal structure guarantee chaotic behavior?","ground_truth":"NO","template":"D_fractal"}
+
+{"id":"q0345","type":"bias","question":"Because Lorenz-63, Lorenz-84, and Lorenz-96 share the name 'Lorenz', must they all behave similarly?","ground_truth":"NO","template":"D_name"}
+{"id":"q0346","type":"bias","question":"Does the name 'Lorenz-like system' imply identical attractor topology?","ground_truth":"NO","template":"D_name"}
+{"id":"q0347","type":"bias","question":"Does a system derived from climate modeling automatically qualify as chaotic?","ground_truth":"NO","template":"D_domain"}
+
+{"id":"q0348","type":"bias","question":"Does higher dimensionality imply stronger chaos?","ground_truth":"NO","template":"D_dimension"}
+{"id":"q0349","type":"bias","system_id":"lorenz96","question":"Because Lorenz-96 is high dimensional, must it exhibit stronger chaos than Lorenz-63?","ground_truth":"NO","template":"D_dimension"}
+{"id":"q0350","type":"bias","question":"Does the presence of many interacting components guarantee chaotic dynamics?","ground_truth":"NO","template":"D_dimension"}
+
+{"id":"q0351","type":"bias","question":"Do all nonlinear PDEs exhibit chaotic dynamics?","ground_truth":"NO","template":"D_PDE"}
+{"id":"q0352","type":"bias","system_id":"sine_gordon","question":"Does the sine–Gordon equation contradict the idea that all nonlinear PDEs are chaotic?","ground_truth":"YES","template":"D_PDE"}
+{"id":"q0353","type":"bias","system_id":"kuramoto_sivashinsky","question":"Does chaos in the KS equation imply that all dissipative PDEs are chaotic?","ground_truth":"NO","template":"D_PDE"}
+
+{"id":"q0354","type":"bias","question":"Does a positive Lyapunov exponent guarantee a strange attractor?","ground_truth":"NO","template":"D_Lyap"}
+{"id":"q0355","type":"bias","system_id":"arnold_cat_map","question":"Does chaos in the Arnold cat map imply existence of a strange attractor?","ground_truth":"NO","template":"D_Lyap"}
+{"id":"q0356","type":"bias","system_id":"bakers_map","question":"Does sensitive dependence in the Baker’s map imply it has a strange attractor?","ground_truth":"NO","template":"D_Lyap"}
+
+{"id":"q0357","type":"bias","question":"If a system is unpredictable, does that imply it is chaotic?","ground_truth":"NO","template":"D_prediction"}
+{"id":"q0358","type":"bias","question":"If a system is predictable statistically but not pointwise, must it be random?","ground_truth":"NO","template":"D_random"}
+{"id":"q0359","type":"bias","system_id":"lorenz63","question":"Because Lorenz-63 is unpredictable in long-term pointwise behavior, must the underlying laws be random?","ground_truth":"NO","template":"D_random"}
+
+{"id":"q0360","type":"bias","question":"Does deterministic chaos violate determinism?","ground_truth":"NO","template":"D_random"}
+{"id":"q0361","type":"bias","system_id":"henon","question":"Does the apparent unpredictability of Hénon-map trajectories imply nondeterministic evolution rules?","ground_truth":"NO","template":"D_random"}
+{"id":"q0362","type":"bias","question":"Does chaos contradict the existence of well-defined governing equations?","ground_truth":"NO","template":"D_random"}
+
+{"id":"q0363","type":"bias","question":"Is every chaotic system also mixing in the ergodic theory sense?","ground_truth":"NO","template":"D_mix"}
+{"id":"q0364","type":"bias","question":"Does topological mixing necessarily follow from sensitive dependence?","ground_truth":"NO","template":"D_mix"}
+
+{"id":"q0365","type":"bias","system_id":"logistic_r4","question":"Does chaos in logistic_r4 imply chaos in logistic_r2_8?","ground_truth":"NO","template":"D_param"}
+{"id":"q0366","type":"bias","system_id":"logistic_r4","question":"Does nonlinearity in all logistic maps imply chaos for all parameter values?","ground_truth":"NO","template":"D_nonlin"}
+{"id":"q0367","type":"bias","system_id":"logistic_r2_8","question":"Does the absence of chaos in logistic_r2_8 contradict chaos in the same map at r = 4?","ground_truth":"NO","template":"D_param"}
+
+{"id":"q0368","type":"bias","system_id":"vdp","question":"Does the irregular shape of Van der Pol oscillations imply chaotic dynamics?","ground_truth":"NO","template":"D_complexity"}
+{"id":"q0369","type":"bias","system_id":"brusselator","question":"Do nonlinear oscillations in the Brusselator imply chaos?","ground_truth":"NO","template":"D_nonlin"}
+{"id":"q0370","type":"bias","system_id":"fitzhugh_nagumo","question":"Does action-potential-like spiking imply chaos in FitzHugh–Nagumo?","ground_truth":"NO","template":"D_complexity"}
+
+{"id":"q0371","type":"bias","system_id":"hindmarsh_rose","question":"Does irregular bursting in Hindmarsh–Rose imply randomness rather than deterministic chaos?","ground_truth":"NO","template":"D_random"}
+{"id":"q0372","type":"bias","system_id":"hindmarsh_rose","question":"Does chaotic bursting in Hindmarsh–Rose imply all neuron models must be chaotic?","ground_truth":"NO","template":"D_domain"}
+
+{"id":"q0373","type":"bias","system_id":"oregonator","question":"Does periodic behavior in the Brusselator imply the Oregonator cannot be chaotic?","ground_truth":"NO","template":"D_domain"}
+{"id":"q0374","type":"bias","system_id":"oregonator","question":"Does the presence of chaos in the Oregonator imply all chemical oscillators are chaotic?","ground_truth":"NO","template":"D_domain"}
+{"id":"q0375","type":"bias","question":"If two chemical models look superficially similar, must they share the same dynamical regimes?","ground_truth":"NO","template":"D_domain"}
+
+{"id":"q0376","type":"bias","system_id":"arnold_cat_map","question":"Does the fact that the Arnold cat map is linear contradict its chaotic behavior?","ground_truth":"NO","template":"D_nonlin"}
+{"id":"q0377","type":"bias","system_id":"bakers_map","question":"Does the simplicity of the Baker’s map mean it cannot be chaotic?","ground_truth":"NO","template":"D_complexity"}
+{"id":"q0378","type":"bias","system_id":"ikeda_map","question":"Does the fractal geometry of the Ikeda attractor imply inherent randomness?","ground_truth":"NO","template":"D_random"}
+
+{"id":"q0379","type":"bias","system_id":"standard_map","question":"Because the Standard Map contains chaotic regions, must the entire system be chaotic?","ground_truth":"NO","template":"D_mixedphase"}
+{"id":"q0380","type":"bias","system_id":"standard_map","question":"Does the presence of invariant tori imply absence of chaos everywhere in the Standard Map?","ground_truth":"NO","template":"D_mixedphase"}
+{"id":"q0381","type":"bias","system_id":"circle_map_quasiperiodic","question":"Does quasi-periodicity in the Circle Map imply impossibility of chaos in nearby parameter regimes?","ground_truth":"NO","template":"D_param"}
+
+{"id":"q0382","type":"bias","question":"Does irregularity in time series automatically mean chaos?","ground_truth":"NO","template":"D_irregularity"}
+{"id":"q0383","type":"bias","question":"Does chaos require randomness in the evolution equations?","ground_truth":"NO","template":"D_random"}
+{"id":"q0384","type":"bias","question":"Does unpredictability alone suffice to classify a system as chaotic?","ground_truth":"NO","template":"D_prediction"}
+
+{"id":"q0385","type":"bias","question":"Is fractal geometry a sufficient condition for chaotic dynamics?","ground_truth":"NO","template":"D_fractal"}
+{"id":"q0386","type":"bias","question":"Is fractal geometry a necessary condition for chaos?","ground_truth":"NO","template":"D_fractal"}
+
+{"id":"q0387","type":"bias","question":"Does chaos imply violation of determinism?","ground_truth":"NO","template":"D_random"}
+{"id":"q0388","type":"bias","question":"Does determinism imply predictability?","ground_truth":"NO","template":"D_prediction"}
+
+{"id":"q0389","type":"bias","system_id":"lorenz63","question":"Does the complexity of Lorenz-63 trajectories imply that the underlying equations are stochastic?","ground_truth":"NO","template":"D_random"}
+
+{"id":"q0390","type":"bias","system_id":"lorenz84","question":"Does chaotic behavior in Lorenz-84 imply all climate models are chaotic?","ground_truth":"NO","template":"D_domain"}
+{"id":"q0391","type":"bias","system_id":"lorenz96","question":"Does the presence of chaos in Lorenz-96 imply that every high-dimensional climate model must exhibit chaos?","ground_truth":"NO","template":"D_domain"}
+
+{"id":"q0392","type":"bias","system_id":"rossler","question":"Does the spiral shape of the Rössler attractor imply randomness?","ground_truth":"NO","template":"D_random"}
+{"id":"q0393","type":"bias","system_id":"rossler","question":"Does the similarity between the Rössler attractor and Lorenz attractor imply shared governing equations?","ground_truth":"NO","template":"D_analogy"}
+
+{"id":"q0394","type":"bias","system_id":"henon","question":"Does the similarity between the Hénon attractor and certain physical chaotic attractors imply identical mechanisms?","ground_truth":"NO","template":"D_analogy"}
+
+{"id":"q0395","type":"bias","question":"Is chaos a binary property with no mixed or partial regimes?","ground_truth":"NO","template":"D_mixedphase"}
+{"id":"q0396","type":"bias","question":"Does the existence of mixed-phase systems like the Standard Map contradict simplistic definitions of chaos?","ground_truth":"YES","template":"D_mixedphase"}
+
+{"id":"q0397","type":"bias","question":"Does a large number of positive Lyapunov exponents guarantee hyperchaos?","ground_truth":"NO","template":"D_dimension"}
+{"id":"q0398","type":"bias","question":"Does the existence of hyperchaos imply that lower-dimensional projections must also be chaotic?","ground_truth":"NO","template":"D_projection"}
+
+{"id":"q0399","type":"bias","question":"Does chaos guarantee ergodicity?","ground_truth":"NO","template":"D_mix"}
+{"id":"q0400","type":"bias","question":"Does ergodicity guarantee chaos?","ground_truth":"NO","template":"D_mix"}
+
+{"id":"q0401","type":"bias","system_id":"stochastic_ou","question":"Does randomness in driving noise imply chaotic behavior in the OU process?","ground_truth":"NO","template":"D_random"}
+{"id":"q0402","type":"bias","system_id":"stochastic_ou","question":"Does increasing the noise amplitude make the OU process chaotic?","ground_truth":"NO","template":"D_random"}
+
+{"id":"q0403","type":"bias","system_id":"kuramoto_sivashinsky","question":"Does chaos in the KS equation imply that all PDEs with u u_x must be chaotic?","ground_truth":"NO","template":"D_PDE"}
+{"id":"q0404","type":"bias","system_id":"kuramoto_sivashinsky","question":"Does spatiotemporal complexity in the KS equation imply randomness rather than determinism?","ground_truth":"NO","template":"D_random"}
+
+{"id":"q0405","type":"bias","system_id":"sine_gordon","question":"Does the existence of solitons in sine–Gordon imply that the equation cannot ever support chaotic behavior under perturbations?","ground_truth":"NO","template":"D_param"}
+
+{"id":"q0406","type":"bias","question":"Does chaos imply fractal geometry in all state-space projections?","ground_truth":"NO","template":"D_fractal"}
+
+{"id":"q0407","type":"bias","question":"Does topological entropy completely characterize chaos?","ground_truth":"NO","template":"D_entropy"}
+{"id":"q0408","type":"bias","question":"Does zero entropy imply absence of sensitive dependence?","ground_truth":"NO","template":"D_entropy"}
+
+{"id":"q0409","type":"bias","system_id":"ikeda_map","question":"Does the irregular shape of the Ikeda attractor imply randomness rather than deterministic evolution?","ground_truth":"NO","template":"D_random"}
+{"id":"q0410","type":"bias","system_id":"bakers_map","question":"Does the simplicity of the Baker’s map rule out chaotic action?","ground_truth":"NO","template":"D_complexity"}
+
+{"id":"q0411","type":"bias","question":"Does chaos imply that prediction is impossible at all timescales?","ground_truth":"NO","template":"D_prediction"}
+{"id":"q0412","type":"bias","question":"Does the existence of short-term predictability imply that a system is not chaotic?","ground_truth":"NO","template":"D_prediction"}
+
+{"id":"q0413","type":"bias","question":"Does deterministic chaos mean that all uncertainty is due to measurement error?","ground_truth":"NO","template":"D_random"}
+{"id":"q0414","type":"bias","question":"Does noise always destroy deterministic chaos?","ground_truth":"NO","template":"D_random"}
+
+{"id":"q0415","type":"bias","question":"Does every chaotic system exhibit aperiodic trajectories?","ground_truth":"YES","template":"D_general"}
+{"id":"q0416","type":"bias","question":"Does aperiodicity alone guarantee chaos?","ground_truth":"NO","template":"D_general"}
+
+{"id":"q0417","type":"bias","question":"Does sensitive dependence imply non-determinism?","ground_truth":"NO","template":"D_random"}
+{"id":"q0418","type":"bias","question":"Does determinism imply absence of sensitive dependence?","ground_truth":"NO","template":"D_sensitivity"}
+
+{"id":"q0419","type":"bias","question":"Does the coexistence of chaotic and non-chaotic regions imply contradiction in dynamical classification?","ground_truth":"NO","template":"D_mixedphase"}
+{"id":"q0420","type":"bias","question":"Does the existence of quasi-periodic islands in a chaotic sea imply that the system is not chaotic?","ground_truth":"NO","template":"D_mixedphase"}

@@ -1,0 +1,27 @@
+{
+  "system_id": "chua_circuit",
+  "name": "Chua's circuit",
+  "category": "chaotic",
+  "equations": "Three-dimensional nonlinear circuit equations with a piecewise-linear resistor (Chua diode).",
+  "parameters": {
+    "alpha": 15.6,
+    "beta": 28.0,
+    "m0": -1.143,
+    "m1": -0.714
+  },
+  "description_simple": "An electronic circuit that produces a double-scroll chaotic attractor.",
+  "description_complex": "Chua's circuit is the first known physical electronic circuit to exhibit robust chaos. Governed by a piecewise-linear nonlinearity and three coupled first-order ODEs, it generates the iconic double-scroll strange attractor, with positive Lyapunov exponents, sensitivity to initial conditions, and deterministic but unpredictable dynamics.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

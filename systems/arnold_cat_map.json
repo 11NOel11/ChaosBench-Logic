@@ -1,0 +1,22 @@
+{
+  "system_id": "arnold_cat_map",
+  "name": "Arnold's cat map",
+  "category": "chaotic",
+  "equations": "A linear hyperbolic map on the torus: (x', y') = (2x + y, x + y) mod 1",
+  "parameters": {},
+  "description_simple": "A linear yet chaotic map on the torus.",
+  "description_complex": "Arnold's cat map is a linear toral automorphism that provides one of the cleanest examples of deterministic chaos. Despite its linearity, it exhibits strong sensitivity, mixing, a positive Lyapunov exponent, and Bernoulli dynamics. Crucially, it lacks a strange attractor, breaking the common misconception that nonlinearity is required for chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": false,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

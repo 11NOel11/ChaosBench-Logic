@@ -1,0 +1,22 @@
+{
+  "system_id": "bakers_map",
+  "name": "Baker's map",
+  "category": "chaotic",
+  "equations": "A measure-preserving, piecewise linear map on the unit square defined by stretching and folding.",
+  "parameters": {},
+  "description_simple": "A simple, exactly solvable chaotic map.",
+  "description_complex": "The Baker's map is a prototypical chaotic transformation defined on the unit square. It stretches the domain in one direction, compresses in another, and stacks the pieces. Despite its linearity on each partition, the map is chaotic with a positive Lyapunov exponent, Bernoulli shift symbolic dynamics, and deterministic unpredictability, but without a conventional strange attractor.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": false,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

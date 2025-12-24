@@ -1,0 +1,26 @@
+{
+  "system_id": "lorenz63",
+  "name": "Lorenz-63 system",
+  "category": "chaotic",
+  "equations": "dx/dt = σ (y - x); dy/dt = x (ρ - z) - y; dz/dt = x y - β z",
+  "parameters": {
+    "sigma": 10.0,
+    "rho": 28.0,
+    "beta": 2.6666666667
+  },
+  "description_simple": "A three-dimensional deterministic system of nonlinear differential equations that models convection and is known to show chaotic behavior for certain parameter values.",
+  "description_complex": "A deterministic three-dimensional dynamical system governed by coupled nonlinear differential equations with strong sensitivity to initial conditions, producing a butterfly-shaped strange attractor at the classical parameter setting (σ = 10, ρ = 28, β = 8/3). It is one of the canonical examples of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "system_id": "damped_driven_pendulum_nonchaotic",
+  "name": "Damped, periodically driven pendulum (non-chaotic regime)",
+  "category": "non-chaotic",
+  "equations": "d2θ/dt2 + β dθ/dt + (g/L) sin θ = A cos(ω t)",
+  "parameters": {
+    "beta": 0.5,
+    "g_over_L": 1.0,
+    "A": 0.2,
+    "omega": 0.7
+  },
+  "description_simple": "A pendulum with friction and periodic forcing, in a parameter regime where trajectories settle into a regular periodic motion.",
+  "description_complex": "A nonlinear second-order dynamical system describing a pendulum subject to damping and periodic external torque. For moderate forcing amplitude and sufficient damping, trajectories converge to a stable periodic orbit synchronized with the driving force. In this regime, the system is deterministic but non-chaotic, with no strange attractor, no positive Lyapunov exponent, and predictable long-term behavior.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": true
+  }
+}
+

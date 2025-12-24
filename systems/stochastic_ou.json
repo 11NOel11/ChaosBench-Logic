@@ -1,0 +1,26 @@
+{
+  "system_id": "stochastic_ou",
+  "name": "Ornstein–Uhlenbeck process",
+  "category": "stochastic",
+  "equations": "dx_t = -θ (x_t - μ) dt + σ dW_t",
+  "parameters": {
+    "theta": 1.0,
+    "mu": 0.0,
+    "sigma": 0.5
+  },
+  "description_simple": "A stochastic process with mean-reverting dynamics driven by Gaussian noise.",
+  "description_complex": "A continuous-time stochastic differential equation describing a mean-reverting Gaussian process driven by Brownian motion. The dynamics are inherently random rather than deterministic, with trajectories influenced by the noise term σ dW_t. The process has a stationary Gaussian distribution and well-defined statistical properties, but individual sample paths cannot be predicted exactly in the long term.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": false,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": true,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

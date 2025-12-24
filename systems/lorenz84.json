@@ -1,0 +1,27 @@
+{
+  "system_id": "lorenz84",
+  "name": "Lorenz-84 climate model (chaotic regime)",
+  "category": "chaotic",
+  "equations": "dX/dt = -Y^2 - Z^2 - a X + a F; dY/dt = X Y - b X Z - Y + G; dZ/dt = b X Y + X Z - Z",
+  "parameters": {
+    "a": 0.25,
+    "b": 4.0,
+    "F": 8.0,
+    "G": 1.0
+  },
+  "description_simple": "A simplified climate model exhibiting chaotic oscillations.",
+  "description_complex": "Lorenz-84 is a low-dimensional climate model describing atmospheric blocking dynamics. For standard parameter settings, the system displays deterministic chaos, irregular oscillations, sensitivity to initial conditions, and non-periodic attractors. Useful for evaluating LLM reasoning about climate-chaos relationships.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

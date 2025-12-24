@@ -1,0 +1,26 @@
+{
+  "system_id": "oregonator",
+  "name": "Oregonator model (BZ reaction, chaotic regime)",
+  "category": "chaotic",
+  "equations": "Three nonlinear ODEs modeling the Belousov–Zhabotinsky reaction.",
+  "parameters": {
+    "epsilon": 0.1,
+    "q": 0.002,
+    "f": 1.3
+  },
+  "description_simple": "A chemical oscillator that can exhibit deterministic chaos.",
+  "description_complex": "The Oregonator is a reduced model of the Belousov–Zhabotinsky reaction. For certain parameter regimes, the chemical oscillations become chaotic, with aperiodic patterns, sensitivity to initial conditions, and positive Lyapunov exponents. This system is key for testing chemical-domain reasoning about chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "system_id": "logistic_r4",
+  "name": "Logistic map (r = 4.0)",
+  "category": "chaotic",
+  "equations": "x_{n+1} = r x_n (1 - x_n)",
+  "parameters": {
+    "r": 4.0
+  },
+  "description_simple": "A discrete-time nonlinear map on the interval [0, 1] that shows chaotic behavior when the parameter r is 4.0.",
+  "description_complex": "A one-dimensional, fully deterministic iterated map defined on [0, 1], where the update rule x_{n+1} = 4 x_n (1 - x_n) produces strong sensitivity to initial conditions, a positive Lyapunov exponent, and an invariant fractal measure. It is a standard textbook example of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

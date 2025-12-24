@@ -1,0 +1,24 @@
+{
+  "system_id": "kuramoto_sivashinsky",
+  "name": "Kuramoto–Sivashinsky equation (spatiotemporal chaos)",
+  "category": "chaotic",
+  "equations": "u_t + u_{xx} + u_{xxxx} + u u_x = 0  (with periodic boundary conditions)",
+  "parameters": {
+    "domain_length": 32.0
+  },
+  "description_simple": "A PDE that generates spatiotemporal chaotic patterns.",
+  "description_complex": "The Kuramoto–Sivashinsky equation is a nonlinear, fourth-order PDE that exhibits spatiotemporal chaos in extended domains. Solutions develop chaotic traveling waves and shifting cellular structures, with multiple positive Lyapunov exponents, complex attractor geometry, and statistical steady states.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

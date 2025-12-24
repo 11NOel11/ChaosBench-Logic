@@ -1,0 +1,25 @@
+{
+  "system_id": "damped_oscillator",
+  "name": "Damped harmonic oscillator",
+  "category": "non-chaotic",
+  "equations": "d2x/dt2 + 2ζω dx/dt + ω^2 x = 0",
+  "parameters": {
+    "omega": 1.0,
+    "zeta": 0.2
+  },
+  "description_simple": "A linear oscillator with friction that causes trajectories to decay to rest at a stable equilibrium.",
+  "description_complex": "A linear second-order deterministic system with viscous damping that causes energy to dissipate over time. In the underdamped regime, trajectories spiral into a stable fixed point in phase space, with no sensitive dependence on initial conditions, no strange attractor, and a non-positive largest Lyapunov exponent, making the long-term behavior easily predictable.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": true,
+    "Periodic": false
+  }
+}

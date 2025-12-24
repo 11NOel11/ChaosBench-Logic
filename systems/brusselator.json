@@ -1,0 +1,25 @@
+{
+  "system_id": "brusselator",
+  "name": "Brusselator chemical oscillator (limit cycle)",
+  "category": "non-chaotic",
+  "equations": "dx/dt = A - (B+1)x + x^2 y; dy/dt = Bx - x^2 y",
+  "parameters": {
+    "A": 1.0,
+    "B": 2.5
+  },
+  "description_simple": "A chemical reaction model that generates stable oscillations.",
+  "description_complex": "The Brusselator is a two-species autocatalytic chemical model. For typical parameters, trajectories converge to a stable periodic orbit representing chemical oscillations. The system has no chaotic attractor, no positive Lyapunov exponent, and no sensitive dependence on initial conditions.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": true
+  }
+}

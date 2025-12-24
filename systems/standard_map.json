@@ -1,0 +1,24 @@
+{
+  "system_id": "standard_map",
+  "name": "Standard map (Chirikov–Taylor map)",
+  "category": "mixed",
+  "equations": "p_{n+1} = p_n + K sin θ_n; θ_{n+1} = θ_n + p_{n+1} (mod 2π)",
+  "parameters": {
+    "K": 1.5
+  },
+  "description_simple": "A discrete map with both chaotic and regular regions in phase space.",
+  "description_complex": "The standard map is a canonical area-preserving map that exhibits a mixed phase space: islands of stability coexist with a chaotic sea. For K ≈ 1.5, large chaotic regions form, but quasi-periodic invariant tori persist. This system is crucial for studying chaos onset, KAM theory, and reasoning about partial chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": false,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": true,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

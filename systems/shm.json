@@ -1,0 +1,24 @@
+{
+  "system_id": "shm",
+  "name": "Simple harmonic oscillator",
+  "category": "non-chaotic",
+  "equations": "d2x/dt2 + ω^2 x = 0",
+  "parameters": {
+    "omega": 1.0
+  },
+  "description_simple": "A one-dimensional oscillator that moves back and forth periodically under a restoring force proportional to displacement.",
+  "description_complex": "A linear second-order deterministic dynamical system describing a mass on a frictionless spring, characterized by sinusoidal motion at a single frequency ω. Trajectories in phase space lie on closed curves, with no sensitivity to initial conditions and no chaotic behavior.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": true
+  }
+}

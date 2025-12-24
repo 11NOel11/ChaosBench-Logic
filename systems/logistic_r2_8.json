@@ -1,0 +1,24 @@
+{
+  "system_id": "logistic_r2_8",
+  "name": "Logistic map (r = 2.8)",
+  "category": "non-chaotic",
+  "equations": "x_{n+1} = r x_n (1 - x_n)",
+  "parameters": {
+    "r": 2.8
+  },
+  "description_simple": "A discrete-time nonlinear map on [0, 1] that converges to a stable fixed point when the parameter r is 2.8.",
+  "description_complex": "A deterministic one-dimensional iterated map in a parameter regime where trajectories converge to a single stable fixed point. There is no sensitive dependence on initial conditions, the largest Lyapunov exponent is non-positive, and long-term behavior is easily predictable.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": true,
+    "Periodic": false
+  }
+}

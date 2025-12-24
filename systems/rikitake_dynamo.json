@@ -1,0 +1,25 @@
+{
+  "system_id": "rikitake_dynamo",
+  "name": "Rikitake dynamo model",
+  "category": "chaotic",
+  "equations": "dx/dt = -μ x + y z; dy/dt = -μ y + (z - a) x; dz/dt = 1 - x y",
+  "parameters": {
+    "mu": 0.5,
+    "a": 0.75
+  },
+  "description_simple": "A model of geomagnetic field reversals that can exhibit chaos.",
+  "description_complex": "The Rikitake dynamo is a system of three nonlinear ODEs modeling magnetic field generation via two coupled conducting disks. For several parameter regimes, the system displays chaotic dynamics and irregular polarity reversals, serving as an important benchmark in geophysical nonlinear dynamics.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

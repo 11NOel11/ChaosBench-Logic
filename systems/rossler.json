@@ -1,0 +1,26 @@
+{
+  "system_id": "rossler",
+  "name": "Rössler system",
+  "category": "chaotic",
+  "equations": "dx/dt = -y - z; dy/dt = x + a y; dz/dt = b + z (x - c)",
+  "parameters": {
+    "a": 0.2,
+    "b": 0.2,
+    "c": 5.7
+  },
+  "description_simple": "A three-dimensional deterministic dynamical system that exhibits chaotic behavior for certain parameter values.",
+  "description_complex": "A continuous-time nonlinear dynamical system defined by three coupled first-order differential equations. For the standard parameter choice a = 0.2, b = 0.2, c = 5.7, the system displays deterministic chaos with a strange attractor, positive largest Lyapunov exponent, and sensitive dependence on initial conditions.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

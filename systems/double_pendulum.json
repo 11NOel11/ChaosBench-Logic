@@ -1,0 +1,29 @@
+{
+  "system_id": "double_pendulum",
+  "name": "Double pendulum",
+  "category": "chaotic",
+  "equations": "Coupled second-order nonlinear equations for two angles θ1, θ2 of a planar double pendulum under gravity.",
+  "parameters": {
+    "m1": 1.0,
+    "m2": 1.0,
+    "l1": 1.0,
+    "l2": 1.0,
+    "g": 9.81
+  },
+  "description_simple": "A physical system with two connected pendulum arms that, for many initial conditions, exhibits chaotic motion.",
+  "description_complex": "A deterministic mechanical system consisting of two rigid rods connected in series and free to swing in a plane under gravity. The governing equations are highly nonlinear, and for generic initial conditions the motion shows deterministic chaos: strong sensitivity to initial conditions, complex trajectories in phase space, and no simple periodic or quasi-periodic attractor.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}
+

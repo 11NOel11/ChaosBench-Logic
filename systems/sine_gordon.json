@@ -1,0 +1,24 @@
+{
+  "system_id": "sine_gordon",
+  "name": "Sine–Gordon equation (soliton regime)",
+  "category": "non-chaotic",
+  "equations": "u_tt - u_xx + sin u = 0",
+  "parameters": {
+    "domain": "periodic or infinite line"
+  },
+  "description_simple": "A nonlinear PDE whose solutions include stable solitons—non-chaotic.",
+  "description_complex": "The sine–Gordon equation is a nonlinear wave equation supporting soliton solutions, breathers, and stable coherent structures. In standard regimes, the system is integrable and displays no deterministic chaos, no strange attractors, and no sensitive dependence on initial conditions. This forms a key contrast to spatiotemporal chaotic PDEs such as the Kuramoto–Sivashinsky equation.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

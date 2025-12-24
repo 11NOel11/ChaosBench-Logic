@@ -1,0 +1,25 @@
+{
+  "system_id": "circle_map_quasiperiodic",
+  "name": "Circle map (quasi-periodic regime)",
+  "category": "non-chaotic",
+  "equations": "θ_{n+1} = θ_n + Ω + (K / 2π) sin(2π θ_n)  (mod 1)",
+  "parameters": {
+    "Omega": 0.6180339887,
+    "K": 0.5
+  },
+  "description_simple": "A discrete-time map on the circle that, in certain parameter regimes, produces quasi-periodic motion without chaos.",
+  "description_complex": "A deterministic map on the unit circle that combines rigid rotation by frequency Ω with a sinusoidal perturbation of strength K. For small K and irrational Ω (e.g., the golden ratio conjugate), trajectories densely fill an invariant curve, yielding quasi-periodic motion with no strange attractor, no positive Lyapunov exponent, and no deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": true,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

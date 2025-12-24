@@ -1,0 +1,25 @@
+{
+  "system_id": "henon",
+  "name": "Hénon map",
+  "category": "chaotic",
+  "equations": "x_{n+1} = 1 - a x_n^2 + y_n; y_{n+1} = b x_n",
+  "parameters": {
+    "a": 1.4,
+    "b": 0.3
+  },
+  "description_simple": "A two-dimensional discrete-time map that, for classical parameter values, exhibits chaotic dynamics with a fractal attractor.",
+  "description_complex": "A deterministic planar map defined by a quadratic nonlinearity in x and linear coupling to y. At the classical parameter setting (a = 1.4, b = 0.3), it possesses a strange attractor with fractal structure, a positive largest Lyapunov exponent, and strong sensitivity to initial conditions, making it a standard example of chaos in low-dimensional maps.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

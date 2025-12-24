@@ -1,0 +1,58 @@
+{"id": "q0001", "system_id": "lorenz63", "type": "atomic", "question": "Is the Lorenz-63 system chaotic?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0002", "system_id": "lorenz63", "type": "atomic", "question": "Does the Lorenz-63 system have a positive largest Lyapunov exponent?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0003", "system_id": "lorenz63", "type": "atomic", "question": "Does the Lorenz-63 system exhibit sensitive dependence on initial conditions?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0004", "system_id": "lorenz63", "type": "atomic", "question": "Is the Lorenz-63 system deterministic?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0005", "system_id": "lorenz63", "type": "atomic", "question": "Does the Lorenz-63 system possess a strange attractor?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0006", "system_id": "lorenz63", "type": "atomic", "question": "Is the Lorenz-63 system quasi-periodic?", "ground_truth": "FALSE", "template": "A1"}
+{"id": "q0007", "system_id": "lorenz63", "type": "atomic", "question": "Is the Lorenz-63 system random rather than deterministic?", "ground_truth": "FALSE", "template": "A1"}
+{"id": "q0008", "system_id": "lorenz63", "type": "atomic", "question": "Is long-term pointwise prediction possible for Lorenz-63?", "ground_truth": "FALSE", "template": "A1"}
+
+{"id": "q0009", "system_id": "henon", "type": "atomic", "question": "Is the Hénon map chaotic?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0010", "system_id": "henon", "type": "atomic", "question": "Does the Hénon map have a strange attractor?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0011", "system_id": "henon", "type": "atomic", "question": "Is the Hénon map deterministic?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0012", "system_id": "henon", "type": "atomic", "question": "Does the Hénon map have sensitive dependence on initial conditions?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0013", "system_id": "henon", "type": "atomic", "question": "Is the Hénon map quasi-periodic?", "ground_truth": "FALSE", "template": "A1"}
+{"id": "q0014", "system_id": "henon", "type": "atomic", "question": "Is the Hénon attractor periodic?", "ground_truth": "FALSE", "template": "A1"}
+{"id": "q0015", "system_id": "henon", "type": "atomic", "question": "Is the Hénon map random?", "ground_truth": "FALSE", "template": "A1"}
+{"id": "q0016", "system_id": "henon", "type": "atomic", "question": "Does the Hénon map have a positive Lyapunov exponent?", "ground_truth": "TRUE", "template": "A1"}
+
+{"id": "q0017", "system_id": "shm", "type": "atomic", "question": "Is the simple harmonic oscillator chaotic?", "ground_truth": "FALSE", "template": "A1"}
+{"id": "q0018", "system_id": "shm", "type": "atomic", "question": "Does the simple harmonic oscillator have a stable periodic orbit?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0019", "system_id": "shm", "type": "atomic", "question": "Is the simple harmonic oscillator deterministic?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0020", "system_id": "shm", "type": "atomic", "question": "Does the simple harmonic oscillator possess a strange attractor?", "ground_truth": "FALSE", "template": "A1"}
+{"id": "q0021", "system_id": "shm", "type": "atomic", "question": "Is the simple harmonic oscillator quasi-periodic?", "ground_truth": "FALSE", "template": "A1"}
+{"id": "q0022", "system_id": "shm", "type": "atomic", "question": "Does the simple harmonic oscillator have a positive Lyapunov exponent?", "ground_truth": "FALSE", "template": "A1"}
+{"id": "q0023", "system_id": "shm", "type": "atomic", "question": "Is long-term pointwise prediction possible for the simple harmonic oscillator?", "ground_truth": "TRUE", "template": "A1"}
+{"id": "q0024", "system_id": "shm", "type": "atomic", "question": "Is the simple harmonic oscillator random?", "ground_truth": "FALSE", "template": "A1"}
+
+{"id": "q0025", "type": "implication", "question": "If a system is chaotic, must it be deterministic?", "ground_truth": "YES", "template": "B1"}
+{"id": "q0026", "type": "implication", "question": "If a system has a positive Lyapunov exponent, must it exhibit sensitive dependence on initial conditions?", "ground_truth": "YES", "template": "B1"}
+{"id": "q0027", "type": "implication", "question": "If a system is quasi-periodic, must it be non-chaotic?", "ground_truth": "YES", "template": "B1"}
+{"id": "q0028", "type": "implication", "question": "If a system is random, must it be non-deterministic?", "ground_truth": "YES", "template": "B1"}
+{"id": "q0029", "type": "implication", "question": "If a system has a strange attractor, must it be chaotic?", "ground_truth": "YES", "template": "B1"}
+{"id": "q0030", "type": "implication", "question": "If a system is deterministic, must it have a strange attractor?", "ground_truth": "NO", "template": "B1"}
+
+{"id": "q0031", "type": "bias", "question": "Does chaotic behavior imply that a system is random?", "ground_truth": "NO", "template": "D1"}
+{"id": "q0032", "type": "bias", "question": "Can a linear system be chaotic?", "ground_truth": "YES", "template": "D2"}
+{"id": "q0033", "type": "bias", "question": "Do all nonlinear PDEs necessarily exhibit chaotic dynamics?", "ground_truth": "NO", "template": "D3"}
+{"id": "q0034", "type": "bias", "question": "Does every chaotic system possess a strange attractor?", "ground_truth": "NO", "template": "D4"}
+{"id": "q0035", "system_id": "duffing_chaotic", "type": "counterfactual", "question": "If the forcing amplitude in the Duffing oscillator were reduced to zero, would the system remain chaotic?", "ground_truth": "NO", "template": "E1"}
+{"id": "q0036", "system_id": "mackey_glass", "type": "counterfactual", "question": "If the delay parameter τ in the Mackey–Glass system were greatly reduced, would it become periodic?", "ground_truth": "YES", "template": "E2"}
+{"id": "q0037", "system_id": "lorenz63", "type": "counterfactual", "question": "If the Rayleigh parameter ρ in the Lorenz-63 system were reduced below the chaos threshold, would the system become non-chaotic?", "ground_truth": "YES", "template": "E3"}
+{"id": "q0038", "system_id": "stochastic_ou", "type": "counterfactual", "question": "If all noise were removed from the Ornstein–Uhlenbeck process, would the system become deterministic?", "ground_truth": "YES", "template": "E4"}
+
+{"id": "q0039", "system_id": "lorenz63", "type": "multi_turn", "question": "Turn 1: Is Lorenz-63 deterministic?", "ground_truth": "TRUE", "template": "C1"}
+{"id": "q0040", "system_id": "lorenz63", "type": "multi_turn", "question": "Turn 2: Does Lorenz-63 evolve according to fixed, non-random equations?", "ground_truth": "TRUE", "template": "C1"}
+{"id": "q0041", "system_id": "lorenz63", "type": "multi_turn", "question": "Turn 3: So Lorenz-63 is not stochastic, correct?", "ground_truth": "TRUE", "template": "C1"}
+
+{"id": "q0042", "system_id": "henon", "type": "multi_turn", "question": "Turn 1: Does the Hénon map have a positive Lyapunov exponent?", "ground_truth": "TRUE", "template": "C2"}
+{"id": "q0043", "system_id": "henon", "type": "multi_turn", "question": "Turn 2: Does it therefore exhibit sensitivity to initial conditions?", "ground_truth": "TRUE", "template": "C2"}
+{"id": "q0044", "system_id": "henon", "type": "multi_turn", "question": "Turn 3: Does this imply chaotic behavior?", "ground_truth": "TRUE", "template": "C2"}
+
+{"id": "q0045", "system_id": "shm", "type": "multi_turn", "question": "Turn 1: Is the simple harmonic oscillator chaotic?", "ground_truth": "FALSE", "template": "C3"}
+{"id": "q0046", "system_id": "shm", "type": "multi_turn", "question": "Turn 2: Does the simple harmonic oscillator have a stable periodic orbit?", "ground_truth": "TRUE", "template": "C3"}
+{"id": "q0047", "system_id": "shm", "type": "multi_turn", "question": "Turn 3: Can a system be both chaotic and strictly periodic?", "ground_truth": "FALSE", "template": "C3"}
+
+{"id": "q0048", "system_id": "stochastic_ou", "type": "multi_turn", "question": "Turn 1: Is the Ornstein–Uhlenbeck process deterministic?", "ground_truth": "FALSE", "template": "C1"}
+{"id": "q0049", "system_id": "stochastic_ou", "type": "multi_turn", "question": "Turn 2: Does the OU process include a stochastic noise term?", "ground_truth": "TRUE", "template": "C1"}
+{"id": "q0050", "system_id": "stochastic_ou", "type": "multi_turn", "question": "Turn 3: So it is not a deterministic system, correct?", "ground_truth": "TRUE", "template": "C1"}

@@ -1,0 +1,26 @@
+{
+  "system_id": "duffing_chaotic",
+  "name": "Forced Duffing oscillator (chaotic regime)",
+  "category": "chaotic",
+  "equations": "d2x/dt2 + δ dx/dt - x + x^3 = γ cos(ω t)",
+  "parameters": {
+    "delta": 0.2,
+    "gamma": 0.3,
+    "omega": 1.0
+  },
+  "description_simple": "A nonlinear driven oscillator that shows chaotic behavior for certain forcing and damping parameters.",
+  "description_complex": "A deterministic second-order nonlinear oscillator with a double-well potential, linear damping, and periodic forcing. For appropriate choices of damping δ, forcing amplitude γ, and frequency ω, the dynamics become chaotic, with a strange attractor in the extended phase space, sensitivity to initial conditions, and a positive largest Lyapunov exponent.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}

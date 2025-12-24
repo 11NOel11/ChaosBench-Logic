@@ -1,0 +1,24 @@
+{
+  "system_id": "vdp",
+  "name": "Van der Pol oscillator",
+  "category": "non-chaotic",
+  "equations": "d2x/dt2 - μ (1 - x^2) dx/dt + x = 0",
+  "parameters": {
+    "mu": 1.0
+  },
+  "description_simple": "A nonlinear oscillator with a self-sustained, stable periodic orbit known as a limit cycle.",
+  "description_complex": "A deterministic second-order nonlinear dynamical system in which energy is injected and dissipated in a state-dependent manner, leading trajectories to converge to a unique stable limit cycle. In the classical parameter regime (μ ≈ 1), the system is non-chaotic, with no sensitive dependence on initial conditions and a negative largest Lyapunov exponent along the attracting cycle.",
+  "truth_assignment": {
+    "Chaotic": false,
+    "Deterministic": true,
+    "PosLyap": false,
+    "Sensitive": false,
+    "StrangeAttr": false,
+    "PointUnpredictable": false,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": true
+  }
+}

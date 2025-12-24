@@ -1,0 +1,95 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+.conda/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# API keys and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+api_keys.txt
+secrets.json
+secrets.txt
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation
+docs/_build/
+
+# Results and outputs (keep structure, ignore content)
+results/*
+!results/.gitkeep
+*.log
+
+# Checkpoints
+checkpoint.json
+*.ckpt
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Archives
+*.zip
+*.tar.gz
+*.tar
+*.rar
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+.cache/
+.claude/
+README_OLD.md
+debug_*.jsonl
+
+# uv
+.uv/
+uv.lock

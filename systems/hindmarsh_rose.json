@@ -1,0 +1,24 @@
+{
+  "system_id": "hindmarsh_rose",
+  "name": "Hindmarsh–Rose neuron model",
+  "category": "chaotic",
+  "equations": "Three nonlinear ODEs modeling bursting dynamics in neurons.",
+  "parameters": {
+    "I": 3.25
+  },
+  "description_simple": "A neuron model that can exhibit chaotic bursting.",
+  "description_complex": "The Hindmarsh–Rose system models complex neuronal bursting via three coupled nonlinear ODEs. For certain input currents, the system displays deterministic chaos characterized by irregular burst timing, sensitivity to initial conditions, positive Lyapunov exponents, and non-periodic attractors.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  }
+}
