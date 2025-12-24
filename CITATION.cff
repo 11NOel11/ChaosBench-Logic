@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this benchmark in your research, please cite it as below."
+type: software
+title: "ChaosBench-Logic: A Benchmark for Evaluating Large Language Models on Complex Reasoning about Dynamical Systems"
+version: 1.0.0
+date-released: 2024-12-24
+url: "https://github.com/11NOel11/chaos-logic-bench"
+repository-code: "https://github.com/11NOel11/chaos-logic-bench"
+license: MIT
+authors:
+  - family-names: "ChaosBench Team"
+    affiliation: "Independent Researchers"
+keywords:
+  - "large language models"
+  - "benchmark"
+  - "dynamical systems"
+  - "chaos theory"
+  - "reasoning"
+  - "evaluation"
+  - "LLM"
+  - "GPT-4"
+  - "Claude"
+  - "Gemini"
+  - "LLaMA"
+abstract: >
+  ChaosBench-Logic is a comprehensive benchmark for evaluating Large Language
+  Models (LLMs) on complex reasoning tasks involving chaotic and non-chaotic
+  dynamical systems. The benchmark consists of 621 carefully curated questions
+  spanning 30 dynamical systems from physics, chemistry, biology, and mathematics.
+  It tests models across 7 categories of reasoning: atomic facts, logical implications,
+  multi-hop reasoning, cross-system comparison, domain-specific technical reasoning,
+  counterfactual analysis, and multi-turn dialogue. We evaluate 6 state-of-the-art
+  LLMs (GPT-4, Claude-3.5, Gemini-2.5, LLaMA-3 70B, Mixtral, OpenHermes) in both
+  zero-shot and chain-of-thought modes, providing comprehensive metrics including
+  overall accuracy, dialogue accuracy, task-specific breakdowns, and bias analysis.
+references:
+  - type: article
+    authors:
+      - family-names: "ChaosBench Team"
+    title: "ChaosBench-Logic: Benchmarking Large Language Models on Complex Reasoning about Dynamical Systems"
+    year: 2024
+    journal: "arXiv preprint"

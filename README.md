@@ -1,145 +1,139 @@
+<div align="center">
+
 # ChaosBench-Logic
+
+### A Benchmark for Evaluating Large Language Models on Complex Reasoning about Dynamical Systems
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![arXiv](https://img.shields.io/badge/arXiv-2024.xxxxx-b31b1b.svg)](https://arxiv.org/)
+[![GitHub Stars](https://img.shields.io/github/stars/11NOel11/chaos-logic-bench?style=social)](https://github.com/11NOel11/chaos-logic-bench)
 
-**ChaosBench-Logic** is a comprehensive benchmark for evaluating Large Language Models (LLMs) on complex reasoning tasks involving chaotic and non-chaotic dynamical systems. It tests models' ability to reason about stability, bifurcations, chaos detection, and multi-hop logical inference across 30 diverse systems from physics, chemistry, biology, and mathematics.
+[**Paper**](https://arxiv.org/) | [**Dataset**](data/) | [**Results**](RESULTS.md) | [**Documentation**](API_SETUP.md)
+
+</div>
+
+---
+
+## 📋 Abstract
+
+**ChaosBench-Logic** is a comprehensive benchmark designed to evaluate the reasoning capabilities of Large Language Models (LLMs) in the context of chaotic and non-chaotic dynamical systems. The benchmark tests models' abilities across multiple dimensions of complex reasoning: logical inference, symbolic manipulation, multi-hop reasoning, cross-system comparison, and counterfactual analysis. We evaluate **6 state-of-the-art LLMs** on **621 carefully curated questions** spanning **30 dynamical systems** from physics, chemistry, biology, and mathematics.
+
+Our findings reveal that while modern LLMs achieve impressive accuracy (up to 91.6%), they exhibit varying strengths across different reasoning tasks, with notable challenges in compositional reasoning and certain types of logical implications.
+
+---
 
 ## 🎯 Key Features
 
-- **30 Dynamical Systems**: Lorenz-63, double pendulum, Brusselator, FitzHugh-Nagumo, logistic map, and more
-- **621 Questions**: Spanning 7 difficulty levels from atomic facts to counterfactual reasoning
-- **11 Logical Predicates**: Tests stability, chaos, bifurcations, periodicity, sensitivity, and cross-system comparisons
-- **6 LLM Models**: GPT-4, Claude-3.5, Gemini-2.5, LLaMA-3, Mixtral, OpenHermes
-- **2 Evaluation Modes**: Zero-shot and chain-of-thought reasoning
-- **Comprehensive Metrics**: Overall accuracy, dialogue accuracy, task-specific breakdowns, bias analysis
+<div align="center">
 
-## 📊 Quick Results
+| Feature | Description |
+|---------|-------------|
+| **📊 621 Questions** | Spanning 7 difficulty levels from atomic facts to counterfactual reasoning |
+| **🔬 30 Systems** | Lorenz-63, double pendulum, Brusselator, FitzHugh-Nagumo, logistic map, and more |
+| **🧠 6 LLMs** | GPT-4, Claude-3.5, Gemini-2.5, LLaMA-3 70B, Mixtral, OpenHermes |
+| **🎲 11 Predicates** | Stability, chaos, bifurcations, periodicity, sensitivity, and more |
+| **🔄 2 Modes** | Zero-shot and chain-of-thought reasoning |
+| **📈 Rich Metrics** | Overall accuracy, dialogue accuracy, task-specific breakdowns, bias analysis |
 
-| Model | Overall Acc | Dialogue Acc | Valid Responses | Throughput* |
-|-------|-------------|--------------|-----------------|-------------|
-| **LLaMA-3 (zeroshot)** | **91.6%** | **75.5%** | 620/621 | 1.2 items/s ⚠️ |
-| GPT-4 (cot) | 90.2% | 73.7% | 621/621 | ~10 items/s |
-| GPT-4 (zeroshot) | 90.0% | 72.8% | 621/621 | ~15 items/s |
-| LLaMA-3 (cot) | 89.5% | 65.3% | 620/621 | 0.2 items/s ⚠️ |
-| Claude-3.5 (zeroshot) | 88.2% | 68.3% | 621/621 | ~12 items/s |
-| Gemini-2.5 (zeroshot) | 87.9% | 67.6% | 620/621 | ~18 items/s |
+</div>
 
-*LLaMA-3 throughput measured with 2 parallel workers (practical real-world speed)
+---
 
-⚠️ **Note**: LLaMA-3 70B takes longer than other models (~8 minutes for zeroshot, ~55 minutes for chain-of-thought).
+## 📊 Main Results
 
-See [RESULTS.md](RESULTS.md) for detailed analysis.
+<div align="center">
+
+### Performance Summary
+
+| Rank | Model | Mode | Overall Acc | Dialogue Acc | Throughput* | Valid |
+|:----:|-------|:----:|:-----------:|:------------:|:-----------:|:-----:|
+| 🥇 | **LLaMA-3 70B** | Zero-shot | **91.6%** | **75.5%** | 1.2 items/s | 620/621 |
+| 🥈 | **GPT-4** | CoT | **90.2%** | **73.7%** | ~10 items/s | 621/621 |
+| 🥉 | **GPT-4** | Zero-shot | **90.0%** | **72.8%** | ~15 items/s | 621/621 |
+| 4 | **LLaMA-3 70B** | CoT | **89.5%** | **65.3%** | 0.2 items/s | 620/621 |
+| 5 | **Claude-3.5** | Zero-shot | **88.2%** | **68.3%** | ~12 items/s | 621/621 |
+| 6 | **Gemini-2.5** | Zero-shot | **87.9%** | **67.6%** | ~18 items/s | 620/621 |
+
+*Throughput measured with 2 parallel workers (practical deployment scenario)
+
+</div>
+
+**Key Findings:**
+- 🏆 **LLaMA-3 70B** achieves highest overall accuracy and best dialogue consistency
+- ⚡ **Gemini-2.5** offers best speed-to-accuracy ratio
+- 🎯 **GPT-4** shows strong chain-of-thought reasoning capabilities
+- 📈 All models achieve >85% accuracy, demonstrating strong logical reasoning capabilities
+
+> **Note:** LLaMA-3 70B requires longer inference time (~8 min for zero-shot, ~55 min for CoT) compared to other models (~2-5 min per run).
+
+See [**RESULTS.md**](RESULTS.md) for comprehensive analysis and task-specific breakdowns.
 
 ---
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Installation
 
-- Python 3.10 or higher
-- API keys for the models you want to test (see [API_SETUP.md](API_SETUP.md))
-
-### Installation (Recommended: uv)
-
-We recommend using **[uv](https://docs.astral.sh/uv/)** - a fast Rust-based Python package manager:
+We recommend using **[uv](https://docs.astral.sh/uv/)** (a fast Rust-based Python package manager):
 
 ```bash
 # Install uv
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone repository
-git clone https://github.com/yourusername/chaos-logic-bench.git
+git clone https://github.com/11NOel11/chaos-logic-bench.git
 cd chaos-logic-bench
 
-# Setup environment (automatic!)
+# Setup environment
 uv venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 uv pip install -e .
 ```
 
-### Alternative Installation Methods
-
 <details>
-<summary><b>Using pip</b></summary>
+<summary><b>Alternative: Using pip or conda</b></summary>
 
+**Using pip:**
 ```bash
-git clone https://github.com/yourusername/chaos-logic-bench.git
-cd chaos-logic-bench
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
-</details>
 
-<details>
-<summary><b>Using conda</b></summary>
-
+**Using conda:**
 ```bash
-git clone https://github.com/yourusername/chaos-logic-bench.git
-cd chaos-logic-bench
 conda create -n chaosbench python=3.11
 conda activate chaosbench
 pip install -r requirements.txt
 ```
 </details>
 
-### Configure API Keys
+### Configuration
 
 ```bash
-# Copy template and add your keys
+# Setup API keys
 cp .env.example .env
-nano .env  # Edit with your API keys
+nano .env  # Add your API keys
 ```
 
-See [API_SETUP.md](API_SETUP.md) for detailed instructions on obtaining API keys.
+See [**API_SETUP.md**](API_SETUP.md) for detailed instructions on obtaining API keys from OpenAI, Anthropic, Google, and HuggingFace.
 
-### Run Your First Evaluation
+### Running Evaluations
 
 ```bash
-# Single model evaluation
+# Evaluate a single model
 python run_benchmark.py --model gpt4 --mode zeroshot
 
 # Run all models
 python run_benchmark.py --model all --mode zeroshot
 
-# Both modes (zeroshot + chain-of-thought)
-python run_benchmark.py --model claude3 --mode both
-```
+# Chain-of-thought reasoning
+python run_benchmark.py --model claude3 --mode cot
 
----
-
-## 📖 Usage
-
-### Basic Commands
-
-```bash
-# Run specific model and mode
-python run_benchmark.py --model gpt4 --mode zeroshot
-
-# Run with custom worker count (useful for rate limiting)
+# Custom worker count (for rate limiting)
 python run_benchmark.py --model llama3 --mode zeroshot --workers 2
-
-# Clear checkpoints and restart from scratch
-python run_benchmark.py --model gemini --mode cot --clear-checkpoints
 ```
-
-### Supported Models
-
-| Model ID | Model Name | Provider | Speed | Cost (per run) |
-|----------|------------|----------|-------|----------------|
-| `gpt4` | GPT-4 | OpenAI | Fast | ~$2.00 |
-| `claude3` | Claude-3.5 | Anthropic | Fast | ~$1.30 |
-| `gemini` | Gemini-2.5 | Google | Fast | ~$0.50 |
-| `llama3` | LLaMA-3 70B | HuggingFace | **Slow** ⚠️ | ~$6.00 |
-| `mixtral` | Mixtral | HuggingFace | Medium | ~$2.00 |
-| `openhermes` | OpenHermes | HuggingFace | Medium | ~$1.30 |
-
-### Evaluation Modes
-
-- **`zeroshot`**: Direct question answering without examples
-- **`cot`**: Chain-of-thought reasoning with step-by-step explanations
-- **`both`**: Run both modes sequentially
 
 ---
 
@@ -147,86 +141,91 @@ python run_benchmark.py --model gemini --mode cot --clear-checkpoints
 
 ```
 chaos-logic-bench/
-├── run_benchmark.py        # 🚀 Main evaluation runner
-├── eval_chaosbench.py      # Core evaluation framework
-├── clients.py              # LLM API client implementations
-├── data/                   # 📊 Benchmark dataset (621 questions, 7 batches)
+├── 📄 run_benchmark.py        # Main evaluation runner
+├── 📄 eval_chaosbench.py      # Core evaluation framework
+├── 📄 clients.py              # LLM API client implementations
+├── 📁 data/                   # Benchmark dataset (621 questions)
 │   ├── batch1_atomic_implication.jsonl
 │   ├── batch2_multiHop_crossSystem.jsonl
-│   └── ...
-├── systems/                # ⚙️ Dynamical system definitions (30 systems)
-│   ├── lorenz63.json
-│   ├── double_pendulum.json
-│   └── ...
-├── results/                # 📈 Evaluation outputs (auto-generated)
-│   ├── gpt4_zeroshot/
-│   ├── claude3_zeroshot/
-│   └── ...
-├── .env.example            # API key template
-├── pyproject.toml          # uv/pip package configuration
-├── requirements.txt        # pip dependencies
-├── API_SETUP.md            # 🔑 Detailed API key setup guide
-├── CONTRIBUTING.md         # 🤝 Contribution guidelines
-└── RESULTS.md              # 📊 Comprehensive evaluation results
+│   ├── batch3_pde_chem_bio.jsonl
+│   ├── batch4_maps_advanced.jsonl
+│   ├── batch5_counterfactual_high_difficulty.jsonl
+│   ├── batch6_deep_bias_probes.jsonl
+│   └── batch7_multiturn_advanced.jsonl
+├── 📁 systems/                # 30 dynamical system definitions
+│   ├── lorenz63.json, rossler.json, double_pendulum.json
+│   ├── brusselator.json, fitzhugh_nagumo.json, ...
+│   └── [27 more systems]
+├── 📁 results/                # Evaluation outputs (auto-generated)
+├── 📄 .env.example            # API key template
+├── 📄 pyproject.toml          # Package configuration
+└── 📚 Documentation
+    ├── README.md              # This file
+    ├── RESULTS.md             # Detailed evaluation results
+    ├── API_SETUP.md           # API key setup guide
+    └── CONTRIBUTING.md        # Contribution guidelines
 ```
 
 ---
 
-## 🧪 Evaluation Tasks
+## 🧪 Benchmark Design
 
-ChaosBench-Logic tests 7 categories of reasoning:
+### Task Categories
 
-1. **Atomic Facts** (109 questions): Basic properties like stability, chaos, dimension
-2. **Implications** (93 questions): Logical consequences (if A then B)
-3. **Multi-hop Reasoning** (98 questions): Chained logical inference across facts
-4. **Cross-system Comparison** (87 questions): Relative properties between systems
-5. **PDE/Chemistry/Biology** (76 questions): Domain-specific technical reasoning
-6. **Counterfactual** (68 questions): "What if" parameter modifications
-7. **Multi-turn Dialogue** (90 questions): Contextual Q&A sequences
+<div align="center">
 
-**Total**: 621 questions across 30 dynamical systems
+| Category | Questions | Description |
+|----------|:---------:|-------------|
+| **Atomic Facts** | 109 | Basic properties: stability, chaos, dimension, periodicity |
+| **Implications** | 93 | Logical consequences: if A then B |
+| **Multi-hop Reasoning** | 98 | Chained logical inference across multiple facts |
+| **Cross-system Comparison** | 87 | Relative properties between different systems |
+| **PDE/Chem/Bio** | 76 | Domain-specific technical reasoning |
+| **Counterfactual** | 68 | "What if" scenarios with parameter modifications |
+| **Multi-turn Dialogue** | 90 | Contextual Q&A sequences |
+| **Total** | **621** | Comprehensive reasoning evaluation |
 
----
+</div>
 
-## 📈 Metrics
+### Dynamical Systems Coverage
 
-Each evaluation generates:
+Our benchmark spans diverse systems across multiple domains:
 
-- **Overall Accuracy**: Correct predictions across all tasks
-- **Dialogue Accuracy**: Multi-turn conversation performance  
-- **Task-specific Accuracy**: Per-category breakdowns
-- **Bias Analysis**: Response distribution (yes/no tendencies)
-- **Response Validity**: API success rate
-- **Execution Time**: Speed benchmarks
-- **Visual Analytics**: Accuracy heatmaps, error distributions
+- **Classical Chaos**: Lorenz-63, Rössler, double pendulum, Duffing oscillator
+- **Chemical Systems**: Brusselator, Oregonator
+- **Biological Models**: FitzHugh-Nagumo, Hindmarsh-Rose, Lotka-Volterra
+- **Maps**: Logistic map, Hénon map, standard map, Arnold cat map, baker's map
+- **PDEs**: Kuramoto-Sivashinsky, sine-Gordon
+- **Others**: Van der Pol, Chua circuit, Mackey-Glass, Lorenz-96
 
-Results are saved in JSON, CSV, and PNG formats for easy analysis.
+### Evaluation Metrics
 
----
+Each run generates comprehensive analytics:
+- ✅ **Overall Accuracy** - Correct predictions across all tasks
+- 💬 **Dialogue Accuracy** - Multi-turn conversation consistency
+- 📊 **Task-specific Accuracy** - Per-category performance breakdowns
+- ⚖️ **Bias Analysis** - Response distribution patterns
+- ⏱️ **Execution Metrics** - Throughput, latency, API success rates
+- 📈 **Visual Analytics** - Heatmaps, error distributions, confusion matrices
 
-## 🤝 Contributing
-
-We welcome contributions! Whether you want to:
-
-- Add support for new LLM models
-- Improve evaluation metrics
-- Add new dynamical systems or questions
-- Fix bugs or improve documentation
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
-- Environment setup (uv, conda, pip, venv)
-- Code style and testing
-- Pull request process
-- Adding new models
+Results are exported in **JSON**, **CSV**, and **PNG** formats for downstream analysis.
 
 ---
 
-## 📚 Documentation
+## 🔬 Supported Models
 
-- **[API_SETUP.md](API_SETUP.md)**: Detailed guide for obtaining and configuring API keys
-- **[CONTRIBUTING.md](CONTRIBUTING.md)**: Development setup and contribution guidelines
-- **[RESULTS.md](RESULTS.md)**: Comprehensive evaluation results and analysis
-- **[LICENSE](LICENSE)**: MIT License details
+<div align="center">
+
+| Model | Provider | Version | Speed | Cost/Run | Notes |
+|-------|----------|---------|-------|----------|-------|
+| GPT-4 | OpenAI | gpt-4-turbo | ⚡⚡⚡ | ~$2.00 | Fast, accurate |
+| Claude-3.5 | Anthropic | claude-3-5-sonnet | ⚡⚡⚡ | ~$1.30 | Strong reasoning |
+| Gemini-2.5 | Google | gemini-2.5-flash | ⚡⚡⚡⚡ | ~$0.50 | Fastest, cost-effective |
+| LLaMA-3 70B | HuggingFace | Meta-Llama-3-70B | ⚡ | ~$6.00 | Best accuracy, slower |
+| Mixtral | HuggingFace | Mixtral-8x7B | ⚡⚡ | ~$2.00 | Medium speed |
+| OpenHermes | HuggingFace | OpenHermes-2.5 | ⚡⚡ | ~$1.30 | Medium speed |
+
+</div>
 
 ---
 
@@ -236,46 +235,102 @@ If you use ChaosBench-Logic in your research, please cite:
 
 ```bibtex
 @article{chaosbench2024,
-  title={ChaosBench-Logic: Benchmarking LLMs on Complex Reasoning about Dynamical Systems},
+  title={ChaosBench-Logic: Benchmarking Large Language Models on Complex Reasoning about Dynamical Systems},
   author={ChaosBench Team},
+  journal={arXiv preprint arXiv:2024.xxxxx},
   year={2024},
-  journal={arXiv preprint},
-  url={https://github.com/yourusername/chaos-logic-bench}
+  url={https://github.com/11NOel11/chaos-logic-bench}
 }
 ```
 
 ---
 
-## ❓ Troubleshooting
+## 🤝 Contributing
 
-**API key errors?** → See [API_SETUP.md](API_SETUP.md#troubleshooting)
+We welcome contributions from the community! Areas for contribution:
 
-**Rate limit issues?** → Reduce workers: `--workers 2`
+- 🆕 Adding support for new LLM models
+- 📊 Expanding the dataset with new questions or systems
+- 🔧 Improving evaluation metrics and analysis tools
+- 📖 Enhancing documentation
+- 🐛 Bug fixes and performance improvements
 
-**LLaMA-3 too slow?** → This is expected (see performance notes above)
+See [**CONTRIBUTING.md**](CONTRIBUTING.md) for detailed guidelines on:
+- Environment setup (uv, conda, pip, venv)
+- Adding new models
+- Code style and testing
+- Pull request workflow
 
-**Missing dependencies?** → Reinstall: `pip install -r requirements.txt`
+---
 
-**Questions?** → Open an issue on GitHub
+## 📚 Documentation
+
+- **[API_SETUP.md](API_SETUP.md)** - Comprehensive guide for obtaining and configuring API keys
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Development setup and contribution guidelines  
+- **[RESULTS.md](RESULTS.md)** - Complete evaluation results with detailed analysis
+- **[LICENSE](LICENSE)** - MIT License
+
+---
+
+## ❓ FAQ & Troubleshooting
+
+<details>
+<summary><b>API key errors?</b></summary>
+
+See [API_SETUP.md#troubleshooting](API_SETUP.md#troubleshooting) for common API key issues and solutions.
+</details>
+
+<details>
+<summary><b>Rate limit issues?</b></summary>
+
+Reduce parallel workers: `python run_benchmark.py --model llama3 --mode zeroshot --workers 2`
+</details>
+
+<details>
+<summary><b>Why is LLaMA-3 so slow?</b></summary>
+
+LLaMA-3 70B has longer inference latency (~8-55 min vs 2-5 min for other models). This is expected for the model size and HuggingFace inference API. The accuracy gains may justify the tradeoff for research purposes.
+</details>
+
+<details>
+<summary><b>Can I add my own models?</b></summary>
+
+Yes! See [CONTRIBUTING.md#adding-new-models](CONTRIBUTING.md#adding-new-models) for step-by-step instructions.
+</details>
+
+<details>
+<summary><b>Missing dependencies?</b></summary>
+
+Reinstall: `pip install -r requirements.txt` or `uv pip install -e .`
+</details>
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+Free for academic and commercial use with attribution.
 
 ---
 
 ## 🙏 Acknowledgments
 
-Built with:
-- [OpenAI API](https://openai.com/)
-- [Anthropic Claude](https://anthropic.com/)
-- [Google Gemini](https://ai.google.dev/)
-- [HuggingFace Inference API](https://huggingface.co/)
+This work builds upon:
+- **LLM APIs**: [OpenAI](https://openai.com/), [Anthropic](https://anthropic.com/), [Google AI](https://ai.google.dev/), [HuggingFace](https://huggingface.co/)
+- **Dynamical Systems Theory**: Research from the chaos theory and nonlinear dynamics community
+- **Benchmark Design**: Inspired by existing LLM reasoning benchmarks
 
-Special thanks to the dynamical systems research community for inspiration.
+Special thanks to the open-source community for tools and libraries that made this work possible.
 
 ---
 
-**Made with ❤️ for advancing LLM reasoning on complex scientific problems**
+<div align="center">
+
+### 🌟 Star us on GitHub if you find this useful!
+
+**Maintained by the ChaosBench Team**
+
+[Report Bug](https://github.com/11NOel11/chaos-logic-bench/issues) · [Request Feature](https://github.com/11NOel11/chaos-logic-bench/issues) · [Discussions](https://github.com/11NOel11/chaos-logic-bench/discussions)
+
+</div>
