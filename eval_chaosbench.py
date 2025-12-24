@@ -273,21 +273,52 @@ def normalize_label(text: Optional[str]) -> Optional[str]:
         return "NO"
 
     # Check if YES/TRUE/NO/FALSE appears as any standalone token
-    for token in tokens:
+    # Iterate in REVERSE to find LAST occurrence (important for CoT)
+    last_yes_token = None
+    last_no_token = None
+    for i, token in enumerate(tokens):
         if token in {"yes", "true"}:
-            return "YES"
+            last_yes_token = i
         if token in {"no", "false"}:
-            return "NO"
+            last_no_token = i
 
-    # Step 8: If we still don't have YES/NO, search full text again
-    full_lower = raw.lower()
-    if re.search(r'\byes\b', full_lower):
+    # Return based on which appeared last
+    if last_yes_token is not None and last_no_token is not None:
+        if last_yes_token > last_no_token:
+            return "YES"
+        else:
+            return "NO"
+    elif last_yes_token is not None:
         return "YES"
-    if re.search(r'\bno\b', full_lower):
+    elif last_no_token is not None:
         return "NO"
-    if re.search(r'\btrue\b', full_lower):
+
+    # Step 8: Last-resort fallback - find LAST occurrence of YES/NO in text
+    # This handles CoT cases like "Let me think... initially seems yes, but actually no"
+    # where the final answer is at the end without explicit FINAL_ANSWER: marker
+    full_lower = raw.lower()
+    last_yes_idx = max(
+        full_lower.rfind(' yes'),
+        full_lower.rfind(' yes.'),
+        full_lower.rfind(' yes,'),
+        full_lower.rfind('\nyes'),
+        full_lower.rfind(' true'),
+        full_lower.rfind(' true.'),
+    )
+    last_no_idx = max(
+        full_lower.rfind(' no'),
+        full_lower.rfind(' no.'),
+        full_lower.rfind(' no,'),
+        full_lower.rfind('\nno'),
+        full_lower.rfind(' false'),
+        full_lower.rfind(' false.'),
+    )
+
+    if last_yes_idx > last_no_idx and last_yes_idx >= 0:
+        # YES appears after NO (or NO doesn't appear)
         return "YES"
-    if re.search(r'\bfalse\b', full_lower):
+    elif last_no_idx > last_yes_idx and last_no_idx >= 0:
+        # NO appears after YES (or YES doesn't appear)
         return "NO"
 
     # Give up
@@ -295,7 +326,205 @@ def normalize_label(text: Optional[str]) -> Optional[str]:
 
 
 ############################
-# 4. METRIC DATA STRUCTURE
+# 4. FOL VIOLATION CHECKING
+############################
+
+def get_fol_rules() -> Dict[str, Dict[str, List[str]]]:
+    """
+    Returns the first-order logic (FOL) axioms for chaotic dynamical systems.
+
+    These rules define necessary and exclusionary relationships between predicates.
+    Based on the formal ontology in the ChaosBench-Logic paper.
+
+    Returns:
+        Dict mapping predicate names to {'requires': [...], 'excludes': [...]}
+
+    Examples:
+        - If Chaotic=YES, then Deterministic, PosLyap, Sensitive must also be YES
+        - If Chaotic=YES, then Random, Periodic, QuasiPeriodic must be NO
+    """
+    return {
+        "Chaotic": {
+            "requires": ["Deterministic", "PosLyap", "Sensitive", "PointUnpredictable", "StatPredictable"],
+            "excludes": ["Random", "Periodic", "QuasiPeriodic", "FixedPointAttr"]
+        },
+        "Random": {
+            "requires": [],
+            "excludes": ["Deterministic", "Chaotic", "QuasiPeriodic", "Periodic"]
+        },
+        "QuasiPeriodic": {
+            "requires": ["Deterministic"],
+            "excludes": ["Chaotic", "Random", "Periodic", "FixedPointAttr"]
+        },
+        "Periodic": {
+            "requires": ["Deterministic"],
+            "excludes": ["Chaotic", "Random", "QuasiPeriodic", "StrangeAttr"]
+        },
+        "FixedPointAttr": {
+            "requires": ["Deterministic"],
+            "excludes": ["Chaotic", "Random", "QuasiPeriodic", "Periodic", "StrangeAttr"]
+        },
+        "Deterministic": {
+            "requires": [],
+            "excludes": ["Random"]
+        },
+    }
+
+
+def load_system_ontology(systems_dir: str = "systems") -> Dict[str, Dict[str, bool]]:
+    """
+    Load ground truth ontology for all dynamical systems.
+
+    Reads all JSON files from systems/ directory and extracts truth_assignment
+    for each system's logical predicates.
+
+    Args:
+        systems_dir: Path to directory containing system JSON files
+
+    Returns:
+        Dict mapping system_id -> {predicate_name: bool_value}
+        Example: {"lorenz63": {"Chaotic": true, "Deterministic": true, ...}, ...}
+
+    Raises:
+        FileNotFoundError: If systems_dir doesn't exist
+        JSONDecodeError: If any JSON file is malformed
+    """
+    ontology: Dict[str, Dict[str, bool]] = {}
+
+    if not os.path.exists(systems_dir):
+        print(f"[WARNING] Systems directory not found: {systems_dir}")
+        return ontology
+
+    for filename in os.listdir(systems_dir):
+        if not filename.endswith('.json'):
+            continue
+
+        filepath = os.path.join(systems_dir, filename)
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                system_id = data.get("system_id")
+                truth_assignment = data.get("truth_assignment", {})
+
+                if system_id and truth_assignment:
+                    ontology[system_id] = truth_assignment
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"[WARNING] Failed to parse {filename}: {e}")
+            continue
+
+    return ontology
+
+
+def extract_predicate_from_question(question: str) -> Optional[str]:
+    """
+    Extract the logical predicate being queried from a question.
+
+    Uses keyword matching to identify which of the 11 FOL predicates
+    a question is asking about.
+
+    Args:
+        question: The question text
+
+    Returns:
+        Predicate name (e.g., "Chaotic", "Deterministic") or None if unknown
+
+    Examples:
+        "Is the Lorenz-63 system chaotic?" → "Chaotic"
+        "Does Lorenz-63 have a positive Lyapunov exponent?" → "PosLyap"
+        "Is the system deterministic?" → "Deterministic"
+    """
+    if not question:
+        return None
+
+    q_lower = question.lower()
+
+    # Keyword mappings (order matters - check specific before general)
+    keyword_map = [
+        (["chaotic", "chaos"], "Chaotic"),
+        (["deterministic"], "Deterministic"),
+        (["positive lyapunov", "poslyap", "largest lyapunov exponent"], "PosLyap"),
+        (["sensitive dependence", "sensitivity to initial conditions", "sensitive"], "Sensitive"),
+        (["strange attractor"], "StrangeAttr"),
+        (["pointwise prediction", "point-wise prediction", "pointunpredictable", "long-term pointwise"], "PointUnpredictable"),
+        (["statistically predictable", "statistical prediction", "statpredictable"], "StatPredictable"),
+        (["quasi-periodic", "quasiperiodic"], "QuasiPeriodic"),
+        (["random", "randomness", "stochastic"], "Random"),
+        (["fixed point", "fixedpoint"], "FixedPointAttr"),
+        (["periodic"], "Periodic"),
+    ]
+
+    for keywords, predicate in keyword_map:
+        if any(kw in q_lower for kw in keywords):
+            return predicate
+
+    return None
+
+
+def check_fol_violations(
+    predictions: Dict[str, str],
+    ground_truth: Optional[Dict[str, bool]] = None
+) -> List[str]:
+    """
+    Check for first-order logic violations in a set of predictions.
+
+    Compares model predictions against FOL axioms to identify logical inconsistencies.
+    For example, if the model says Chaotic=YES but Deterministic=NO, this violates
+    the axiom "Chaotic → Deterministic".
+
+    Args:
+        predictions: Model predictions as {predicate: "YES"|"NO"}
+                    Example: {"Chaotic": "YES", "Deterministic": "NO", ...}
+        ground_truth: Optional ground truth as {predicate: bool} (for debugging)
+
+    Returns:
+        List of violated implication strings
+        Example: ["Chaotic → Deterministic", "Chaotic → PosLyap"]
+
+    Notes:
+        - Only checks predicates that appear in predictions
+        - Treats missing predicates as "unknown" (no violation)
+        - Single questions are treated as length-1 dialogues
+    """
+    violations: List[str] = []
+    fol_rules = get_fol_rules()
+
+    # Convert predictions to boolean for easier checking
+    pred_bool: Dict[str, bool] = {}
+    for pred_name, pred_value in predictions.items():
+        if pred_value == "YES":
+            pred_bool[pred_name] = True
+        elif pred_value == "NO":
+            pred_bool[pred_name] = False
+        # else: unknown/unparsed, skip
+
+    # Check each predicate's implications
+    for predicate, is_true in pred_bool.items():
+        if predicate not in fol_rules:
+            continue  # No rules for this predicate
+
+        rules = fol_rules[predicate]
+
+        # If this predicate is TRUE, check requirements and exclusions
+        if is_true:
+            # Check "requires" implications
+            for required_pred in rules.get("requires", []):
+                if required_pred in pred_bool:
+                    if not pred_bool[required_pred]:
+                        # Violation: predicate is true but required predicate is false
+                        violations.append(f"{predicate} → {required_pred}")
+
+            # Check "excludes" implications
+            for excluded_pred in rules.get("excludes", []):
+                if excluded_pred in pred_bool:
+                    if pred_bool[excluded_pred]:
+                        # Violation: predicate is true but excluded predicate is also true
+                        violations.append(f"{predicate} → ¬{excluded_pred}")
+
+    return violations
+
+
+############################
+# 5. METRIC DATA STRUCTURE
 ############################
 
 @dataclass
@@ -312,6 +541,7 @@ class EvalResult:
     pred_norm: Optional[str]
     correct: Optional[bool]
     error_type: Optional[str] = None  # Track error type for failed items
+    question: Optional[str] = None  # Question text (for FOL predicate extraction)
 
 
 ############################
@@ -502,6 +732,7 @@ def evaluate_single_item_robust(
         pred_norm=pred_norm,
         correct=correct,
         error_type=error_type,
+        question=q,  # Store question text for FOL predicate extraction
     )
 
 
@@ -754,6 +985,7 @@ def evaluate_items(
             pred_norm=pred_norm,
             correct=correct,
             error_type=None,  # No error tracking in legacy mode
+            question=q,  # Store question text for FOL predicate extraction
         )
         results.append(res)
 
@@ -841,8 +1073,6 @@ def compute_summary(results: List[EvalResult]) -> Dict[str, Any]:
     for r in bias_items:
         assert r.bias_family is not None
         by_bias[r.bias_family].append(r)
-        assert r.bias_family is not None
-        by_bias[r.bias_family].append(r)
 
     bias_err: Dict[str, float] = {}
     for b, lst in by_bias.items():
@@ -899,6 +1129,73 @@ def compute_summary(results: List[EvalResult]) -> Dict[str, Any]:
         summary["contradiction_rate"] = contradiction_count / len(dialogues)
     else:
         summary["contradiction_rate"] = None
+
+    # FOL Violation Metrics (NEW - per-dialogue violation counting)
+    # Load system ontology for ground truth
+    ontology = load_system_ontology(systems_dir="systems")
+
+    # Collect all results (dialogues + single questions)
+    # Treat single questions as length-1 dialogues
+    all_dialogue_groups: Dict[str, List[EvalResult]] = {}
+
+    # Multi-turn dialogues
+    for did, turns in dialogues.items():
+        all_dialogue_groups[did] = turns
+
+    # Single questions (no dialogue_id) - create synthetic dialogue IDs
+    single_questions = [r for r in results if r.dialogue_id is None]
+    for r in single_questions:
+        synthetic_id = f"single_{r.item_id}"
+        all_dialogue_groups[synthetic_id] = [r]
+
+    # Check FOL violations for each dialogue
+    violation_counts: List[int] = []
+
+    for dialogue_id, turns in all_dialogue_groups.items():
+        # Group predictions by system_id
+        predictions_by_system: Dict[str, Dict[str, str]] = defaultdict(dict)
+
+        for turn in turns:
+            if turn.system_id and turn.pred_norm and turn.question:
+                # Extract which predicate this question asks about
+                predicate = extract_predicate_from_question(turn.question)
+                if predicate:
+                    # Store this prediction for this system
+                    predictions_by_system[turn.system_id][predicate] = turn.pred_norm
+
+        # Check FOL violations for each system in this dialogue
+        num_violations = 0
+        for system_id, predictions in predictions_by_system.items():
+            # Check FOL violations using the actual axioms
+            violations = check_fol_violations(predictions)
+            num_violations += len(violations)
+
+        violation_counts.append(num_violations)
+
+    # Compute violation metrics
+    if violation_counts:
+        summary["avg_violations_per_dialogue"] = sum(violation_counts) / len(violation_counts)
+
+        # Breakdown by violation count
+        violations_breakdown: Dict[str, int] = defaultdict(int)
+        for count in violation_counts:
+            if count == 0:
+                violations_breakdown["0_violations"] += 1
+            elif count == 1:
+                violations_breakdown["1_violation"] += 1
+            elif count == 2:
+                violations_breakdown["2_violations"] += 1
+            else:
+                violations_breakdown["3+_violations"] += 1
+
+        summary["violations_breakdown"] = dict(violations_breakdown)
+
+        print(f"\n[FOL VIOLATIONS] Dialogue violation statistics:")
+        print(f"  Avg violations per dialogue: {summary['avg_violations_per_dialogue']:.2f}")
+        print(f"  Breakdown: {dict(violations_breakdown)}")
+    else:
+        summary["avg_violations_per_dialogue"] = None
+        summary["violations_breakdown"] = {}
 
     return summary
 

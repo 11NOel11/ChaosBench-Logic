@@ -137,6 +137,86 @@ python run_benchmark.py --model llama3 --mode zeroshot --workers 2
 
 ---
 
+## 🧪 Testing & Quality Assurance
+
+ChaosBench-Logic includes a comprehensive pytest test suite with **122 test cases** ensuring correctness of evaluation logic, FOL violation detection, and answer normalization.
+
+### Running Tests
+
+```bash
+# Install pytest (in virtual environment)
+source .venv/bin/activate
+pip install pytest
+
+# Run all tests
+pytest
+
+# Run with verbose output
+pytest -v
+
+# Run specific test file
+pytest tests/test_normalization.py -v
+
+# Run with coverage report
+pytest --cov=eval_chaosbench --cov-report=html
+```
+
+### Test Coverage
+
+<div align="center">
+
+| Test Suite | Test Cases | Coverage |
+|------------|:----------:|----------|
+| **Answer Normalization** | 48 | 8-step CoT parsing cascade, TRUE/FALSE variants, edge cases |
+| **FOL Rules & Ontology** | 46 | Axiom definitions, system loading, predicate extraction, violation detection |
+| **Summary Metrics** | 21 | Accuracy, dialogue metrics, contradiction rate, FOL violations, bias error |
+| **Integration Smoke Tests** | 7 | End-to-end evaluation flow, metric aggregation |
+| **Total** | **122** | Comprehensive coverage of core evaluation logic |
+
+</div>
+
+### Key Quality Improvements (Phase 2)
+
+**1. First-Order Logic (FOL) Violation Detection**
+
+ChaosBench-Logic now tracks **logical consistency** in addition to simple contradictions:
+
+- **`contradiction_rate`** (binary): Did the model contradict itself by giving both YES and NO for the same (system, task) pair?
+- **`avg_violations_per_dialogue`** (granular): How many formal logic axioms were violated?
+
+**Example:** If a model says "Chaotic=YES" but "Deterministic=NO", this violates the axiom **Chaotic → Deterministic** and counts as 1 FOL violation. The model may not contradict itself (give both YES and NO), but it still violates logical consistency.
+
+**2. Improved Chain-of-Thought Parsing**
+
+The `normalize_label()` function uses an 8-step cascade to robustly extract YES/NO from diverse model outputs:
+- Standard `FINAL_ANSWER:` markers
+- Chain-of-thought conclusions without explicit markers
+- Revision patterns ("yes... actually no")
+- TRUE/FALSE variants
+- Markdown formatting
+
+See `tests/test_normalization.py` for 48 test cases documenting all supported formats.
+
+**3. Bug Fixes**
+
+- **bias_error computation**: Fixed to correctly compute error rate per bias family (was previously undefined)
+- **Dialogue grouping**: Single questions now correctly treated as length-1 dialogues for FOL violation checking
+
+### Test Organization
+
+```
+tests/
+├── __init__.py                    # Test suite documentation
+├── test_normalization.py          # Answer extraction (48 tests)
+├── test_fol_rules.py              # FOL logic (46 tests)
+├── test_summary_metrics.py        # Metric computation (21 tests)
+└── test_integration_smoke.py      # Integration tests (7 tests)
+```
+
+All tests use **synthetic data** and do not require API keys or external network access.
+
+---
+
 ## 📂 Repository Structure
 
 ```
@@ -156,6 +236,11 @@ chaos-logic-bench/
 │   ├── lorenz63.json, rossler.json, double_pendulum.json
 │   ├── brusselator.json, fitzhugh_nagumo.json, ...
 │   └── [27 more systems]
+├── 📁 tests/                  # Pytest test suite (122 test cases)
+│   ├── test_normalization.py  # Answer extraction tests (48)
+│   ├── test_fol_rules.py      # FOL violation tests (46)
+│   ├── test_summary_metrics.py # Metrics computation tests (21)
+│   └── test_integration_smoke.py # Integration tests (7)
 ├── 📁 results/                # Evaluation outputs (auto-generated)
 ├── 📄 .env.example            # API key template
 ├── 📄 pyproject.toml          # Package configuration
