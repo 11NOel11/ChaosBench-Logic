@@ -10,7 +10,7 @@
 [![Tests](https://github.com/11NOel11/ChaosBench-Logic/actions/workflows/ci.yml/badge.svg)](https://github.com/11NOel11/ChaosBench-Logic/actions)
 [![GitHub Stars](https://img.shields.io/github/stars/11NOel11/ChaosBench-Logic?style=social)](https://github.com/11NOel11/ChaosBench-Logic)
 
-[**Dataset Card**](DATASET.md) | [**Ontology**](ONTOLOGY.md) | [**Results**](RESULTS.md) | [**API Setup**](API_SETUP.md) | [**Contributing**](CONTRIBUTING.md)
+[**Dataset Card**](docs/DATASET.md) | [**Ontology**](docs/ONTOLOGY.md) | [**Results**](docs/RESULTS.md) | [**API Setup**](docs/API_SETUP.md) | [**Contributing**](docs/CONTRIBUTING.md)
 
 </div>
 
@@ -42,7 +42,7 @@ Our findings reveal that while modern LLMs achieve impressive accuracy (up to 91
 
 **Note:** 27 systems are actively used in the dataset; 3 systems (Chua circuit, damped oscillator, double pendulum) are defined but reserved for future batches.
 
-See [**DATASET.md**](DATASET.md) for complete schema documentation and [**ONTOLOGY.md**](ONTOLOGY.md) for predicate definitions and FOL axioms.
+See [**DATASET.md**](docs/DATASET.md) for complete schema documentation and [**ONTOLOGY.md**](docs/ONTOLOGY.md) for predicate definitions and FOL axioms.
 
 ---
 
@@ -90,7 +90,7 @@ See [**DATASET.md**](DATASET.md) for complete schema documentation and [**ONTOLO
 
 > **Note:** LLaMA-3 70B requires longer inference time (~8 min for zero-shot, ~55 min for CoT) compared to other models (~2-5 min per run).
 
-See [**RESULTS.md**](RESULTS.md) for comprehensive analysis and task-specific breakdowns.
+See [**RESULTS.md**](docs/RESULTS.md) for comprehensive analysis and task-specific breakdowns.
 
 ---
 
@@ -144,7 +144,7 @@ cp .env.example .env
 nano .env  # Add your API keys
 ```
 
-See [**API_SETUP.md**](API_SETUP.md) for detailed instructions on obtaining API keys from OpenAI, Anthropic, Google, and HuggingFace.
+See [**docs/API_SETUP.md**](docs/API_SETUP.md) for detailed instructions on obtaining API keys from OpenAI, Anthropic, Google, and HuggingFace.
 
 ### Running Evaluations
 
@@ -269,13 +269,21 @@ ChaosBench-Logic/
 │   ├── test_summary_metrics.py # Metrics computation tests (21)
 │   └── test_integration_smoke.py # Integration tests (7)
 ├── 📁 results/                # Evaluation outputs (auto-generated)
+├── 📁 docs/                   # Documentation
+│   ├── DATASET.md             # Dataset card and schema
+│   ├── ONTOLOGY.md            # Predicate definitions and FOL axioms
+│   ├── RESULTS.md             # Detailed evaluation results
+│   ├── API_SETUP.md           # API key setup guide
+│   └── CONTRIBUTING.md        # Contribution guidelines
+├── 📁 scripts/                # Utility scripts
+│   ├── dataset_stats.py       # Compute dataset statistics
+│   ├── validate_repo_claims.py # Validate documentation claims
+│   └── aggregate_results.py   # Generate results tables
+├── 📄 README.md               # This file
 ├── 📄 .env.example            # API key template
 ├── 📄 pyproject.toml          # Package configuration
-└── 📚 Documentation
-    ├── README.md              # This file
-    ├── RESULTS.md             # Detailed evaluation results
-    ├── API_SETUP.md           # API key setup guide
-    └── CONTRIBUTING.md        # Contribution guidelines
+├── 📄 LICENSE                 # MIT License (code)
+└── 📄 LICENSE_DATA            # CC BY 4.0 (dataset)
 ```
 
 ---
@@ -369,7 +377,7 @@ We welcome contributions from the community! Areas for contribution:
 - 📖 Enhancing documentation
 - 🐛 Bug fixes and performance improvements
 
-See [**CONTRIBUTING.md**](CONTRIBUTING.md) for detailed guidelines on:
+See [**docs/CONTRIBUTING.md**](docs/CONTRIBUTING.md) for detailed guidelines on:
 - Environment setup (uv, conda, pip, venv)
 - Adding new models
 - Code style and testing
@@ -379,11 +387,11 @@ See [**CONTRIBUTING.md**](CONTRIBUTING.md) for detailed guidelines on:
 
 ## 📚 Documentation
 
-- **[DATASET.md](DATASET.md)** - Complete dataset card with schema, statistics, and construction methodology
-- **[ONTOLOGY.md](ONTOLOGY.md)** - Predicate definitions and first-order logic axioms
-- **[RESULTS.md](RESULTS.md)** - Complete evaluation results with detailed analysis
-- **[API_SETUP.md](API_SETUP.md)** - Comprehensive guide for obtaining and configuring API keys
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Development setup and contribution guidelines
+- **[docs/DATASET.md](docs/DATASET.md)** - Complete dataset card with schema, statistics, and construction methodology
+- **[docs/ONTOLOGY.md](docs/ONTOLOGY.md)** - Predicate definitions and first-order logic axioms
+- **[docs/RESULTS.md](docs/RESULTS.md)** - Complete evaluation results with detailed analysis
+- **[docs/API_SETUP.md](docs/API_SETUP.md)** - Comprehensive guide for obtaining and configuring API keys
+- **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Development setup and contribution guidelines
 - **[LICENSE](LICENSE)** - MIT License (code)
 - **[LICENSE_DATA](LICENSE_DATA)** - CC BY 4.0 (dataset)
 
@@ -394,7 +402,7 @@ See [**CONTRIBUTING.md**](CONTRIBUTING.md) for detailed guidelines on:
 <details>
 <summary><b>API key errors?</b></summary>
 
-See [API_SETUP.md#troubleshooting](API_SETUP.md#troubleshooting) for common API key issues and solutions.
+See [docs/API_SETUP.md#troubleshooting](docs/API_SETUP.md#troubleshooting) for common API key issues and solutions.
 </details>
 
 <details>
@@ -412,7 +420,7 @@ LLaMA-3 70B has longer inference latency (~8-55 min vs 2-5 min for other models)
 <details>
 <summary><b>Can I add my own models?</b></summary>
 
-Yes! See [CONTRIBUTING.md#adding-new-models](CONTRIBUTING.md#adding-new-models) for step-by-step instructions.
+Yes! See [docs/CONTRIBUTING.md#adding-new-models](docs/CONTRIBUTING.md#adding-new-models) for step-by-step instructions.
 </details>
 
 <details>
