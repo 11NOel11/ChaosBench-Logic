@@ -50,13 +50,13 @@ CITATION:
 
 When using this dataset in your research, please cite:
 
-  Thomas, N. (2024). ChaosBench-Logic: A Benchmark for Evaluating Large Language Models on
+  Thomas, N. (2025). ChaosBench-Logic: A Benchmark for Evaluating Large Language Models on
   Complex Reasoning about Dynamical Systems. https://github.com/11NOel11/ChaosBench-Logic
 
 BibTeX:
-  @software{chaosbench2024,
+  @software{chaosbench2025,
     title={ChaosBench-Logic: A Benchmark for Evaluating Large Language Models on Complex Reasoning about Dynamical Systems},
     author={Thomas, Noel},
-    year={2024},
+    year={2025},
     url={https://github.com/11NOel11/ChaosBench-Logic}
   }

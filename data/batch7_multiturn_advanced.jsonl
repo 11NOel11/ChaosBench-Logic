@@ -1,292 +1,201 @@
 {"id":"q0421","dialogue_id":"d001","turn":1,"system_id":"lorenz63","type":"multi_turn","question":"Is the Lorenz-63 system deterministic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0422","dialogue_id":"d001","turn":2,"system_id":"lorenz63","type":"multi_turn","question":"Does Lorenz-63 evolve according to fixed equations without any randomness?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0423","dialogue_id":"d001","turn":3,"system_id":"lorenz63","type":"multi_turn","question":"So the unpredictability in Lorenz-63 is not due to random noise, correct?","ground_truth":"TRUE","template":"C1"}
-
 {"id":"q0424","dialogue_id":"d002","turn":1,"system_id":"lorenz63","type":"multi_turn","question":"Does the Lorenz-63 system have a positive Lyapunov exponent?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0425","dialogue_id":"d002","turn":2,"system_id":"lorenz63","type":"multi_turn","question":"Does that imply sensitive dependence on initial conditions?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0426","dialogue_id":"d002","turn":3,"system_id":"lorenz63","type":"multi_turn","question":"Does sensitive dependence imply long-term pointwise unpredictability?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0427","dialogue_id":"d003","turn":1,"system_id":"henon","type":"multi_turn","question":"Does the Hénon map possess a strange attractor?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0428","dialogue_id":"d003","turn":2,"system_id":"henon","type":"multi_turn","question":"Does a strange attractor imply randomness in the governing equations?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0429","dialogue_id":"d003","turn":3,"system_id":"henon","type":"multi_turn","question":"So the Hénon map is chaotic but still deterministic, correct?","ground_truth":"TRUE","template":"C1"}
-
 {"id":"q0430","dialogue_id":"d004","turn":1,"system_id":"ikeda_map","type":"multi_turn","question":"Is the Ikeda map chaotic for parameter u = 0.9?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0431","dialogue_id":"d004","turn":2,"system_id":"ikeda_map","type":"multi_turn","question":"If u were reduced to 0.5, would you expect chaos to weaken or disappear?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0432","dialogue_id":"d004","turn":3,"system_id":"ikeda_map","type":"multi_turn","question":"Does decreasing u change the determinism of the system?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0433","dialogue_id":"d005","turn":1,"system_id":"standard_map","type":"multi_turn","question":"Does the Standard Map contain both chaotic regions and invariant tori when K = 1.5?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0434","dialogue_id":"d005","turn":2,"system_id":"standard_map","type":"multi_turn","question":"Does the existence of invariant tori imply the entire map is non-chaotic?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0435","dialogue_id":"d005","turn":3,"system_id":"standard_map","type":"multi_turn","question":"Can chaotic and non-chaotic trajectories coexist in the same system?","ground_truth":"TRUE","template":"C1"}
-
 {"id":"q0436","dialogue_id":"d006","turn":1,"system_id":"standard_map","type":"multi_turn","question":"When K is small, does the Standard Map behave nearly integrably?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0437","dialogue_id":"d006","turn":2,"system_id":"standard_map","type":"multi_turn","question":"Does increasing K cause destruction of invariant tori?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0438","dialogue_id":"d006","turn":3,"system_id":"standard_map","type":"multi_turn","question":"Does destruction of tori always imply immediate chaos throughout the domain?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0439","dialogue_id":"d007","turn":1,"system_id":"circle_map_quasiperiodic","type":"multi_turn","question":"In the regime used here, does the Circle Map exhibit quasi-periodicity?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0440","dialogue_id":"d007","turn":2,"system_id":"circle_map_quasiperiodic","type":"multi_turn","question":"Does quasi-periodicity imply chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0441","dialogue_id":"d007","turn":3,"system_id":"circle_map_quasiperiodic","type":"multi_turn","question":"Can increasing the nonlinearity K eventually break quasi-periodicity?","ground_truth":"TRUE","template":"C2"}
-
 {"id":"q0442","dialogue_id":"d008","turn":1,"system_id":"circle_map_quasiperiodic","type":"multi_turn","question":"Does a quasi-periodic attractor have zero Lyapunov exponent?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0443","dialogue_id":"d008","turn":2,"system_id":"circle_map_quasiperiodic","type":"multi_turn","question":"Does zero Lyapunov exponent indicate absence of chaos?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0444","dialogue_id":"d008","turn":3,"system_id":"circle_map_quasiperiodic","type":"multi_turn","question":"Is zero Lyapunov exponent sufficient to classify a system as periodic?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0445","dialogue_id":"d009","turn":1,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does the Kuramoto–Sivashinsky equation show spatiotemporal chaos?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0446","dialogue_id":"d009","turn":2,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does spatiotemporal chaos imply randomness in the governing PDE?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0447","dialogue_id":"d009","turn":3,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Is the KS equation deterministic despite its irregular behavior?","ground_truth":"TRUE","template":"C1"}
-
 {"id":"q0448","dialogue_id":"d010","turn":1,"system_id":"sine_gordon","type":"multi_turn","question":"Does the sine–Gordon equation support solitons in the regime used here?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0449","dialogue_id":"d010","turn":2,"system_id":"sine_gordon","type":"multi_turn","question":"Does the existence of solitons imply chaos in this PDE?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0450","dialogue_id":"d010","turn":3,"system_id":"sine_gordon","type":"multi_turn","question":"Does integrability imply absence of chaos?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0451","dialogue_id":"d011","turn":1,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Is the Hindmarsh–Rose model chaotic in the chosen regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0452","dialogue_id":"d011","turn":2,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Does irregular bursting imply random underlying dynamics?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0453","dialogue_id":"d011","turn":3,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Is the irregularity explained by deterministic chaotic structure?","ground_truth":"TRUE","template":"C2"}
-
 {"id":"q0454","dialogue_id":"d012","turn":1,"system_id":"fitzhugh_nagumo","type":"multi_turn","question":"Does the FitzHugh–Nagumo model exhibit periodic spiking in this benchmark?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0455","dialogue_id":"d012","turn":2,"system_id":"fitzhugh_nagumo","type":"multi_turn","question":"Does periodic spiking imply chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0456","dialogue_id":"d012","turn":3,"system_id":"fitzhugh_nagumo","type":"multi_turn","question":"Does the FHN model remain deterministic?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0457","dialogue_id":"d013","turn":1,"system_id":"brusselator","type":"multi_turn","question":"Does the Brusselator exhibit a stable limit cycle in the considered regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0458","dialogue_id":"d013","turn":2,"system_id":"brusselator","type":"multi_turn","question":"Does the presence of oscillations imply chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0459","dialogue_id":"d013","turn":3,"system_id":"brusselator","type":"multi_turn","question":"Is the long-term behavior predictable for the Brusselator in this regime?","ground_truth":"TRUE","template":"C1"}
-
 {"id":"q0460","dialogue_id":"d014","turn":1,"system_id":"oregonator","type":"multi_turn","question":"Is the Oregonator chaotic in the regime considered here?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0461","dialogue_id":"d014","turn":2,"system_id":"oregonator","type":"multi_turn","question":"Does chaotic chemical oscillation imply chemical randomness?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0462","dialogue_id":"d014","turn":3,"system_id":"oregonator","type":"multi_turn","question":"Does the Oregonator behave according to deterministic reaction equations?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0463","dialogue_id":"d015","turn":1,"system_id":"arnold_cat_map","type":"multi_turn","question":"Is the Arnold cat map chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0464","dialogue_id":"d015","turn":2,"system_id":"arnold_cat_map","type":"multi_turn","question":"Does its linearity contradict chaotic behavior?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0465","dialogue_id":"d015","turn":3,"system_id":"arnold_cat_map","type":"multi_turn","question":"Does the cat map demonstrate that chaos does not require nonlinearity?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0466","dialogue_id":"d016","turn":1,"system_id":"stochastic_ou","type":"multi_turn","question":"Is the Ornstein–Uhlenbeck process deterministic in its dynamics?","ground_truth":"FALSE","template":"C1"}
 {"id":"q0467","dialogue_id":"d016","turn":2,"system_id":"stochastic_ou","type":"multi_turn","question":"Does the presence of randomness imply chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0468","dialogue_id":"d016","turn":3,"system_id":"stochastic_ou","type":"multi_turn","question":"Is it correct that OU randomness comes from stochastic forcing, not chaotic dynamics?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0469","dialogue_id":"d017","turn":1,"type":"multi_turn","system_id":"lorenz63","question":"Does a positive Lyapunov exponent imply chaos?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0470","dialogue_id":"d017","turn":2,"type":"multi_turn","system_id":"lorenz63","question":"Does chaos guarantee existence of a strange attractor?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0471","dialogue_id":"d017","turn":3,"type":"multi_turn","system_id":"lorenz63","question":"So chaos does not necessarily imply strange attractor structure, correct?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0472","dialogue_id":"d018","turn":1,"system_id":"lorenz63","type":"multi_turn","question":"Does Lorenz-63 have a positive largest Lyapunov exponent?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0473","dialogue_id":"d018","turn":2,"system_id":"lorenz63","type":"multi_turn","question":"Does a positive Lyapunov exponent imply sensitive dependence in Lorenz-63?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0474","dialogue_id":"d018","turn":3,"system_id":"lorenz63","type":"multi_turn","question":"Does sensitive dependence guarantee long-term pointwise unpredictability?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0475","dialogue_id":"d018","turn":4,"system_id":"lorenz63","type":"multi_turn","question":"Does pointwise unpredictability imply randomness in the evolution equations?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0476","dialogue_id":"d018","turn":5,"system_id":"lorenz63","type":"multi_turn","question":"Despite unpredictability, does Lorenz-63 remain statistically predictable at the ensemble level?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0477","dialogue_id":"d019","turn":1,"system_id":"rossler","type":"multi_turn","question":"Does the Rössler system exhibit a chaotic attractor in the chosen regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0478","dialogue_id":"d019","turn":2,"system_id":"rossler","type":"multi_turn","question":"Because Rössler and Lorenz-63 are both chaotic, must their attractors share the same topology?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0479","dialogue_id":"d019","turn":3,"system_id":"rossler","type":"multi_turn","question":"Does chaos guarantee similar geometry across different systems?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0480","dialogue_id":"d019","turn":4,"system_id":"rossler","type":"multi_turn","question":"Is chaos compatible with very different attractor shapes?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0481","dialogue_id":"d020","turn":1,"system_id":"chen_system","type":"multi_turn","question":"Is the Chen system chaotic in the regime considered?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0482","dialogue_id":"d020","turn":2,"system_id":"chen_system","type":"multi_turn","question":"Because the Chen and Lorenz-63 systems have similar equations, must they be topologically equivalent?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0483","dialogue_id":"d020","turn":3,"system_id":"chen_system","type":"multi_turn","question":"Does similarity of equations guarantee identical attractor geometry?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0484","dialogue_id":"d020","turn":4,"system_id":"chen_system","type":"multi_turn","question":"Can two chaotic systems have qualitatively different attractors?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0485","dialogue_id":"d020","turn":5,"system_id":"chen_system","type":"multi_turn","question":"Does chaos alone determine the full structure of an attractor?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0486","dialogue_id":"d021","turn":1,"system_id":"logistic_r4","type":"multi_turn","question":"Is the logistic map chaotic at r = 4.0?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0487","dialogue_id":"d021","turn":2,"system_id":"logistic_r4","type":"multi_turn","question":"Does the route to chaos in the logistic map proceed via period-doubling?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0488","dialogue_id":"d021","turn":3,"system_id":"logistic_r4","type":"multi_turn","question":"Does period-doubling imply immediate chaos for all r > 2.8?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0489","dialogue_id":"d021","turn":4,"system_id":"logistic_r4","type":"multi_turn","question":"Do periodic windows exist even after chaos has set in?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0490","dialogue_id":"d021","turn":5,"system_id":"logistic_r4","type":"multi_turn","question":"Does full chaos at r = 4 imply absence of periodic windows at other r values?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0491","dialogue_id":"d022","turn":1,"system_id":"logistic_r2_8","type":"multi_turn","question":"At r = 2.8, does the logistic map converge to a stable fixed point?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0492","dialogue_id":"d022","turn":2,"system_id":"logistic_r2_8","type":"multi_turn","question":"Does nonlinearity alone imply chaos here?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0493","dialogue_id":"d022","turn":3,"system_id":"logistic_r2_8","type":"multi_turn","question":"Can the logistic map become chaotic at higher r?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0494","dialogue_id":"d022","turn":4,"system_id":"logistic_r2_8","type":"multi_turn","question":"Does chaos at r = 4 imply chaos at r = 2.8?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0495","dialogue_id":"d023","turn":1,"system_id":"bakers_map","type":"multi_turn","question":"Is the Baker’s map chaotic in this benchmark?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0496","dialogue_id":"d023","turn":2,"system_id":"bakers_map","type":"multi_turn","question":"Does chaotic behavior imply random governing rules?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0497","dialogue_id":"d023","turn":3,"system_id":"bakers_map","type":"multi_turn","question":"Is the Baker’s map deterministic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0498","dialogue_id":"d023","turn":4,"system_id":"bakers_map","type":"multi_turn","question":"Does symbolic dynamics guarantee chaos without randomness?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0499","dialogue_id":"d024","turn":1,"system_id":"arnold_cat_map","type":"multi_turn","question":"Is the Arnold cat map chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0500","dialogue_id":"d024","turn":2,"system_id":"arnold_cat_map","type":"multi_turn","question":"Does its linearity contradict chaotic behavior?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0501","dialogue_id":"d024","turn":3,"system_id":"arnold_cat_map","type":"multi_turn","question":"Does the cat map show that nonlinearity is not required for chaos?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0502","dialogue_id":"d024","turn":4,"system_id":"arnold_cat_map","type":"multi_turn","question":"Does chaos in the cat map require a strange attractor?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0503","dialogue_id":"d024","turn":5,"system_id":"arnold_cat_map","type":"multi_turn","question":"Does positive Lyapunov exponent suffice for chaos even without a fractal attractor?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0504","dialogue_id":"d025","turn":1,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Is the Kuramoto–Sivashinsky equation chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0505","dialogue_id":"d025","turn":2,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does the presence of chaos in KS imply that all nonlinear PDEs are chaotic?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0506","dialogue_id":"d025","turn":3,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does sine–Gordon provide a counterexample by being nonlinear but non-chaotic?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0507","dialogue_id":"d025","turn":4,"system_id":"sine_gordon","type":"multi_turn","question":"Does the integrability of sine–Gordon prevent chaos in the benchmark regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0508","dialogue_id":"d025","turn":5,"system_id":"sine_gordon","type":"multi_turn","question":"Does integrability imply predictable long-term behavior?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0509","dialogue_id":"d026","turn":1,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Is the Hindmarsh–Rose neuron model chaotic here?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0510","dialogue_id":"d026","turn":2,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Is the FitzHugh–Nagumo model chaotic in the same regime?","ground_truth":"FALSE","template":"C1"}
 {"id":"q0511","dialogue_id":"d026","turn":3,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Does irregular spiking in biological neurons necessarily imply deterministic chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0512","dialogue_id":"d026","turn":4,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Can neuron models transition between periodic and chaotic modes depending on parameters?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0513","dialogue_id":"d027","turn":1,"system_id":"oregonator","type":"multi_turn","question":"Is the Oregonator chaotic in the benchmark regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0514","dialogue_id":"d027","turn":2,"system_id":"brusselator","type":"multi_turn","question":"Is the Brusselator chaotic in the regime used?","ground_truth":"FALSE","template":"C1"}
 {"id":"q0515","dialogue_id":"d027","turn":3,"system_id":"oregonator","type":"multi_turn","question":"Does chaos in the Oregonator imply all chemical oscillators must be chaotic?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0516","dialogue_id":"d027","turn":4,"system_id":"oregonator","type":"multi_turn","question":"Does periodic behavior in the Brusselator contradict chaos in the Oregonator?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0517","dialogue_id":"d028","turn":1,"system_id":"lorenz96","type":"multi_turn","question":"Does Lorenz-96 exhibit high-dimensional chaos for F = 8?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0518","dialogue_id":"d028","turn":2,"system_id":"lorenz96","type":"multi_turn","question":"Does high dimensionality guarantee chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0519","dialogue_id":"d028","turn":3,"system_id":"lorenz96","type":"multi_turn","question":"Does Lorenz-96 provide an example where chaos coexists with meaningful statistical predictability?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0520","dialogue_id":"d028","turn":4,"system_id":"lorenz96","type":"multi_turn","question":"Does the presence of chaos imply all modes behave chaotically?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0521","dialogue_id":"d028","turn":5,"system_id":"lorenz96","type":"multi_turn","question":"Can some modes remain weakly chaotic or near-neutral even when others are strongly chaotic?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0522","dialogue_id":"d029","turn":1,"system_id":"stochastic_ou","type":"multi_turn","question":"Is the Ornstein–Uhlenbeck process chaotic?","ground_truth":"FALSE","template":"C1"}
 {"id":"q0523","dialogue_id":"d029","turn":2,"system_id":"stochastic_ou","type":"multi_turn","question":"Does randomness imply chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0524","dialogue_id":"d029","turn":3,"system_id":"stochastic_ou","type":"multi_turn","question":"Does the OU process remain stochastic even without chaotic sensitivity?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0525","dialogue_id":"d029","turn":4,"system_id":"stochastic_ou","type":"multi_turn","question":"Is the OU process an example of irregular behavior without chaos?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0526","dialogue_id":"d030","turn":1,"system_id":"henon","type":"multi_turn","question":"Does the Hénon map have a strange attractor?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0527","dialogue_id":"d030","turn":2,"system_id":"arnold_cat_map","type":"multi_turn","question":"Does the Arnold cat map have a strange attractor?","ground_truth":"FALSE","template":"C1"}
 {"id":"q0528","dialogue_id":"d030","turn":3,"system_id":"henon","type":"multi_turn","question":"Does chaos require a strange attractor?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0529","dialogue_id":"d030","turn":4,"system_id":"arnold_cat_map","type":"multi_turn","question":"Can a system be chaotic without a fractal attractor?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0530","dialogue_id":"d030","turn":5,"system_id":"henon","type":"multi_turn","question":"Does chaotic geometry differ fundamentally across systems?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0531","dialogue_id":"d031","turn":1,"system_id":"lorenz63","type":"multi_turn","question":"Is Lorenz-63 chaotic in the benchmark regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0532","dialogue_id":"d031","turn":2,"system_id":"lorenz84","type":"multi_turn","question":"Does chaos in Lorenz-63 imply that Lorenz-84 must behave identically?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0533","dialogue_id":"d031","turn":3,"system_id":"lorenz96","type":"multi_turn","question":"Does the presence of chaos in Lorenz-96 imply identical attractor geometry to Lorenz-63?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0534","dialogue_id":"d031","turn":4,"system_id":"lorenz96","type":"multi_turn","question":"Can Lorenz models differ substantially despite all being chaotic?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0535","dialogue_id":"d031","turn":5,"system_id":"lorenz63","type":"multi_turn","question":"Does 'chaotic' alone determine full system behavior?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0536","dialogue_id":"d032","turn":1,"system_id":"rikitake_dynamo","type":"multi_turn","question":"Is the Rikitake dynamo chaotic in the chosen regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0537","dialogue_id":"d032","turn":2,"system_id":"rikitake_dynamo","type":"multi_turn","question":"Do chaotic magnetic polarity reversals imply randomness in the system?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0538","dialogue_id":"d032","turn":3,"system_id":"lorenz63","type":"multi_turn","question":"Does the chaotic behavior of Lorenz-63 imply it should exhibit polarity reversals like the Rikitake model?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0539","dialogue_id":"d032","turn":4,"system_id":"rikitake_dynamo","type":"multi_turn","question":"Can different chaotic systems express different physical phenomena despite sharing chaos?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0540","dialogue_id":"d033","turn":1,"system_id":"oregonator","type":"multi_turn","question":"Is the Oregonator chaotic in the chosen regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0541","dialogue_id":"d033","turn":2,"system_id":"brusselator","type":"multi_turn","question":"Does chaos in the Oregonator imply that the Brusselator must also be chaotic?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0542","dialogue_id":"d033","turn":3,"system_id":"brusselator","type":"multi_turn","question":"Does the Brusselator show periodic behavior instead of chaos in this regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0543","dialogue_id":"d033","turn":4,"system_id":"oregonator","type":"multi_turn","question":"Can small parameter differences create different dynamical regimes?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0544","dialogue_id":"d033","turn":5,"system_id":"oregonator","type":"multi_turn","question":"Does chaos imply that closely related models must behave the same?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0545","dialogue_id":"d034","turn":1,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does the KS equation exhibit spatiotemporal chaos?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0546","dialogue_id":"d034","turn":2,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does the KS equation's chaotic behavior imply all nonlinear PDEs are chaotic?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0547","dialogue_id":"d034","turn":3,"system_id":"sine_gordon","type":"multi_turn","question":"Does sine–Gordon in the benchmark regime remain non-chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0548","dialogue_id":"d034","turn":4,"system_id":"sine_gordon","type":"multi_turn","question":"Does integrability prevent chaotic dynamics in sine–Gordon?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0549","dialogue_id":"d034","turn":5,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does coexistence of integrable and chaotic PDEs refute the idea that nonlinearity implies chaos?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0550","dialogue_id":"d035","turn":1,"system_id":"lorenz96","type":"multi_turn","question":"Does Lorenz-96 with F=8 have multiple positive Lyapunov exponents?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0551","dialogue_id":"d035","turn":2,"system_id":"lorenz96","type":"multi_turn","question":"Does having multiple positive exponents automatically imply hyperchaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0552","dialogue_id":"d035","turn":3,"system_id":"lorenz96","type":"multi_turn","question":"Is hyperchaos a stronger condition than just having more than one positive exponent?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0553","dialogue_id":"d035","turn":4,"system_id":"lorenz96","type":"multi_turn","question":"Does Lorenz-96 necessarily satisfy hyperchaotic conditions?","ground_truth":"FALSE","template":"C3"}
-
-
 {"id":"q0554","dialogue_id":"d036","turn":1,"system_id":"fitzhugh_nagumo","type":"multi_turn","question":"Does FitzHugh–Nagumo exhibit periodic spiking in the chosen regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0555","dialogue_id":"d036","turn":2,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Does Hindmarsh–Rose exhibit chaotic bursting in the chosen regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0556","dialogue_id":"d036","turn":3,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Does chaotic bursting imply randomness in biological neurons?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0557","dialogue_id":"d036","turn":4,"system_id":"fitzhugh_nagumo","type":"multi_turn","question":"Does periodic behavior contradict deterministic dynamics?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0558","dialogue_id":"d036","turn":5,"system_id":"fitzhugh_nagumo","type":"multi_turn","question":"Can small parameter changes cause transitions between periodic and chaotic regimes in some neuron models?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0559","dialogue_id":"d037","turn":1,"system_id":"logistic_r4","type":"multi_turn","question":"Is the logistic map at r=4 chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0560","dialogue_id":"d037","turn":2,"system_id":"henon","type":"multi_turn","question":"Is the Hénon map chaotic in this regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0561","dialogue_id":"d037","turn":3,"system_id":"ikeda_map","type":"multi_turn","question":"Is the Ikeda map also chaotic in the chosen regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0562","dialogue_id":"d037","turn":4,"type":"multi_turn","question":"Do these maps share identical attractor structures because all are chaotic?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0563","dialogue_id":"d037","turn":5,"type":"multi_turn","question":"Can chaotic maps differ drastically in geometry despite sharing chaos?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0564","dialogue_id":"d038","turn":1,"system_id":"shm","type":"multi_turn","question":"Is the simple harmonic oscillator periodic in this benchmark?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0565","dialogue_id":"d038","turn":2,"system_id":"shm","type":"multi_turn","question":"Does changing amplitude create chaos in SHM?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0566","dialogue_id":"d038","turn":3,"system_id":"duffing_chaotic","type":"multi_turn","question":"Does adding nonlinearity and forcing in the Duffing system create the possibility of chaos?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0567","dialogue_id":"d038","turn":4,"type":"multi_turn","system_id":"shm","question":"Does SHM provide an example where complexity remains entirely absent despite oscillations?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0568","dialogue_id":"d039","turn":1,"system_id":"bakers_map","type":"multi_turn","question":"Is the Baker’s map chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0569","dialogue_id":"d039","turn":2,"system_id":"arnold_cat_map","type":"multi_turn","question":"Is the Arnold cat map chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0570","dialogue_id":"d039","turn":3,"type":"multi_turn","question":"Does chaos in these maps arise from folding-and-stretching mechanisms?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0571","dialogue_id":"d039","turn":4,"type":"multi_turn","question":"Do these maps require strange attractors for chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0572","dialogue_id":"d039","turn":5,"type":"multi_turn","question":"Does symbolic dynamics explain their chaotic behavior despite simple forms?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0573","dialogue_id":"d040","turn":1,"system_id":"hindmarsh_rose","type":"multi_turn","question":"Is Hindmarsh–Rose chaotic here?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0574","dialogue_id":"d040","turn":2,"system_id":"lorenz96","type":"multi_turn","question":"Is Lorenz-96 chaotic at F = 8?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0575","dialogue_id":"d040","turn":3,"type":"multi_turn","question":"Does higher dimension guarantee stronger chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0576","dialogue_id":"d040","turn":4,"type":"multi_turn","question":"Do HR and Lorenz-96 illustrate that chaos does not depend solely on dimensionality?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0577","dialogue_id":"d041","turn":1,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does the KS equation show spatiotemporal chaos?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0578","dialogue_id":"d041","turn":2,"system_id":"lorenz63","type":"multi_turn","question":"Does Lorenz-63 show low-dimensional chaos?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0579","dialogue_id":"d041","turn":3,"type":"multi_turn","question":"Does the difference in dimensionality imply KS and Lorenz-63 share identical chaotic structure?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0580","dialogue_id":"d041","turn":4,"type":"multi_turn","question":"Does chaos manifest differently in PDEs vs ODEs?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0581","dialogue_id":"d041","turn":5,"type":"multi_turn","question":"Is determinism preserved in both despite differing complexity?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0582","dialogue_id":"d042","turn":1,"system_id":"stochastic_ou","type":"multi_turn","question":"Is the OU process chaotic?","ground_truth":"FALSE","template":"C1"}
 {"id":"q0583","dialogue_id":"d042","turn":2,"system_id":"stochastic_ou","type":"multi_turn","question":"Does irregularity in OU trajectories imply deterministic chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0584","dialogue_id":"d042","turn":3,"type":"multi_turn","question":"Can irregular behavior arise from stochastic forcing rather than deterministic chaos?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0585","dialogue_id":"d042","turn":4,"type":"multi_turn","question":"Is the OU process an example of randomness without chaos?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0586","dialogue_id":"d043","turn":1,"system_id":"henon","type":"multi_turn","question":"Does the Hénon map have a strange attractor?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0587","dialogue_id":"d043","turn":2,"system_id":"arnold_cat_map","type":"multi_turn","question":"Does the Arnold cat map have a strange attractor?","ground_truth":"FALSE","template":"C1"}
 {"id":"q0588","dialogue_id":"d043","turn":3,"type":"multi_turn","question":"Does chaos require fractal geometry?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0589","dialogue_id":"d043","turn":4,"type":"multi_turn","question":"Is hyperbolic chaos possible without strange attractors?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0590","dialogue_id":"d043","turn":5,"type":"multi_turn","question":"Do Henon and cat map together demonstrate distinct pathways to chaos?","ground_truth":"TRUE","template":"C1"}
-
-
 {"id":"q0591","dialogue_id":"d044","turn":1,"system_id":"lorenz63","type":"multi_turn","question":"Does unpredictability in Lorenz-63 imply randomness?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0592","dialogue_id":"d044","turn":2,"system_id":"lorenz63","type":"multi_turn","question":"Is Lorenz-63 deterministic despite unpredictability?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0593","dialogue_id":"d044","turn":3,"system_id":"lorenz96","type":"multi_turn","question":"Is Lorenz-96 likewise deterministic despite chaotic features?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0594","dialogue_id":"d044","turn":4,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does the KS equation remain deterministic despite irregular spatiotemporal patterns?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0595","dialogue_id":"d044","turn":5,"system_id":"stochastic_ou","type":"multi_turn","question":"Is the OU process deterministic?","ground_truth":"FALSE","template":"C1"}
 {"id":"q0596","dialogue_id":"d044","turn":6,"type":"multi_turn","question":"Do these examples show unpredictability, chaos, and randomness are distinct?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0597","dialogue_id":"d045","turn":1,"system_id":"standard_map","type":"multi_turn","question":"Does the Standard Map at K=1.5 exhibit both chaotic and regular regions?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0598","dialogue_id":"d045","turn":2,"system_id":"standard_map","type":"multi_turn","question":"Does existence of invariant tori negate chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0599","dialogue_id":"d045","turn":3,"system_id":"standard_map","type":"multi_turn","question":"Can chaotic regions exist even when some tori survive?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0600","dialogue_id":"d045","turn":4,"system_id":"standard_map","type":"multi_turn","question":"Does mixed phase space contradict the definition of chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0601","dialogue_id":"d045","turn":5,"type":"multi_turn","question":"Do mixed systems challenge binary classifications of chaos vs non-chaos?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0602","dialogue_id":"d046","turn":1,"system_id":"brusselator","type":"multi_turn","question":"Does the Brusselator exhibit nonlinear oscillations?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0603","dialogue_id":"d046","turn":2,"system_id":"brusselator","type":"multi_turn","question":"Does strong nonlinearity guarantee chaos?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0604","dialogue_id":"d046","turn":3,"system_id":"sine_gordon","type":"multi_turn","question":"Does sine–Gordon demonstrate nonlinear but non-chaotic dynamics in the chosen regime?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0605","dialogue_id":"d046","turn":4,"type":"multi_turn","question":"Do these examples show nonlinearity is necessary but not sufficient for chaos?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0606","dialogue_id":"d047","turn":1,"system_id":"henon","type":"multi_turn","question":"Is the Hénon map chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0607","dialogue_id":"d047","turn":2,"system_id":"lorenz63","type":"multi_turn","question":"Is Lorenz-63 chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0608","dialogue_id":"d047","turn":3,"type":"multi_turn","question":"Does this imply their attractors share identical geometry?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0609","dialogue_id":"d047","turn":4,"type":"multi_turn","question":"Does similar chaos level imply similar mechanism?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0610","dialogue_id":"d047","turn":5,"type":"multi_turn","question":"Can two chaotic systems differ radically in structure?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0611","dialogue_id":"d048","turn":1,"system_id":"logistic_r4","type":"multi_turn","question":"Is logistic_r4 chaotic?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0612","dialogue_id":"d048","turn":2,"system_id":"logistic_r4","type":"multi_turn","question":"Does chaos at r=4 imply chaos at r=2.8?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0613","dialogue_id":"d048","turn":3,"system_id":"logistic_r2_8","type":"multi_turn","question":"Does logistic_r2_8 converge to a non-chaotic attractor?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0614","dialogue_id":"d048","turn":4,"type":"multi_turn","question":"Does nonlinearity imply chaos at all parameter values?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0615","dialogue_id":"d048","turn":5,"type":"multi_turn","question":"Does the logistic family illustrate parameter-dependent chaos?","ground_truth":"TRUE","template":"C2"}
-
-
 {"id":"q0616","dialogue_id":"d049","turn":1,"system_id":"lorenz63","type":"multi_turn","question":"Does unpredictability in Lorenz-63 imply randomness?","ground_truth":"FALSE","template":"C3"}
 {"id":"q0617","dialogue_id":"d049","turn":2,"system_id":"lorenz96","type":"multi_turn","question":"Does unpredictability in Lorenz-96 likewise reflect sensitivity rather than randomness?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0618","dialogue_id":"d049","turn":3,"system_id":"kuramoto_sivashinsky","type":"multi_turn","question":"Does the KS equation remain deterministic despite complex patterns?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0619","dialogue_id":"d049","turn":4,"system_id":"stochastic_ou","type":"multi_turn","question":"Does the OU process remain stochastic even though it is predictable statistically?","ground_truth":"TRUE","template":"C1"}
 {"id":"q0620","dialogue_id":"d049","turn":5,"type":"multi_turn","question":"Do these examples collectively show unpredictability, chaos, and randomness are distinct?","ground_truth":"TRUE","template":"C2"}
 {"id":"q0621","dialogue_id":"d049","turn":6,"type":"multi_turn","question":"Does failure to distinguish these concepts lead to major reasoning errors in scientific inference?","ground_truth":"TRUE","template":"C2"}
-
-

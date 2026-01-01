@@ -6,7 +6,6 @@
 {"id":"q0196","system_id":"arnold_cat_map","type":"bias","question":"Does the linearity of the Arnold cat map imply absence of chaos?","ground_truth":"FALSE","template":"D_nonlin_fallacy"}
 {"id":"q0197","system_id":"arnold_cat_map","type":"multi_hop","question":"If the Arnold cat map is chaotic, must it also exhibit sensitive dependence and mixing in the measure-theoretic sense?","ground_truth":"YES","template":"B_chain_2"}
 {"id":"q0198","system_id":"arnold_cat_map","type":"cross_system","question":"Does the fact that the Arnold cat map is chaotic despite linearity refute the claim that chaos requires nonlinearity?","ground_truth":"YES","template":"L3_counterexample"}
-
 {"id":"q0199","system_id":"bakers_map","type":"atomic","question":"Is the Baker’s map chaotic under the benchmark definition?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0200","system_id":"bakers_map","type":"atomic","question":"Is the Baker’s map deterministic?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0201","system_id":"bakers_map","type":"atomic","question":"Does the Baker’s map exhibit sensitive dependence on initial conditions?","ground_truth":"TRUE","template":"A1"}
@@ -14,7 +13,6 @@
 {"id":"q0203","system_id":"bakers_map","type":"bias","question":"Does the geometric simplicity of the Baker’s map imply it cannot be chaotic?","ground_truth":"FALSE","template":"D_complexity_fallacy"}
 {"id":"q0204","system_id":"bakers_map","type":"multi_hop","question":"Does the symbolic dynamics of the Baker’s map imply chaotic mixing and unpredictability?","ground_truth":"YES","template":"B_chain_2"}
 {"id":"q0205","system_id":"bakers_map","type":"cross_system","question":"If both the Baker’s map and the Hénon map are chaotic, does this imply they share the same attractor structure?","ground_truth":"NO","template":"L3_structure"}
-
 {"id":"q0206","system_id":"ikeda_map","type":"atomic","question":"Is the Ikeda map chaotic in the benchmark regime?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0207","system_id":"ikeda_map","type":"atomic","question":"Is the Ikeda map deterministic?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0208","system_id":"ikeda_map","type":"atomic","question":"Does the Ikeda map have a positive Lyapunov exponent?","ground_truth":"TRUE","template":"A1"}
@@ -22,7 +20,6 @@
 {"id":"q0210","system_id":"ikeda_map","type":"bias","question":"Does the fractal appearance of the Ikeda attractor imply randomness rather than deterministic chaos?","ground_truth":"NO","template":"D_randomness_fallacy"}
 {"id":"q0211","system_id":"ikeda_map","type":"multi_hop","question":"Does chaotic behavior in the Ikeda map imply sensitive dependence and non-periodic orbits?","ground_truth":"YES","template":"B_chain_2"}
 {"id":"q0212","system_id":"ikeda_map","type":"cf","question":"If the Ikeda map parameter u were reduced significantly below 0.9, would chaos likely disappear?","ground_truth":"YES","template":"E_cf_param"}
-
 {"id":"q0213","system_id":"standard_map","type":"atomic","question":"Is the Standard Map chaotic for K = 1.5?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0214","system_id":"standard_map","type":"atomic","question":"Does the Standard Map contain quasi-periodic regions in addition to chaotic ones?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0215","system_id":"standard_map","type":"atomic","question":"Is the Standard Map deterministic?","ground_truth":"TRUE","template":"A1"}
@@ -30,53 +27,44 @@
 {"id":"q0217","system_id":"standard_map","type":"multi_hop","question":"If K = 1.5 leads to a chaotic sea and surviving tori, does the existence of quasi-periodic islands contradict the classification of the map as partially chaotic?","ground_truth":"NO","template":"B_chain_neg"}
 {"id":"q0218","system_id":"standard_map","type":"cf","question":"If K is increased well above 2, would quasi-periodic tori continue to survive in the Standard Map?","ground_truth":"NO","template":"E_cf_param"}
 {"id":"q0219","system_id":"standard_map","type":"cross_system","question":"Does the coexistence of chaotic and regular orbits in the Standard Map challenge the idea that chaos is a binary property?","ground_truth":"YES","template":"L3_mixedphase"}
-
 {"id":"q0220","system_id":"circle_map_quasiperiodic","type":"atomic","question":"Is the Circle Map in the given regime quasi-periodic?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0221","system_id":"circle_map_quasiperiodic","type":"atomic","question":"Does the Circle Map have a positive Lyapunov exponent in the benchmark regime?","ground_truth":"FALSE","template":"A1"}
 {"id":"q0222","system_id":"circle_map_quasiperiodic","type":"atomic","question":"Is the Circle Map deterministic?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0223","system_id":"circle_map_quasiperiodic","type":"bias","question":"Because the Circle Map is nonlinear, must it be chaotic?","ground_truth":"FALSE","template":"D_nonlin_fallacy"}
 {"id":"q0224","system_id":"circle_map_quasiperiodic","type":"multi_hop","question":"If the Circle Map exhibits quasi-periodic motion, does that imply zero sensitivity and absence of chaos?","ground_truth":"YES","template":"B_chain_2"}
 {"id":"q0225","system_id":"circle_map_quasiperiodic","type":"cf","question":"If the Circle Map parameter K were increased significantly, could quasi-periodic tori break down and chaos appear?","ground_truth":"YES","template":"E_cf_param"}
-
 {"id":"q0226","system_id":"henon","type":"atomic","question":"Does the Hénon map exhibit a strange attractor in the benchmark regime?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0227","system_id":"henon","type":"atomic","question":"Does the Hénon map have a positive largest Lyapunov exponent?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0228","system_id":"henon","type":"bias","question":"Because the Hénon attractor appears fractal and irregular, should it be classified as random rather than deterministic?","ground_truth":"NO","template":"D_randomness_fallacy"}
 {"id":"q0229","system_id":"henon","type":"cross_system","question":"Does the similarity between the Hénon attractor and some physical chaotic systems imply identical underlying mechanisms?","ground_truth":"NO","template":"L3_analogy"}
 {"id":"q0230","system_id":"henon","type":"multi_hop","question":"If the Hénon map is chaotic, must it exhibit sensitive dependence and non-periodic orbits?","ground_truth":"YES","template":"B_chain_2"}
-
 {"id":"q0231","type":"cross_system","question":"If the Arnold cat map and Baker’s map are both chaotic but have no strange attractor, does this imply strange attractors are not required for chaos?","ground_truth":"YES","template":"L3_counterexample"}
 {"id":"q0232","type":"cross_system","question":"Does the existence of quasi-periodic islands in the Standard Map contradict chaos in other regions of the phase space?","ground_truth":"NO","template":"L3_mixedphase"}
 {"id":"q0233","type":"cross_system","question":"Can chaos exist simultaneously with regular invariant structures in discrete maps?","ground_truth":"YES","template":"L3_mixedphase"}
 {"id":"q0234","type":"cross_system","question":"Does symbolic dynamics in the Baker’s map and Arnold cat map suggest that chaos can arise from simple rules?","ground_truth":"YES","template":"L3_symbolic"}
 {"id":"q0235","type":"cross_system","question":"Does the fact that the Circle Map is non-chaotic but nonlinear refute the claim that nonlinearity guarantees chaos?","ground_truth":"YES","template":"L3_nonlin_fallacy"}
 {"id":"q0236","type":"cross_system","question":"Do discrete-time maps offer examples where deterministic chaos appears without strange attractors?","ground_truth":"YES","template":"L3_geometric"}
-
 {"id":"q0237","type":"multi_hop","question":"If a system has sensitive dependence but no strange attractor, can it still be chaotic?","ground_truth":"YES","template":"B_chain_2"}
 {"id":"q0238","type":"multi_hop","question":"If an invariant torus persists under perturbation in the Circle Map, does that imply quasi-periodicity persists?","ground_truth":"YES","template":"B_chain_2"}
 {"id":"q0239","type":"multi_hop","question":"If a map is deterministic and has positive Lyapunov exponent, must its long-term orbits be non-periodic?","ground_truth":"YES","template":"B_chain_2"}
 {"id":"q0240","type":"multi_hop","question":"Does the folding-and-stretching mechanism in the Baker’s map ensure exponential divergence of trajectories?","ground_truth":"YES","template":"B_chain_2"}
-
 {"id":"q0241","type":"bias","question":"Is it valid to infer that because the Standard Map shows complex trajectories, it must be chaotic everywhere?","ground_truth":"NO","template":"D_complexity_fallacy"}
 {"id":"q0242","type":"bias","question":"Does the presence of fractal geometry in an attractor automatically classify a system as random?","ground_truth":"NO","template":"D_randomness_fallacy"}
 {"id":"q0243","type":"bias","question":"Does the name ‘Lorenz-like’ imply all such systems share the same attractor structure?","ground_truth":"NO","template":"D_name_fallacy"}
-
 {"id":"q0244","type":"cf","system_id":"ikeda_map","question":"If the Ikeda map’s internal phase shift term t_n becomes nearly constant, would chaotic behavior weaken or disappear?","ground_truth":"YES","template":"E_cf_param"}
 {"id":"q0245","type":"cf","system_id":"standard_map","question":"If initial momentum dispersion shrinks to zero in the Standard Map, can chaos still persist for some K values?","ground_truth":"YES","template":"E_cf_param"}
 {"id":"q0246","type":"cf","system_id":"circle_map_quasiperiodic","question":"If the irrational rotation number in the Circle Map is replaced by a rational one, would the system become periodic?","ground_truth":"YES","template":"E_cf_param"}
 {"id":"q0247","type":"cf","system_id":"henon","question":"If the parameter a in the Hénon map is reduced substantially, could the system enter a periodic window?","ground_truth":"YES","template":"E_cf_param"}
-
 {"id":"q0248","type":"hard","question":"Does chaos in the Arnold cat map imply existence of a strange attractor?","ground_truth":"NO","template":"L3_Lyap_vs_attr"}
 {"id":"q0249","type":"hard","question":"Is linear chaos generally possible in continuous-time flows?","ground_truth":"NO","template":"L3_confounder"}
 {"id":"q0250","type":"hard","question":"Does the existence of symbolic dynamics guarantee chaotic behavior in a system?","ground_truth":"YES","template":"L3_symbolic"}
 {"id":"q0251","type":"hard","question":"Does area preservation in the Standard Map prohibit the existence of attractors in the conventional sense?","ground_truth":"YES","template":"L3_area_preserving"}
 {"id":"q0252","type":"hard","question":"Can a discrete-time map be chaotic even if it maps a compact domain into itself without contraction?","ground_truth":"YES","template":"L3_maps_general"}
 {"id":"q0253","type":"hard","question":"Does the survival of KAM tori in the Standard Map imply absence of chaos?","ground_truth":"NO","template":"L3_mixedphase"}
-
 {"id":"q0254","type":"hard","question":"Do all chaotic maps necessarily exhibit topological mixing?","ground_truth":"NO","template":"L3_topology"}
 {"id":"q0255","type":"hard","question":"Is a positive Lyapunov exponent sufficient to ensure the attractor is fractal?","ground_truth":"NO","template":"L3_Lyap_vs_fractal"}
 {"id":"q0256","type":"hard","question":"Does the Circle Map demonstrate that rotation number determines quasi-periodicity more than nonlinearity?","ground_truth":"YES","template":"L3_mechanism"}
 {"id":"q0257","type":"hard","question":"Does the existence of chaos in Baker’s map prove chaos can emerge from deterministic rules without any smoothness?","ground_truth":"YES","template":"L3_symbolic"}
-
 {"id":"q0258","type":"hard","question":"Does the combination of Arnold cat map, Baker’s map, and Ikeda map illustrate that chaos can arise from linear, piecewise-linear, and nonlinear systems alike?","ground_truth":"YES","template":"L3_synthesis"}
 {"id":"q0259","type":"hard","question":"Is fractal geometry required for chaos in a discrete map?","ground_truth":"NO","template":"L3_geometry"}
 {"id":"q0260","type":"hard","question":"Do examples like the Circle Map show that deterministic dynamics can be complex without being chaotic?","ground_truth":"YES","template":"L3_nonchaotic_complexity"}

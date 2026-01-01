@@ -279,16 +279,7 @@ GPT-4 CoT:          53.1% ███████████
 - Only 1 item with no gold label (inherent in dataset)
 - 0 API failures or payment issues
 
-### Execution Times
-
-| Model | Mode | Time | Throughput* | Cost Estimate |
-|-------|------|------|-------------|---------------|
-| LLaMA-3 | Zeroshot | 8.6 min | 1.2 items/s | ~$1-2 |
-| LLaMA-3 | CoT | 55 min | 0.2 items/s | ~$5-8 |
-
-*Throughput measured with 2 parallel workers (practical speed)
-| GPT-4 | Zeroshot | ~10 min | 1.0 | ~$3-5 |
-| GPT-4 | CoT | ~30 min | 0.3 | ~$8-12 |
+**Note:** Execution timing and cost data are environment-dependent (varies by API load, network latency, worker configuration) and not reported in published results to avoid misleading comparisons. See `run_meta.json` files for worker configurations used.
 
 ---
 
@@ -313,11 +304,10 @@ GPT-4 CoT:          53.1% ███████████
 
 ### Strengths of LLaMA-3 70B
 
-1. **Dialogue Consistency** - Best multi-turn reasoning across all models
+1. **Dialogue Consistency** - Best multi-turn reasoning across all models (75.5% dialogue accuracy)
 2. **Counterfactual Reasoning** - Strong performance on "what-if" scenarios
 3. **Bias Detection** - Good at identifying logical fallacies and misconceptions
-4. **Throughput** - 1.2 items/s (with 2 workers) for zeroshot, 0.2 items/s for CoT
-5. **Cost-Effectiveness** - Lower cost than GPT-4 with comparable performance
+4. **Competitive Overall Accuracy** - 91.6% overall accuracy, matching Claude-3.5 and approaching Gemini-2.5
 
 ### Weaknesses of LLaMA-3 70B
 
@@ -328,11 +318,11 @@ GPT-4 CoT:          53.1% ███████████
 
 ### Recommendations for Paper
 
-1. **Highlight LLaMA-3's dialogue consistency** - Unique strength not seen in other models
-2. **Analyze CoT paradox** - Why does explicit reasoning hurt performance?
-3. **Compare cost-performance ratio** - LLaMA-3 offers best value
-4. **Investigate compositional failures** - Common weakness across all models
-5. **Recommend task-specific prompting** - Zeroshot for most, CoT only for structural/validity
+1. **Highlight LLaMA-3's dialogue consistency** - Unique strength not seen in other models (75.5% vs 53-71% for others)
+2. **Analyze CoT paradox** - Why does explicit reasoning hurt performance for both GPT-4 and LLaMA-3?
+3. **Investigate compositional failures** - Common weakness across all models (0% accuracy)
+4. **Recommend task-specific prompting** - Zeroshot for most tasks, CoT only for specific scenarios
+5. **Emphasize open-source competitiveness** - LLaMA-3 matches or exceeds some proprietary models
 
 ---
 
@@ -462,10 +452,10 @@ This will automatically generate updated tables and statistics.
 - Task types: atomic, implications, multi-hop, counterfactual, bias, dialogue
 
 **Best Results:**
-- Overall: GPT-4 Zeroshot (94.0%)
-- Dialogue: LLaMA-3 Zeroshot (75.5%)
-- Cost-Effective: LLaMA-3 Zeroshot (91.6% at ~$1-2)
-- Throughput: LLaMA-3 Zeroshot (1.2 items/s with 2 workers)
+- Overall Accuracy: GPT-4 Zeroshot (94.0%)
+- Dialogue Accuracy: LLaMA-3 Zeroshot (75.5%)
+- Contradiction Rate: Gemini-2.5 and Claude-3.5 (91.8% - lower is better)
+- FOL Violations: All models (0.000 average violations)
 
 **Key Findings:**
 1. All models struggle with compositional reasoning (0%)

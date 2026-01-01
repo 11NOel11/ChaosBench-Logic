@@ -8,7 +8,6 @@
 {"id":"q0118","system_id":"kuramoto_sivashinsky","type":"bias","question":"Does the presence of complex, noisy-looking patterns in the Kuramoto–Sivashinsky solution imply that the underlying dynamics are random rather than deterministic?","ground_truth":"NO","template":"D_randomness_fallacy"}
 {"id":"q0119","system_id":"kuramoto_sivashinsky","type":"cf","question":"If the domain length of the Kuramoto–Sivashinsky equation were reduced sufficiently, could the system transition from chaos to simpler, non-chaotic dynamics?","ground_truth":"YES","template":"E_cf_param"}
 {"id":"q0120","system_id":"kuramoto_sivashinsky","type":"cf_chain","question":"If dissipation terms in the Kuramoto–Sivashinsky equation were strengthened relative to the destabilizing terms, would you expect spatiotemporal chaos to weaken or disappear?","ground_truth":"YES","template":"E_cf_chain"}
-
 {"id":"q0121","system_id":"sine_gordon","type":"atomic","question":"In the regime considered here, does the sine–Gordon equation support stable soliton solutions rather than chaotic behavior?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0122","system_id":"sine_gordon","type":"atomic","question":"Is the sine–Gordon equation treated as chaotic in this benchmark?","ground_truth":"FALSE","template":"A1"}
 {"id":"q0123","system_id":"sine_gordon","type":"atomic","question":"Is the sine–Gordon equation deterministic in the regime we consider?","ground_truth":"TRUE","template":"A1"}
@@ -18,7 +17,6 @@
 {"id":"q0127","system_id":"sine_gordon","type":"bias","question":"Does the fact that the sine–Gordon equation is a nonlinear PDE automatically mean it is chaotic?","ground_truth":"NO","template":"D_nonlin_fallacy"}
 {"id":"q0128","system_id":"sine_gordon","type":"cross_system","question":"Given that the Kuramoto–Sivashinsky equation is chaotic while the sine–Gordon equation is not, is it valid to conclude that all nonlinear PDEs are chaotic?","ground_truth":"NO","template":"L3_PDE_reasoning"}
 {"id":"q0129","system_id":"sine_gordon","type":"cf","question":"If small perturbations are added to the sine–Gordon equation, is it guaranteed that the system remains non-chaotic?","ground_truth":"NO","template":"E_cf_subtle"}
-
 {"id":"q0130","system_id":"brusselator","type":"atomic","question":"Does the Brusselator, in the parameter regime considered here, converge to a stable limit cycle?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0131","system_id":"brusselator","type":"atomic","question":"Is the Brusselator chaotic in this benchmark?","ground_truth":"FALSE","template":"A1"}
 {"id":"q0132","system_id":"brusselator","type":"atomic","question":"Is the Brusselator deterministic?","ground_truth":"TRUE","template":"A1"}
@@ -28,7 +26,6 @@
 {"id":"q0136","system_id":"brusselator","type":"bias","question":"Because the Brusselator is a nonlinear chemical reaction model, is it correct to assume it must be chaotic?","ground_truth":"NO","template":"D_nonlin_fallacy"}
 {"id":"q0137","system_id":"brusselator","type":"cf","question":"If parameters in the Brusselator were tuned away from the limit-cycle regime, could the system in principle become chaotic?","ground_truth":"YES","template":"E_cf_param"}
 {"id":"q0138","system_id":"brusselator","type":"adversarial","question":"A chemist claims that because the Brusselator shows oscillatory concentrations and complicated-looking trajectories, it must be chaotic. Is this reasoning correct?","ground_truth":"NO","template":"D_complexity_fallacy"}
-
 {"id":"q0139","system_id":"oregonator","type":"atomic","question":"Is the Oregonator model chaotic in the parameter regime considered in this benchmark?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0140","system_id":"oregonator","type":"atomic","question":"Is the Oregonator model deterministic rather than stochastic in this setting?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0141","system_id":"oregonator","type":"atomic","question":"Does the Oregonator model, in the chosen regime, have a positive largest Lyapunov exponent?","ground_truth":"TRUE","template":"A1"}
@@ -38,7 +35,6 @@
 {"id":"q0145","system_id":"oregonator","type":"bias","question":"Because the Oregonator is a chemical oscillator, is it necessarily non-chaotic?","ground_truth":"NO","template":"D_chem_bias"}
 {"id":"q0146","system_id":"oregonator","type":"cf","question":"If parameters in the Oregonator are moved back into a classical periodic oscillation regime, would you expect chaos to disappear?","ground_truth":"YES","template":"E_cf_param"}
 {"id":"q0147","system_id":"oregonator","type":"cross_system","question":"If the Brusselator is periodic and the Oregonator is chaotic, does that show that similar chemical mechanisms can support both regular and chaotic oscillations depending on parameters?","ground_truth":"YES","template":"L3_cross_chem"}
-
 {"id":"q0148","system_id":"fitzhugh_nagumo","type":"atomic","question":"Does the FitzHugh–Nagumo model, in the parameter regime considered here, exhibit a stable periodic limit cycle?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0149","system_id":"fitzhugh_nagumo","type":"atomic","question":"Is the FitzHugh–Nagumo model treated as chaotic in this benchmark?","ground_truth":"FALSE","template":"A1"}
 {"id":"q0150","system_id":"fitzhugh_nagumo","type":"atomic","question":"Is the FitzHugh–Nagumo model deterministic?","ground_truth":"TRUE","template":"A1"}
@@ -48,7 +44,6 @@
 {"id":"q0154","system_id":"fitzhugh_nagumo","type":"bias","question":"Does the presence of action-potential-like spikes in the FitzHugh–Nagumo model imply chaotic dynamics by itself?","ground_truth":"NO","template":"D_complexity_fallacy"}
 {"id":"q0155","system_id":"fitzhugh_nagumo","type":"cf","question":"If parameters in the FitzHugh–Nagumo model were significantly altered, could the dynamics become more complex or even chaotic in some extended variants?","ground_truth":"YES","template":"E_cf_param"}
 {"id":"q0156","system_id":"fitzhugh_nagumo","type":"cross_system","question":"If FitzHugh–Nagumo is periodic while Hindmarsh–Rose is chaotic, does that show that neuronal models can exhibit both regular and chaotic firing patterns depending on the mechanism?","ground_truth":"YES","template":"L3_cross_neuro"}
-
 {"id":"q0157","system_id":"hindmarsh_rose","type":"atomic","question":"In the regime we consider, is the Hindmarsh–Rose neuron model chaotic?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0158","system_id":"hindmarsh_rose","type":"atomic","question":"Is the Hindmarsh–Rose model deterministic in this benchmark?","ground_truth":"TRUE","template":"A1"}
 {"id":"q0159","system_id":"hindmarsh_rose","type":"atomic","question":"Does the Hindmarsh–Rose model have a positive largest Lyapunov exponent in the chaotic regime used here?","ground_truth":"TRUE","template":"A1"}
@@ -58,24 +53,20 @@
 {"id":"q0163","system_id":"hindmarsh_rose","type":"bias","question":"Because the Hindmarsh–Rose model produces irregular spike trains, is it correct to call the model random rather than deterministic?","ground_truth":"NO","template":"D_randomness_fallacy"}
 {"id":"q0164","system_id":"hindmarsh_rose","type":"cf","question":"If key parameters of the Hindmarsh–Rose model are tuned back into a regular spiking regime, would you expect chaos to vanish?","ground_truth":"YES","template":"E_cf_param"}
 {"id":"q0165","system_id":"hindmarsh_rose","type":"cross_system","question":"Does comparing FitzHugh–Nagumo and Hindmarsh–Rose support the claim that chaos in neuron models is parameter-dependent rather than inevitable?","ground_truth":"YES","template":"L3_cross_neuro"}
-
 {"id":"q0166","type":"cross_system","question":"If the Kuramoto–Sivashinsky equation is chaotic while the sine–Gordon equation is not, does that show that chaos in PDEs depends on specific terms and parameter regimes rather than nonlinearity alone?","ground_truth":"YES","template":"L3_PDE_reasoning"}
 {"id":"q0167","type":"cross_system","question":"If the Brusselator is periodic and the Oregonator is chaotic, is it valid evidence that chemically similar systems can exhibit both regular and chaotic oscillations depending on parameter choices?","ground_truth":"YES","template":"L3_cross_chem"}
 {"id":"q0168","type":"cross_system","question":"If a neuron model exhibits chaotic bursting, does this imply that biological neurons must be fundamentally random?","ground_truth":"NO","template":"D_bio_randomness_fallacy"}
 {"id":"q0169","type":"cross_system","question":"Is it logically valid to generalize from the chaos of the Kuramoto–Sivashinsky equation to claim that all spatially extended physical systems are chaotic?","ground_truth":"NO","template":"L3_overgeneralization"}
 {"id":"q0170","type":"cross_system","question":"If a model is deterministic but hard to solve analytically, does that imply its behavior is random?","ground_truth":"NO","template":"D_complexity_randomness"}
 {"id":"q0171","type":"cross_system","question":"Does the existence of chaotic neuronal models justify assuming that every irregular biological spike train arises from chaos rather than noise or external inputs?","ground_truth":"NO","template":"L3_misattribution"}
-
 {"id":"q0172","type":"multi_hop","question":"If a system is deterministic, non-chaotic, and has a stable limit cycle, can its long-term state still be statistically unpredictable?","ground_truth":"NO","template":"B_chain_neg"}
 {"id":"q0173","type":"multi_hop","question":"If a system is chaotic and statistically predictable in an ensemble sense, is there a contradiction between unpredictability and predictability?","ground_truth":"NO","template":"L3_paradox_resolution"}
 {"id":"q0174","type":"multi_hop","question":"If a PDE admits an invariant measure and positive Lyapunov exponents, is it reasonable to classify its long-term regime as chaotic?","ground_truth":"YES","template":"B_chain_2"}
 {"id":"q0175","type":"multi_hop","question":"If a chemical system transitions from a periodic orbit to a strange attractor as a parameter changes, does this indicate a bifurcation leading to chaos?","ground_truth":"YES","template":"L3_bifurcation"}
-
 {"id":"q0176","type":"bias","question":"Is the statement \"All nonlinear systems are chaotic\" consistent with the examples of the Brusselator, FitzHugh–Nagumo, and sine–Gordon in their standard regimes?","ground_truth":"NO","template":"D_nonlin_fallacy"}
 {"id":"q0177","type":"bias","question":"Is the claim \"All irregular time series come from chaotic systems\" consistent with the Ornstein–Uhlenbeck process example?","ground_truth":"NO","template":"D_irregularity"}
 {"id":"q0178","type":"bias","question":"Is it logically valid to infer that every chaotic system must be high-dimensional because Lorenz-96 and Kuramoto–Sivashinsky are high-dimensional and chaotic?","ground_truth":"NO","template":"D_dimensionality_fallacy"}
 {"id":"q0179","type":"bias","question":"From the existence of chaotic neuron models, is it justified to conclude that chaos is required for information processing in the brain?","ground_truth":"NO","template":"D_bio_requirement"}
-
 {"id":"q0180","type":"hard","question":"Considering the Kuramoto–Sivashinsky, Oregonator, and Hindmarsh–Rose systems, is it correct to claim that chaos is a property that emerges only in systems with feedback and nonlinearity, but not all such systems are chaotic?","ground_truth":"YES","template":"L3_synthesis"}
 {"id":"q0181","type":"hard","question":"Given the sine–Gordon and FitzHugh–Nagumo examples, does the existence of stable coherent structures or limit cycles show that strong nonlinearity can coexist with complete absence of chaos?","ground_truth":"YES","template":"L3_synthesis"}
 {"id":"q0182","type":"hard","question":"Do the combined examples of Oregonator, Brusselator, Kuramoto–Sivashinsky, and sine–Gordon support the claim that parameter tuning is crucial for determining whether a system is chaotic or not?","ground_truth":"YES","template":"L3_synthesis"}
