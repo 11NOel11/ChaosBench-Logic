@@ -383,10 +383,23 @@ To add evaluation results for a new model or configuration:
 # Run your model evaluation (outputs to results/ locally)
 python run_benchmark.py --model yourmodel --mode zeroshot
 
-# Copy minimal artifacts to published_results for tracking
-mkdir -p published_results/yourmodel_zeroshot
-cp results/yourmodel_zeroshot/{summary.json,run_meta.json,accuracy_by_task.csv,metrics_overview.csv} \
-   published_results/yourmodel_zeroshot/
+# Copy minimal artifacts to published_results for tracking (with validation)
+required_files="summary.json run_meta.json accuracy_by_task.csv metrics_overview.csv"
+model_mode="yourmodel_zeroshot"
+
+for file in $required_files; do
+    if [ ! -f "results/$model_mode/$file" ]; then
+        echo "ERROR: Missing required file: results/$model_mode/$file"
+        exit 1
+    fi
+done
+
+mkdir -p "published_results/$model_mode"
+for file in $required_files; do
+    cp "results/$model_mode/$file" "published_results/$model_mode/"
+done
+
+echo "✓ Successfully copied artifacts to published_results/$model_mode/"
 ```
 
 ### 2. Verify Output Files

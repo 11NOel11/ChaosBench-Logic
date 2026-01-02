@@ -86,7 +86,7 @@ def compute_stats():
 
 
 def validate_published_results():
-    """Validate that published_results exists and has expected structure."""
+    """Validate published_results structure and prevent raw outputs from being tracked."""
 
     published_dir = Path("published_results")
     errors = []
@@ -95,8 +95,8 @@ def validate_published_results():
         errors.append("published_results/ directory not found")
         return errors
 
-    # Expected configurations
-    expected_configs = [
+    # Canonical configurations (must exist for official publication)
+    canonical_configs = [
         "claude3_zeroshot",
         "gemini_zeroshot",
         "gpt4_cot",
@@ -106,18 +106,62 @@ def validate_published_results():
     ]
 
     # Required files per configuration
-    required_files = ["summary.json", "run_meta.json", "accuracy_by_task.csv", "metrics_overview.csv"]
+    required_files = [
+        "summary.json",
+        "run_meta.json",
+        "accuracy_by_task.csv",
+        "metrics_overview.csv",
+    ]
 
-    for config in expected_configs:
-        config_dir = published_dir / config
-        if not config_dir.exists():
-            errors.append(f"Missing published_results/{config}/")
-            continue
+    # Forbidden raw/debug artifacts (should never appear in published_results/)
+    forbidden_names = {
+        "per_item_results.jsonl",
+        "debug_samples.jsonl",
+        "checkpoint.json",
+        "run.log",
+        "bias_errors.csv",
+    }
 
+    forbidden_globs = [
+        "*.jsonl",
+        "*.log",
+        "*.png",
+        "*.jpg",
+        "*.jpeg",
+    ]
+
+    # Validate every config directory that exists under published_results/
+    config_dirs = [d for d in published_dir.iterdir() if d.is_dir()]
+    if not config_dirs:
+        errors.append("No configuration directories found in published_results/")
+        return errors
+
+    for config_dir in config_dirs:
+        config_name = config_dir.name
+
+        # Required files
         for filename in required_files:
-            filepath = config_dir / filename
-            if not filepath.exists():
-                errors.append(f"Missing published_results/{config}/{filename}")
+            if not (config_dir / filename).exists():
+                errors.append(f"Missing published_results/{config_name}/{filename}")
+
+        # Forbidden exact names
+        for filename in forbidden_names:
+            if (config_dir / filename).exists():
+                errors.append(
+                    f"Forbidden raw output file found: published_results/{config_name}/{filename}"
+                )
+
+        # Forbidden patterns
+        for pattern in forbidden_globs:
+            for match in config_dir.glob(pattern):
+                errors.append(
+                    f"Forbidden file found: published_results/{config_name}/{match.name}"
+                )
+
+    # Ensure canonical configs exist (for official published results)
+    for cfg in canonical_configs:
+        if not (published_dir / cfg).is_dir():
+            errors.append(f"Missing canonical configuration: published_results/{cfg}/")
 
     return errors
 
