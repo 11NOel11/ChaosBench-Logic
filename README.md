@@ -8,9 +8,10 @@
 [![Code License: MIT](https://img.shields.io/badge/Code%20License-MIT-yellow.svg)](LICENSE)
 [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-blue.svg)](LICENSE_DATA)
 [![Tests](https://github.com/11NOel11/ChaosBench-Logic/actions/workflows/ci.yml/badge.svg)](https://github.com/11NOel11/ChaosBench-Logic/actions)
+[![HuggingFace Dataset](https://img.shields.io/badge/🤗%20Dataset-ChaosBench--Logic-orange.svg)](https://huggingface.co/datasets/11NOel11/ChaosBench-Logic)
 [![GitHub Stars](https://img.shields.io/github/stars/11NOel11/ChaosBench-Logic?style=social)](https://github.com/11NOel11/ChaosBench-Logic)
 
-[**Dataset Card**](docs/DATASET.md) | [**Ontology**](docs/ONTOLOGY.md) | [**Results**](docs/RESULTS.md) | [**API Setup**](docs/API_SETUP.md) | [**Contributing**](docs/CONTRIBUTING.md)
+[**🤗 HuggingFace Dataset**](https://huggingface.co/datasets/11NOel11/ChaosBench-Logic) | [**Dataset Card**](docs/DATASET.md) | [**Ontology**](docs/ONTOLOGY.md) | [**Results**](docs/RESULTS.md) | [**API Setup**](docs/API_SETUP.md) | [**Contributing**](docs/CONTRIBUTING.md)
 
 </div>
 
@@ -148,6 +149,38 @@ nano .env  # Add your API keys
 ```
 
 See [**docs/API_SETUP.md**](docs/API_SETUP.md) for detailed instructions on obtaining API keys from OpenAI, Anthropic, Google, and HuggingFace.
+
+### Loading Dataset from HuggingFace
+
+The ChaosBench-Logic dataset is available on HuggingFace for easy loading with the `datasets` library:
+
+```python
+from datasets import load_dataset
+
+# Load single-turn questions (420 questions)
+single_turn = load_dataset("11NOel11/ChaosBench-Logic", "single_turn")
+
+# Load multi-turn dialogues (201 dialogue turns across 49 dialogues)
+multi_turn = load_dataset("11NOel11/ChaosBench-Logic", "multi_turn")
+
+# Access test split
+print(f"Single-turn: {len(single_turn['test'])} questions")
+print(f"Multi-turn: {len(multi_turn['test'])} turns")
+print(f"Total benchmark: {len(single_turn['test']) + len(multi_turn['test'])} questions")
+
+# Example: Load first question
+first_question = single_turn['test'][0]
+print(first_question['question'])
+print(f"Ground truth: {first_question['ground_truth']}")
+```
+
+**Why two configurations?** Single-turn and multi-turn questions have different schemas:
+- **Single-turn** (6 fields): `id`, `system_id`, `type`, `question`, `ground_truth`, `template`
+- **Multi-turn** (8 fields): Adds `dialogue_id` and `turn` for dialogue tracking
+
+**Note on `system_id`:** 159 questions have `null` system_id by design. These are general ontology/implication questions (e.g., "If a system is chaotic, must it be deterministic?") that test reasoning about FOL axioms rather than properties of specific systems.
+
+See the [HuggingFace Dataset Card](https://huggingface.co/datasets/11NOel11/ChaosBench-Logic) for complete documentation.
 
 ### Running Evaluations
 
