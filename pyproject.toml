@@ -47,4 +47,4 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["."]
+py-modules = ["eval_chaosbench", "clients", "run_benchmark"]
