@@ -1,0 +1,39 @@
+{
+  "system_id": "dysts_saltonsea",
+  "name": "SaltonSea (dysts)",
+  "category": "chaotic",
+  "equations": "SaltonSea system (see dysts package for equations)",
+  "parameters": {
+    "a": 15,
+    "d": 8.3,
+    "k": 400,
+    "lam": 0.06,
+    "m": 15.5,
+    "mu": 3.4,
+    "r": 22,
+    "th": 10.0
+  },
+  "dimension": 3,
+  "description_simple": "An eco-epidemiological model of bird and fish abundances in the Salton sea of southern California.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.864326+00:00",
+    "uncertain": false
+  }
+}

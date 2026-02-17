@@ -1,0 +1,30 @@
+{
+  "system_id": "dysts_sprottmore",
+  "name": "SprottMore (dysts)",
+  "category": "chaotic",
+  "equations": "SprottMore system (see dysts package for equations)",
+  "parameters": {},
+  "dimension": 3,
+  "description_simple": "A multifractal system with a nearly 3D attractor",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.870048+00:00",
+    "uncertain": false
+  }
+}

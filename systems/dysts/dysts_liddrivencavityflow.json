@@ -1,0 +1,36 @@
+{
+  "system_id": "dysts_liddrivencavityflow",
+  "name": "LidDrivenCavityFlow (dysts)",
+  "category": "chaotic",
+  "equations": "LidDrivenCavityFlow system (see dysts package for equations)",
+  "parameters": {
+    "a": 6.0,
+    "b": 1.0,
+    "tau": 1.1,
+    "u1": 9.92786,
+    "u2": 8.34932
+  },
+  "dimension": 3,
+  "description_simple": "A two-dimensional flow alternately driven by translation of the left and right walls.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.852831+00:00",
+    "uncertain": false
+  }
+}

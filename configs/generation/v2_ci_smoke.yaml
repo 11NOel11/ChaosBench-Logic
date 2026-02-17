@@ -1,0 +1,87 @@
+# ChaosBench-Logic v2.1 CI Smoke Test Config
+# Minimal config for CI: 5 dysts systems, ~200 items total
+
+seed: 42
+version: "2.1.0"
+template: "V2"
+
+# System pool definitions (minimal for CI)
+system_pools:
+  core_30:
+    type: "glob"
+    pattern: "systems/*.json"
+    exclude_prefix: "dysts_"
+  dysts_all:
+    type: "glob"
+    pattern: "systems/dysts/*.json"
+  dysts_chaotic:
+    type: "filter"
+    pool: "dysts_all"
+    predicate: "Chaotic"
+
+# Indicator computation settings
+indicators:
+  seed: 42
+
+# Adversarial generation settings
+adversarial:
+  n_per_type: 5
+  drop_unknown: true
+
+# Consistency paraphrase settings
+consistency:
+  batch2_take: 5
+  paraphrase_variants: 2
+
+# Per-batch configuration (minimal counts for CI)
+batches:
+  batch8_indicator_diagnostics:
+    task: indicator_diagnostics
+    systems: core_30
+    target_count: 20
+  batch9_regime_transitions:
+    task: regime_transition
+    systems: core_30
+    target_count: 10
+  batch10_adversarial:
+    task: adversarial
+    systems: core_30
+    target_count: 15
+  batch11_consistency_paraphrase:
+    task: consistency_paraphrase
+    systems: core_30
+    target_count: 20
+  batch12_fol_inference:
+    task: fol_inference
+    systems: core_30
+    target_count: 20
+  batch13_extended_systems:
+    task: extended_systems
+    systems: core_30
+    target_count: 15
+  batch14_cross_indicator:
+    task: cross_indicator
+    systems: core_30
+    target_count: 10
+
+  # Dysts batches (small for CI)
+  batch15_atomic_dysts:
+    task: atomic
+    systems: dysts_all
+    target_count: 30
+  batch16_multi_hop_dysts:
+    task: multi_hop
+    systems: dysts_all
+    target_count: 20
+  batch17_perturbation_robustness:
+    task: perturbation
+    systems: core_30
+    target_count: 20
+  batch18_fol_dysts:
+    task: fol_inference
+    systems: dysts_all
+    target_count: 20
+
+# Import settings for CI
+dysts_import:
+  subset: 5  # Only import 5 dysts systems for smoke test

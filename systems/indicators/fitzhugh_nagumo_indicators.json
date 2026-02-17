@@ -1,0 +1,9 @@
+{
+  "system_id": "fitzhugh_nagumo",
+  "zero_one_K": 0.0,
+  "permutation_entropy": 0.38311036252555136,
+  "megno": -0.6671888446779913,
+  "system_type": "ode",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:26.524498+00:00"
+}

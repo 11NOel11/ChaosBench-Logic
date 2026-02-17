@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_excitablecell",
+  "maximum_lyapunov_estimated": 0.7164303367057223,
+  "lyapunov_spectrum": [
+    17.030315084501463,
+    -0.3267053778962445,
+    -129.70230355691595
+  ],
+  "kaplan_yorke_dimension": 2.1287842177704674,
+  "correlation_dimension": 0.19124944684169679,
+  "multiscale_entropy": 0.7807524009298388,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.820578+00:00"
+}

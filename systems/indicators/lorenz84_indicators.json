@@ -1,0 +1,9 @@
+{
+  "system_id": "lorenz84",
+  "zero_one_K": 0.07136771583083656,
+  "permutation_entropy": 0.4124853234620979,
+  "megno": 12.123771512406876,
+  "system_type": "ode",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:28.699528+00:00"
+}

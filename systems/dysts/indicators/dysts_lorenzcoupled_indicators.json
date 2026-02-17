@@ -1,0 +1,17 @@
+{
+  "system_id": "dysts_lorenzcoupled",
+  "maximum_lyapunov_estimated": 1.0284398414904556,
+  "lyapunov_spectrum": [
+    1.2218762961515068,
+    0.1222254715421154,
+    -1.265209618630438,
+    -1.9333037412103384,
+    -13.618111101381306,
+    -15.073328947851422
+  ],
+  "kaplan_yorke_dimension": 3.0408069075490425,
+  "correlation_dimension": 2.3989498239642524,
+  "multiscale_entropy": 1.1717493753138832,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.854739+00:00"
+}

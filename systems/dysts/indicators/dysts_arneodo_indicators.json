@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_arneodo",
+  "maximum_lyapunov_estimated": 0.23737468667051287,
+  "lyapunov_spectrum": [
+    0.24285661379003065,
+    -0.0006168721448237418,
+    -1.2169777901647385
+  ],
+  "kaplan_yorke_dimension": 2.198607392233255,
+  "correlation_dimension": 1.9333366595280337,
+  "multiscale_entropy": 0.7388404221540498,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.766335+00:00"
+}

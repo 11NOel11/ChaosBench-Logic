@@ -1,0 +1,15 @@
+{
+  "system_id": "dysts_hyperwang",
+  "maximum_lyapunov_estimated": 1.2930140887300063,
+  "lyapunov_spectrum": [
+    1.2224015619377895,
+    0.25827623672371736,
+    -0.0075512136517132625,
+    -13.986919236227278
+  ],
+  "kaplan_yorke_dimension": 3.105321722354005,
+  "correlation_dimension": 2.384028593490252,
+  "multiscale_entropy": 0.9969261837212393,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.849947+00:00"
+}

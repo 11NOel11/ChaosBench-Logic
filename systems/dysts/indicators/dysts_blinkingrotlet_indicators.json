@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_blinkingrotlet",
+  "maximum_lyapunov_estimated": 2.120338159738003,
+  "lyapunov_spectrum": [
+    5.609358269449125,
+    0.007963961496808246,
+    -6.16801583110239
+  ],
+  "kaplan_yorke_dimension": 2.910902586026695,
+  "correlation_dimension": 2.0693373122119807,
+  "multiscale_entropy": 1.2895030395332947,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.782445+00:00"
+}

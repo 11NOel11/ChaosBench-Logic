@@ -1,0 +1,15 @@
+{
+  "system_id": "dysts_qi",
+  "maximum_lyapunov_estimated": 2.1916060472989556,
+  "lyapunov_spectrum": [
+    2.0360429519545677,
+    0.1320125824983059,
+    -4.347891883424509,
+    -44.356041824978305
+  ],
+  "kaplan_yorke_dimension": 2.498645226832379,
+  "correlation_dimension": 1.8913519055600239,
+  "multiscale_entropy": 0.8855652233700573,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.861247+00:00"
+}

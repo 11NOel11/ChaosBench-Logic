@@ -1,0 +1,38 @@
+{
+  "system_id": "dysts_bouali2",
+  "name": "Bouali2 (dysts)",
+  "category": "chaotic",
+  "equations": "Bouali2 system (see dysts package for equations)",
+  "parameters": {
+    "a": 3.0,
+    "b": 2.2,
+    "bb": 0,
+    "c": 0,
+    "g": 1.0,
+    "m": -0.0026667,
+    "y0": 1.0
+  },
+  "dimension": 3,
+  "description_simple": "A modified economic cycle model.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.788351+00:00",
+    "uncertain": false
+  }
+}

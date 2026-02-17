@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_glycolyticoscillation",
+  "maximum_lyapunov_estimated": 0.021594561241816756,
+  "lyapunov_spectrum": [
+    0.01959615,
+    -0.03550638,
+    -2.39422048
+  ],
+  "kaplan_yorke_dimension": 1.5520229717346938,
+  "correlation_dimension": 1.6403587221370042,
+  "multiscale_entropy": 0.4632600047939084,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.829458+00:00"
+}

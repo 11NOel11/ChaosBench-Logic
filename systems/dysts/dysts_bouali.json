@@ -1,0 +1,38 @@
+{
+  "system_id": "dysts_bouali",
+  "name": "Bouali (dysts)",
+  "category": "chaotic",
+  "equations": "Bouali system (see dysts package for equations)",
+  "parameters": {
+    "a": 1.0,
+    "b": -0.3,
+    "bb": 1.0,
+    "c": 0.05,
+    "g": 1.0,
+    "m": 1,
+    "y0": 4.0
+  },
+  "dimension": 3,
+  "description_simple": "Economic cycles with fluctuating demand. Related to the DequanLi attractor",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.786450+00:00",
+    "uncertain": false
+  }
+}

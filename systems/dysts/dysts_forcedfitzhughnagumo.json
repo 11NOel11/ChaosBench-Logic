@@ -1,0 +1,37 @@
+{
+  "system_id": "dysts_forcedfitzhughnagumo",
+  "name": "ForcedFitzHughNagumo (dysts)",
+  "category": "chaotic",
+  "equations": "ForcedFitzHughNagumo system (see dysts package for equations)",
+  "parameters": {
+    "a": 0.7,
+    "b": 0.8,
+    "curr": 0.965,
+    "f": 0.4008225,
+    "gamma": 0.08,
+    "omega": 0.043650793650793655
+  },
+  "dimension": 3,
+  "description_simple": "A driven neuron model sustaining both quiesent and oscillating states.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.825771+00:00",
+    "uncertain": false
+  }
+}

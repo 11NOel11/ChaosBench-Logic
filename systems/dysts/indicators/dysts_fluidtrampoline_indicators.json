@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_fluidtrampoline",
+  "maximum_lyapunov_estimated": 0.22311237411461174,
+  "lyapunov_spectrum": [
+    0.08081301489037329,
+    -0.0011783910877478326,
+    -0.09403052188090477
+  ],
+  "kaplan_yorke_dimension": 2.8462636972682116,
+  "correlation_dimension": 2.18441887672186,
+  "multiscale_entropy": 0.796312585554829,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.823388+00:00"
+}

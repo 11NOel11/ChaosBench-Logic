@@ -1,0 +1,39 @@
+{
+  "system_id": "dysts_turchinhanski",
+  "name": "TurchinHanski (dysts)",
+  "category": "chaotic",
+  "equations": "TurchinHanski system (see dysts package for equations)",
+  "parameters": {
+    "a": 8,
+    "d": 0.04,
+    "e": 0.5,
+    "g": 0.1,
+    "h": 0.8,
+    "lamb": 1.0,
+    "r": 8.12,
+    "s": 1.25
+  },
+  "dimension": 3,
+  "description_simple": " A chaotic three species food web. The species growth rate has been increased from the default parameters in the original paper, in order to ensure that the system exhibits sustained chaotic oscillations.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.874073+00:00",
+    "uncertain": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "system_id": "dysts_piecewisecircuit",
+  "name": "PiecewiseCircuit (dysts)",
+  "category": "chaotic",
+  "equations": "PiecewiseCircuit system (see dysts package for equations)",
+  "parameters": {
+    "alpha": 1.0,
+    "beta": 1.0,
+    "c": 2.24,
+    "tau": 4.9
+  },
+  "dimension": 10,
+  "description_simple": "A delay model that can be implemented as an electronic circuit. A standard delay dimension of three is used.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.860718+00:00",
+    "uncertain": false
+  }
+}

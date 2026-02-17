@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_forcedvanderpol",
+  "maximum_lyapunov_estimated": 0.0035097622587646343,
+  "lyapunov_spectrum": [
+    0.2651824388815116,
+    -0.0008450617218488057,
+    -20.60632249066986
+  ],
+  "kaplan_yorke_dimension": 2.012828649055009,
+  "correlation_dimension": 1.3243672479645296,
+  "multiscale_entropy": 0.39443058905146283,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.826931+00:00"
+}

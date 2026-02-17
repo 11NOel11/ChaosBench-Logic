@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_forcedbrusselator",
+  "maximum_lyapunov_estimated": 0.015326007974604663,
+  "lyapunov_spectrum": [
+    0.0028307087627546254,
+    -0.014898681909916936,
+    -0.23304448314240073
+  ],
+  "kaplan_yorke_dimension": 1.190019824057157,
+  "correlation_dimension": 1.616157126800283,
+  "multiscale_entropy": 0.47299463051887286,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.824647+00:00"
+}

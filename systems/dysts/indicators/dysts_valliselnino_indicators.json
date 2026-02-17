@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_valliselnino",
+  "maximum_lyapunov_estimated": 0.5477586276153029,
+  "lyapunov_spectrum": [
+    0.6561566154431996,
+    0.022689184568283626,
+    -5.6332694618503885
+  ],
+  "kaplan_yorke_dimension": 2.1205065379188333,
+  "correlation_dimension": 1.3112426349362432,
+  "multiscale_entropy": 0.9058707360850027,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.874349+00:00"
+}

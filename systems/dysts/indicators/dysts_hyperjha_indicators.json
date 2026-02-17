@@ -1,0 +1,15 @@
+{
+  "system_id": "dysts_hyperjha",
+  "maximum_lyapunov_estimated": 0.38695361636760767,
+  "lyapunov_spectrum": [
+    0.3949499860671474,
+    0.2920214751184925,
+    0.005568431034995312,
+    -13.022125042186726
+  ],
+  "kaplan_yorke_dimension": 3.053181782412727,
+  "correlation_dimension": 2.295404578145075,
+  "multiscale_entropy": 0.8934166449122942,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.841406+00:00"
+}

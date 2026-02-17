@@ -1,0 +1,15 @@
+{
+  "system_id": "dysts_hyperpang",
+  "maximum_lyapunov_estimated": 1.4465315511406867,
+  "lyapunov_spectrum": [
+    1.586932998381499,
+    0.28444192185263556,
+    -0.0011541322141891326,
+    -21.007696151519628
+  ],
+  "kaplan_yorke_dimension": 3.08902125132107,
+  "correlation_dimension": 2.409444534598458,
+  "multiscale_entropy": 0.9172158388570456,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.845086+00:00"
+}

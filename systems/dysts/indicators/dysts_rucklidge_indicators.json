@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_rucklidge",
+  "maximum_lyapunov_estimated": 0.1936356650629198,
+  "lyapunov_spectrum": [
+    0.18286378999435815,
+    -0.0039065765687848,
+    -3.2151284307504713
+  ],
+  "kaplan_yorke_dimension": 2.055660980653234,
+  "correlation_dimension": 1.9824460344125072,
+  "multiscale_entropy": 0.6441822675461503,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.863535+00:00"
+}

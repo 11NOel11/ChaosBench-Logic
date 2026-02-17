@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_chenlee",
+  "maximum_lyapunov_estimated": 0.16363115430160305,
+  "lyapunov_spectrum": [
+    0.16460631102343384,
+    0.00018225769802326938,
+    -5.485329903201408
+  ],
+  "kaplan_yorke_dimension": 2.0300416878282137,
+  "correlation_dimension": 1.2279387897055603,
+  "multiscale_entropy": 0.6224325755254609,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.802848+00:00"
+}

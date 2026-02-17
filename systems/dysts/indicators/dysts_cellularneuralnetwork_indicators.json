@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_cellularneuralnetwork",
+  "maximum_lyapunov_estimated": 2.3258468977096562,
+  "lyapunov_spectrum": [
+    0.09799656528996928,
+    0.0036354952626342415,
+    -0.6061495728157424
+  ],
+  "kaplan_yorke_dimension": 2.167668286708633,
+  "correlation_dimension": 1.7777777253372764,
+  "multiscale_entropy": 1.2414841874061011,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.799337+00:00"
+}

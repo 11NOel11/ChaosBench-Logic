@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_sticksliposcillator",
+  "maximum_lyapunov_estimated": 0.06406131604734494,
+  "lyapunov_spectrum": [
+    0.07073329226101453,
+    3.356854711815694e-05,
+    -0.02131392884593247
+  ],
+  "kaplan_yorke_dimension": 5.682155291949877,
+  "correlation_dimension": 1.7159805502964127,
+  "multiscale_entropy": 0.9213029740441252,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.872334+00:00"
+}

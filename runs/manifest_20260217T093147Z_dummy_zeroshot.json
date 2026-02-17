@@ -1,0 +1,90 @@
+{
+  "manifest_version": "1.0",
+  "timestamp": "2026-02-17T09:31:47.656448+00:00",
+  "model": "dummy",
+  "mode": "zeroshot",
+  "run_name": "dummy_zeroshot",
+  "run_out_dir": "/tmp/chaosbench_test_results/dummy_zeroshot",
+  "data_dir": "data",
+  "batches": [
+    {
+      "file": "batch1_atomic_implication.jsonl",
+      "path": "data/batch1_atomic_implication.jsonl",
+      "sha256": "2ef3b7cb83b42de4499093be88723b78fd034094dcbf2561077ce1df55ba65f8"
+    },
+    {
+      "file": "batch2_multiHop_crossSystem.jsonl",
+      "path": "data/batch2_multiHop_crossSystem.jsonl",
+      "sha256": "4d849ea17265f0d0bc05dcdc959f835f1a5fab064e7d18d8c7a91570509bcb83"
+    },
+    {
+      "file": "batch3_pde_chem_bio.jsonl",
+      "path": "data/batch3_pde_chem_bio.jsonl",
+      "sha256": "2e4b50d93acdd3b39f9501a6b0f9d719ca9c69f728b3a8c5d60af74ed7f886c7"
+    },
+    {
+      "file": "batch4_maps_advanced.jsonl",
+      "path": "data/batch4_maps_advanced.jsonl",
+      "sha256": "dae3b50dd83916a0b0111d1e4b9c3baf17525fe47ea60d9d887832da7b6e2725"
+    },
+    {
+      "file": "batch5_counterfactual_high_difficulty.jsonl",
+      "path": "data/batch5_counterfactual_high_difficulty.jsonl",
+      "sha256": "800c73e50f5138991628dd89f43679315be831313ab794d746590f7a05aac578"
+    },
+    {
+      "file": "batch6_deep_bias_probes.jsonl",
+      "path": "data/batch6_deep_bias_probes.jsonl",
+      "sha256": "e626adfe6966f375e465be8db833e97cc47ed3f5ff95fca50a9718f32ea29b88"
+    },
+    {
+      "file": "batch7_multiturn_advanced.jsonl",
+      "path": "data/batch7_multiturn_advanced.jsonl",
+      "sha256": "13420cdc04170e22f9399a38249619a0ed3dd0c84590c7c31ea23910a009f203"
+    },
+    {
+      "file": "batch8_indicator_diagnostics.jsonl",
+      "path": "data/batch8_indicator_diagnostics.jsonl",
+      "sha256": "e87c378672e30677c5b8e56d37a1f46fcd4040959cebfc6f70f33d98331692ee"
+    },
+    {
+      "file": "batch9_regime_transitions.jsonl",
+      "path": "data/batch9_regime_transitions.jsonl",
+      "sha256": "2e63ebbee85c1763a443e2f2e480051a2f91537746113cd3cdb328e67223f8d0"
+    },
+    {
+      "file": "batch10_adversarial.jsonl",
+      "path": "data/batch10_adversarial.jsonl",
+      "sha256": "fd3a1e056e9079122e7c4bbb3ae7e7a9b8abec23d5842b47509bedef1c2aaca6"
+    },
+    {
+      "file": "batch11_consistency_paraphrase.jsonl",
+      "path": "data/batch11_consistency_paraphrase.jsonl",
+      "sha256": "45caafef37421e85bfcbbdb0befd914cfb351faa913a821487d209c0bea8dba3"
+    },
+    {
+      "file": "batch12_fol_inference.jsonl",
+      "path": "data/batch12_fol_inference.jsonl",
+      "sha256": "d87733142fce3493cc503bc82eaaa9c2c5621988fea1302ef3be3298d241b355"
+    },
+    {
+      "file": "batch13_extended_systems.jsonl",
+      "path": "data/batch13_extended_systems.jsonl",
+      "sha256": "49a5f675312af895faf54e6e9a7bc35141107d1f57bfced99b9b03108485ae3b"
+    },
+    {
+      "file": "batch14_cross_indicator.jsonl",
+      "path": "data/batch14_cross_indicator.jsonl",
+      "sha256": "c2434129682359a9f99c8a4ba867c8cb13a5fdb239c88ee3135bc6932e8dab05"
+    }
+  ],
+  "total_items_before_sharding": 1879,
+  "items_in_this_run": 5,
+  "workers": null,
+  "checkpoint_interval": 50,
+  "sharding": {
+    "num_shards": 1,
+    "shard_index": 0
+  },
+  "max_items": 5
+}

@@ -1,0 +1,17 @@
+{
+  "system_id": "dysts_hopfield",
+  "maximum_lyapunov_estimated": 0.5684266951234997,
+  "lyapunov_spectrum": [
+    0.07726437124258394,
+    -0.00018152933777384922,
+    -0.29083324580448194,
+    -0.36906925337474944,
+    -0.40604718386075256,
+    -1.4425404449511432
+  ],
+  "kaplan_yorke_dimension": 2.264479110541058,
+  "correlation_dimension": 1.988149295653683,
+  "multiscale_entropy": 0.9160145554679957,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.837377+00:00"
+}

@@ -1,0 +1,52 @@
+{
+  "system_id": "dysts_belousovzhabotinsky",
+  "name": "BelousovZhabotinsky (dysts)",
+  "category": "chaotic",
+  "equations": "BelousovZhabotinsky system (see dysts package for equations)",
+  "parameters": {
+    "c1": -8.03474,
+    "c10": 0.0223915,
+    "c11": 7.53559e-05,
+    "c12": 8.07384e-06,
+    "c13": -0.000499825,
+    "c2": 0.05408,
+    "c3": -0.0115886,
+    "c4": 832.587,
+    "c5": -0.029155,
+    "c6": 0.00321617,
+    "c7": -0.01352,
+    "c8": -0.0831709,
+    "c9": -0.0199985,
+    "ci": 0.000833,
+    "kf": 0.00035,
+    "t0": 2308.62,
+    "y0": 7.72571e-06,
+    "yb1": 6.92813e-07,
+    "yb2": 2.00869,
+    "yb3": 0.01352,
+    "z0": 8.33e-06
+  },
+  "dimension": 3,
+  "description_simple": "A reduced-order model of the BZ reaction that exhibits period doubling. The bifurcation parameter for controlling the onset of chaos is kf. The system undergoes regular cycling when kf=3e-4, and chaotic oscillations when kf=3.5e-4",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.776477+00:00",
+    "uncertain": false
+  }
+}

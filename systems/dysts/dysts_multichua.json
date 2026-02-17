@@ -1,0 +1,49 @@
+{
+  "system_id": "dysts_multichua",
+  "name": "MultiChua (dysts)",
+  "category": "chaotic",
+  "equations": "MultiChua system (see dysts package for equations)",
+  "parameters": {
+    "a": 9,
+    "b": 14.286,
+    "c": [
+      0.0,
+      1.0,
+      2.15,
+      3.6,
+      8.2,
+      13.0
+    ],
+    "m": [
+      -0.14285714,
+      0.28571429,
+      -0.57142857,
+      0.28571429,
+      -0.57142857,
+      0.28571429
+    ]
+  },
+  "dimension": 3,
+  "description_simple": "Multiple interacting Chua electronic circuits.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.857127+00:00",
+    "uncertain": false
+  }
+}

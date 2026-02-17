@@ -1,0 +1,50 @@
+{
+  "system_id": "dysts_catwoplus",
+  "name": "CaTwoPlus (dysts)",
+  "category": "chaotic",
+  "equations": "CaTwoPlus system (see dysts package for equations)",
+  "parameters": {
+    "K2": 0.1,
+    "K5": 0.3194,
+    "Ka": 0.1,
+    "Kd": 1,
+    "Ky": 0.3,
+    "Kz": 0.6,
+    "V0": 2,
+    "V1": 2,
+    "V4": 3,
+    "Vm2": 6,
+    "Vm3": 30,
+    "Vm5": 50,
+    "beta": 0.65,
+    "eps": 13,
+    "k": 10,
+    "kf": 1,
+    "m": 2,
+    "n": 4,
+    "p": 1
+  },
+  "dimension": 3,
+  "description_simple": "Intracellular calcium ion oscillations.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.792139+00:00",
+    "uncertain": false
+  }
+}

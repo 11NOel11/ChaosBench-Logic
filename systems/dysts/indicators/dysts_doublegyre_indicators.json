@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_doublegyre",
+  "maximum_lyapunov_estimated": 0.12185254082886439,
+  "lyapunov_spectrum": [
+    0.06285936079346421,
+    -0.0036702088073069326,
+    -0.06633987533400756
+  ],
+  "kaplan_yorke_dimension": 2.881525629972418,
+  "correlation_dimension": 2.3304138196892192,
+  "multiscale_entropy": 0.66519273658672,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.815957+00:00"
+}

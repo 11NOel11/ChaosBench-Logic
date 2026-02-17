@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-02-16T14:45:35.912946+00:00",
+  "batches": {
+    "batch10_adversarial": {
+      "count": 104,
+      "sha256": "fd3a1e056e9079122e7c4bbb3ae7e7a9b8abec23d5842b47509bedef1c2aaca6"
+    },
+    "batch11_consistency_paraphrase": {
+      "count": 300,
+      "sha256": "45caafef37421e85bfcbbdb0befd914cfb351faa913a821487d209c0bea8dba3"
+    },
+    "batch12_fol_inference": {
+      "count": 121,
+      "sha256": "d87733142fce3493cc503bc82eaaa9c2c5621988fea1302ef3be3298d241b355"
+    },
+    "batch13_extended_systems": {
+      "count": 45,
+      "sha256": "49a5f675312af895faf54e6e9a7bc35141107d1f57bfced99b9b03108485ae3b"
+    },
+    "batch14_cross_indicator": {
+      "count": 70,
+      "sha256": "c2434129682359a9f99c8a4ba867c8cb13a5fdb239c88ee3135bc6932e8dab05"
+    },
+    "batch8_indicator_diagnostics": {
+      "count": 550,
+      "sha256": "e87c378672e30677c5b8e56d37a1f46fcd4040959cebfc6f70f33d98331692ee"
+    },
+    "batch9_regime_transitions": {
+      "count": 68,
+      "sha256": "2e63ebbee85c1763a443e2f2e480051a2f91537746113cd3cdb328e67223f8d0"
+    }
+  },
+  "total_new_questions": 1258,
+  "total_existing_questions": 621,
+  "grand_total": 1879
+}

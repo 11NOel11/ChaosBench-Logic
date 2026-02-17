@@ -3,8 +3,11 @@ name: CI
 on:
   push:
     branches: [ master, main ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ master, main ]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -191,3 +194,114 @@ jobs:
           else:
               print('[OK] All system JSON files are valid')
           VALIDATE_SYSTEMS_EOF
+
+  validate-v2-dataset:
+    name: Validate v2 Dataset
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: |
+          uv sync --all-groups
+
+      - name: Run v2 dataset validation
+        run: |
+          uv run python scripts/validate_v2.py --strict --max-duplicate-questions 200 --skip-tests
+
+  smoke-build-check:
+    name: Smoke Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: |
+          uv sync --all-groups
+
+      - name: Run build dry-run smoke test
+        run: |
+          # TODO: Add --dry-run flag to build_v2_dataset.py
+          # For now, validate config file exists and parses
+          if [ ! -f configs/generation/v2_ci_smoke.yaml ]; then
+            echo "Error: v2_ci_smoke.yaml not found"
+            exit 1
+          fi
+          uv run python -c "import yaml; yaml.safe_load(open('configs/generation/v2_ci_smoke.yaml'))"
+          echo "[OK] Config file parses successfully"
+          echo "[NOTE] Full --dry-run support requires implementation in build_v2_dataset.py"
+
+  release-gates:
+    name: Release Gates
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: |
+          uv sync --all-groups
+
+      - name: Run strict release validation
+        run: |
+          mkdir -p artifacts
+          uv run python scripts/validate_v2.py --strict --max-duplicate-questions 200 --skip-tests | tee artifacts/validate_v2.log
+
+      - name: Generate run manifest smoke artifact
+        run: |
+          uv run python run_benchmark.py --model dummy --mode zeroshot --workers 1 --max-items 10 --out-dir results_ci --clear-checkpoints | tee artifacts/run_benchmark_dummy.log
+          mkdir -p artifacts/run_manifests
+          if ls runs/manifest_*.json 1> /dev/null 2>&1; then cp runs/manifest_*.json artifacts/run_manifests/; fi
+          if [ -f results_ci/dummy_zeroshot/run_manifest.json ]; then cp results_ci/dummy_zeroshot/run_manifest.json artifacts/run_manifests/; fi
+
+      - name: Collect release smoke proof bundle
+        run: |
+          mkdir -p artifacts/release_smoke
+          test -f results_ci/dummy_zeroshot/summary.json
+          test -f results_ci/dummy_zeroshot/run_meta.json
+          cp results_ci/dummy_zeroshot/summary.json artifacts/release_smoke/
+          cp results_ci/dummy_zeroshot/run_meta.json artifacts/release_smoke/
+          if [ -f results_ci/dummy_zeroshot/metrics_overview.csv ]; then cp results_ci/dummy_zeroshot/metrics_overview.csv artifacts/release_smoke/; fi
+
+      - name: Upload release gate artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-gate-artifacts
+          path: artifacts/
+          if-no-files-found: error

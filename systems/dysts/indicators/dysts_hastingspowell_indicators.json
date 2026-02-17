@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_hastingspowell",
+  "maximum_lyapunov_estimated": 0.012532796124563227,
+  "lyapunov_spectrum": [
+    0.008585012825774563,
+    0.005765040490702786,
+    -0.5169232002224432
+  ],
+  "kaplan_yorke_dimension": 2.027757892627057,
+  "correlation_dimension": 1.0147969186008294,
+  "multiscale_entropy": 0.47829796264231095,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.833946+00:00"
+}

@@ -1,0 +1,9 @@
+{
+  "system_id": "circle_map_quasiperiodic",
+  "zero_one_K": 0.8996395481491117,
+  "permutation_entropy": 0.6024134250606715,
+  "megno": -0.00015907171526449227,
+  "system_type": "map",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:38.029553+00:00"
+}

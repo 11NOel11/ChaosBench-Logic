@@ -1,0 +1,15 @@
+{
+  "system_id": "dysts_hypercai",
+  "maximum_lyapunov_estimated": 1.6777584899044127,
+  "lyapunov_spectrum": [
+    1.634443623908957,
+    0.12845528254618424,
+    -0.003328688360603957,
+    -12.747646341795276
+  ],
+  "kaplan_yorke_dimension": 3.138030987910704,
+  "correlation_dimension": 2.3775113946995137,
+  "multiscale_entropy": 1.1155413734604414,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.840284+00:00"
+}

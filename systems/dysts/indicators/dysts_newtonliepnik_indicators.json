@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_newtonliepnik",
+  "maximum_lyapunov_estimated": 0.14945341784639976,
+  "lyapunov_spectrum": [
+    0.1723564207468104,
+    -0.00036976661148194504,
+    -0.7795789311467557
+  ],
+  "kaplan_yorke_dimension": 2.2206092778719664,
+  "correlation_dimension": 2.0051574625339903,
+  "multiscale_entropy": 0.6322918700854281,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.857440+00:00"
+}

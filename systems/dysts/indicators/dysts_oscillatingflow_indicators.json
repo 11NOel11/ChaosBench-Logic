@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_oscillatingflow",
+  "maximum_lyapunov_estimated": 0.13470179997834794,
+  "lyapunov_spectrum": [
+    0.4274159768365289,
+    -0.005029615144529367,
+    -0.43888500460322705
+  ],
+  "kaplan_yorke_dimension": 2.962629189215532,
+  "correlation_dimension": 2.346659533315372,
+  "multiscale_entropy": 0.6177682255070645,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.858190+00:00"
+}

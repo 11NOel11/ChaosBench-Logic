@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_genesiotesi",
+  "maximum_lyapunov_estimated": 0.10509061137519304,
+  "lyapunov_spectrum": [
+    0.09974381765927798,
+    0.00038146676582121423,
+    -0.5282231255530121
+  ],
+  "kaplan_yorke_dimension": 2.1892507433089325,
+  "correlation_dimension": 1.9474141853715994,
+  "multiscale_entropy": 0.7003576241153363,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.828146+00:00"
+}

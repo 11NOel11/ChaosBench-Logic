@@ -1,0 +1,50 @@
+{
+  "system_id": "dysts_catwoplusquasiperiodic",
+  "name": "CaTwoPlusQuasiperiodic (dysts)",
+  "category": "chaotic",
+  "equations": "CaTwoPlusQuasiperiodic system (see dysts package for equations)",
+  "parameters": {
+    "K2": 0.1,
+    "K5": 0.3,
+    "Ka": 0.2,
+    "Kd": 0.5,
+    "Ky": 0.2,
+    "Kz": 0.5,
+    "V0": 2,
+    "V1": 2,
+    "V4": 5,
+    "Vm2": 6,
+    "Vm3": 20,
+    "Vm5": 30,
+    "beta": 0.51,
+    "eps": 0.1,
+    "k": 10,
+    "kf": 1,
+    "m": 2,
+    "n": 4,
+    "p": 2
+  },
+  "dimension": 3,
+  "description_simple": "Intracellular calcium ion oscillations with quasiperiodic parameter values. The original paper also includes parameters for a limit cycle",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.794229+00:00",
+    "uncertain": false
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_moorespiegel",
+  "maximum_lyapunov_estimated": 0.6976623003008144,
+  "lyapunov_spectrum": [
+    0.4074353399833356,
+    -0.022079955878999143,
+    -1.1975751283606624
+  ],
+  "kaplan_yorke_dimension": 2.3217713120052443,
+  "correlation_dimension": 1.8466427700305443,
+  "multiscale_entropy": 0.5401952179209213,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.856759+00:00"
+}

@@ -1,0 +1,15 @@
+{
+  "system_id": "dysts_hyperlu",
+  "maximum_lyapunov_estimated": 1.042961263138283,
+  "lyapunov_spectrum": [
+    1.0855770127041702,
+    0.4753850931706396,
+    0.02849951886859947,
+    -19.313823203887658
+  ],
+  "kaplan_yorke_dimension": 3.0822889656900583,
+  "correlation_dimension": 2.343735648584751,
+  "multiscale_entropy": 1.0455788608813867,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.843875+00:00"
+}

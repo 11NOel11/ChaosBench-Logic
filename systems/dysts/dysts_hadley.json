@@ -1,0 +1,35 @@
+{
+  "system_id": "dysts_hadley",
+  "name": "Hadley (dysts)",
+  "category": "chaotic",
+  "equations": "Hadley system (see dysts package for equations)",
+  "parameters": {
+    "a": 0.2,
+    "b": 4,
+    "f": 9,
+    "g": 1
+  },
+  "dimension": 3,
+  "description_simple": "An atmospheric convective cell.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.831760+00:00",
+    "uncertain": false
+  }
+}

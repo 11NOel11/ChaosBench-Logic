@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_blinkingvortex",
+  "maximum_lyapunov_estimated": 2.863016777441748,
+  "lyapunov_spectrum": [
+    4.877365151111008,
+    -0.0016245138226140734,
+    -5.476774413564737
+  ],
+  "kaplan_yorke_dimension": 2.8911482753116986,
+  "correlation_dimension": 2.212155663068541,
+  "multiscale_entropy": 1.1011364489263011,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.784396+00:00"
+}

@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_forcedfitzhughnagumo",
+  "maximum_lyapunov_estimated": 0.007561278655908403,
+  "lyapunov_spectrum": [
+    0.0006271045837994497,
+    -0.0017541532237019502,
+    -0.9544351506941636
+  ],
+  "kaplan_yorke_dimension": 1.5705852319395741,
+  "correlation_dimension": 1.6159744662497548,
+  "multiscale_entropy": 0.946734422406113,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.825774+00:00"
+}

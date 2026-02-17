@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_rabinovichfabrikant",
+  "maximum_lyapunov_estimated": 0.2541443669572464,
+  "lyapunov_spectrum": [
+    0.24233580922074083,
+    1.7068504600119996e-05,
+    -0.6717710576786404
+  ],
+  "kaplan_yorke_dimension": 2.36076141745315,
+  "correlation_dimension": 2.0781334886735414,
+  "multiscale_entropy": 0.9189339042839536,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.861914+00:00"
+}

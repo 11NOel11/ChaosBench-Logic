@@ -1,0 +1,84 @@
+{
+  "system_id": "dysts_hopfield",
+  "name": "Hopfield (dysts)",
+  "category": "chaotic",
+  "equations": "Hopfield system (see dysts package for equations)",
+  "parameters": {
+    "beta": 0.5,
+    "eps": 10,
+    "k": [
+      [
+        0,
+        -1,
+        0,
+        0,
+        -1,
+        -1
+      ],
+      [
+        0,
+        0,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      [
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        0
+      ],
+      [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0
+      ],
+      [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        0
+      ],
+      [
+        0,
+        -1,
+        -1,
+        -1,
+        0,
+        0
+      ]
+    ],
+    "tau": 2.5
+  },
+  "dimension": 6,
+  "description_simple": "A neural network with frustrated connectivity",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.837375+00:00",
+    "uncertain": false
+  }
+}

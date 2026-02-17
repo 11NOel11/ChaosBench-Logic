@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_arnoldbeltramichildress",
+  "maximum_lyapunov_estimated": 0.3667300080060703,
+  "lyapunov_spectrum": [
+    1.47222087191395,
+    -0.01824039630029517,
+    -2.378562986862767
+  ],
+  "kaplan_yorke_dimension": 2.612281260580053,
+  "correlation_dimension": 1.9304327374472745,
+  "multiscale_entropy": 1.2759526834024162,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.768433+00:00"
+}

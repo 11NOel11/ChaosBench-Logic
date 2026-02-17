@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_itikbankstumor",
+  "maximum_lyapunov_estimated": 0.03621509684991421,
+  "lyapunov_spectrum": [
+    0.022156938955395417,
+    -0.0135394920593605,
+    -0.5610833889492404
+  ],
+  "kaplan_yorke_dimension": 2.0152772613355485,
+  "correlation_dimension": 1.0127192656492157,
+  "multiscale_entropy": 0.5883298730506914,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.851692+00:00"
+}

@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_sakarya",
+  "maximum_lyapunov_estimated": 0.26501036485491514,
+  "lyapunov_spectrum": [
+    0.3080921246264039,
+    0.00035292037656675234,
+    -1.2584697568737606
+  ],
+  "kaplan_yorke_dimension": 2.245095314885476,
+  "correlation_dimension": 2.055704010721625,
+  "multiscale_entropy": 0.6082767822064958,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.863852+00:00"
+}

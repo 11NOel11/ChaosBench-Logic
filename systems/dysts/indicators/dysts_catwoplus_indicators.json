@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_catwoplus",
+  "maximum_lyapunov_estimated": 0.5802865327706731,
+  "lyapunov_spectrum": [
+    0.5788123099350391,
+    0.022652249040266133,
+    -9.284523260554844
+  ],
+  "kaplan_yorke_dimension": 2.0647813731079956,
+  "correlation_dimension": 1.2267327876216785,
+  "multiscale_entropy": 0.5770296569860646,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.792142+00:00"
+}

@@ -196,6 +196,34 @@ python run_benchmark.py --model claude3 --mode cot
 
 # Custom worker count (for rate limiting)
 python run_benchmark.py --model llama3 --mode zeroshot --workers 2
+
+# Distributed sharded run (example: shard 1/4)
+python run_benchmark.py --model gpt4 --mode zeroshot --num-shards 4 --shard-index 0
+
+# Merge shard outputs into canonical run directory
+python scripts/merge_sharded_runs.py --model gpt4 --mode zeroshot --results-dir results
+
+# Each run writes reproducibility manifests to runs/ and results/*/run_manifest.json
+```
+
+### Config-Driven Dataset Builds
+
+```bash
+# Build v2 dataset with default generation recipe
+python scripts/build_v2_dataset.py --config configs/generation/v2_default.yaml
+
+# Validate release gates (strict mode enables contamination check)
+python scripts/validate_v2.py --strict --max-duplicate-questions 200
+```
+
+### Cluster-Scale Evaluations (SLURM)
+
+```bash
+# Dry-run script generation for 6 models x 2 modes, each split into 4 shards
+python scripts/run_cluster_eval.py --dry-run --base-dir results --num-shards 4
+
+# Submit jobs to SLURM
+python scripts/run_cluster_eval.py --submit --base-dir results --num-shards 4
 ```
 
 ---
@@ -468,6 +496,7 @@ See [**docs/CONTRIBUTING.md**](docs/CONTRIBUTING.md) for detailed guidelines on:
 - **[docs/RESULTS.md](docs/RESULTS.md)** - Complete evaluation results with detailed analysis
 - **[docs/API_SETUP.md](docs/API_SETUP.md)** - Comprehensive guide for obtaining and configuring API keys
 - **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Development setup and contribution guidelines
+- **[docs/SCALING_ROADMAP.md](docs/SCALING_ROADMAP.md)** - Major rescale plan and milestones
 - **[LICENSE](LICENSE)** - MIT License (code)
 - **[LICENSE_DATA](LICENSE_DATA)** - CC BY 4.0 (dataset)
 

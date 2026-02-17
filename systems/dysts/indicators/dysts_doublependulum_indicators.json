@@ -1,0 +1,15 @@
+{
+  "system_id": "dysts_doublependulum",
+  "maximum_lyapunov_estimated": 3.985298067514186,
+  "lyapunov_spectrum": [
+    8.464443924343541,
+    0.46411672696182493,
+    -0.17345525567611142,
+    -10.805817517613212
+  ],
+  "kaplan_yorke_dimension": 3.810221473882809,
+  "correlation_dimension": 2.6609798545500714,
+  "multiscale_entropy": 0.5591104791210428,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.817693+00:00"
+}

@@ -1,0 +1,38 @@
+{
+  "system_id": "dysts_hindmarshrose",
+  "name": "HindmarshRose (dysts)",
+  "category": "chaotic",
+  "equations": "HindmarshRose system (see dysts package for equations)",
+  "parameters": {
+    "a": 0.49,
+    "b": 1.0,
+    "c": 0.0322,
+    "d": 1.0,
+    "s": 1.0,
+    "tx": 0.03,
+    "tz": 0.8
+  },
+  "dimension": 3,
+  "description_simple": "A neuron model exhibiting spiking and bursting.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.836258+00:00",
+    "uncertain": false
+  }
+}

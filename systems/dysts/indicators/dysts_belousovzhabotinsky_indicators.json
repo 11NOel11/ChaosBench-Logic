@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_belousovzhabotinsky",
+  "maximum_lyapunov_estimated": 132.08766434104578,
+  "lyapunov_spectrum": [
+    114.64513768787073,
+    -0.4669861532822692,
+    -5529.048679334775
+  ],
+  "kaplan_yorke_dimension": 2.0206505961796535,
+  "correlation_dimension": 0.8599643745060099,
+  "multiscale_entropy": 0.8764191281600929,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.776481+00:00"
+}

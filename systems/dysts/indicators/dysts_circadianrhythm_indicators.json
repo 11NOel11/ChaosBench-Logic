@@ -1,0 +1,16 @@
+{
+  "system_id": "dysts_circadianrhythm",
+  "maximum_lyapunov_estimated": 0.006263277393890506,
+  "lyapunov_spectrum": [
+    0.09298369588063138,
+    0.00046501992305171574,
+    -0.14586025062784352,
+    -0.3598453092044599,
+    -1.091393481159416
+  ],
+  "kaplan_yorke_dimension": 2.640554412377753,
+  "correlation_dimension": 1.6328881174569194,
+  "multiscale_entropy": 0.7054585345031309,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.806511+00:00"
+}
