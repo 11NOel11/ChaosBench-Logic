@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_pehlivanwei",
+  "maximum_lyapunov_estimated": 0.10415076085878888,
+  "lyapunov_spectrum": [
+    0.09512327528959069,
+    0.0015323304198873254,
+    -0.6168618108533457
+  ],
+  "kaplan_yorke_dimension": 2.1563635563177295,
+  "correlation_dimension": 1.7200323215068793,
+  "multiscale_entropy": 0.6547493000137818,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.860388+00:00"
+}

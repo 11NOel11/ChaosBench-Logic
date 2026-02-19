@@ -1,0 +1,39 @@
+{
+  "system_id": "dysts_sakarya",
+  "name": "Sakarya (dysts)",
+  "category": "chaotic",
+  "equations": "Sakarya system (see dysts package for equations)",
+  "parameters": {
+    "a": -1.0,
+    "b": 1.0,
+    "c": 1.0,
+    "h": 1.0,
+    "p": 1.0,
+    "q": 0.4,
+    "r": 0.3,
+    "s": 1.0
+  },
+  "dimension": 3,
+  "description_simple": "An attractor that arises due to merging of two disjoint bistable attractors.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.863848+00:00",
+    "uncertain": false
+  }
+}

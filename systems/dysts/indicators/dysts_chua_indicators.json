@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_chua",
+  "maximum_lyapunov_estimated": 1.2301163591725595,
+  "lyapunov_spectrum": [
+    0.4605474829443073,
+    0.0022048281168492866,
+    -4.319076735248446
+  ],
+  "kaplan_yorke_dimension": 2.10727056025829,
+  "correlation_dimension": 1.7987707234207353,
+  "multiscale_entropy": 1.2693527097629784,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.804316+00:00"
+}

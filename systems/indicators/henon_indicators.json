@@ -1,0 +1,9 @@
+{
+  "system_id": "henon",
+  "zero_one_K": 0.9985187197804584,
+  "permutation_entropy": 0.8836428878454449,
+  "megno": 0.8251604469030943,
+  "system_type": "map",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:36.905601+00:00"
+}

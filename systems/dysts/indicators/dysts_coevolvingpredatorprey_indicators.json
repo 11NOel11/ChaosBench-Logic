@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_coevolvingpredatorprey",
+  "maximum_lyapunov_estimated": 0.00732698039035783,
+  "lyapunov_spectrum": [
+    0.0034879428860592264,
+    0.0017391810332012293,
+    -1.9676998121970224
+  ],
+  "kaplan_yorke_dimension": 2.0026539580881706,
+  "correlation_dimension": 1.453444520919468,
+  "multiscale_entropy": 1.006450625395487,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.808529+00:00"
+}

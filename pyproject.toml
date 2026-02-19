@@ -1,6 +1,6 @@
 [project]
 name = "chaos-logic-bench"
-version = "1.0.0"
+version = "2.2.0"
 description = "ChaosBench-Logic: Benchmarking LLMs on complex reasoning about dynamical systems"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -29,6 +29,10 @@ dependencies = [
     "seaborn>=0.12.0",
     "pandas>=2.0.0",
     "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "pyyaml>=6.0",
+    "python-sat>=0.1.8.dev14",
+    "dysts>=0.9,<1.0",
 ]
 
 [project.urls]
@@ -47,4 +51,14 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
+packages = ["chaosbench", "chaosbench.data", "chaosbench.data.indicators", "chaosbench.data.systems", "chaosbench.logic", "chaosbench.tasks", "chaosbench.eval", "chaosbench.eval.providers", "chaosbench.models", "chaosbench.models.adapters", "chaosbench.quality"]
 py-modules = ["eval_chaosbench", "clients", "run_benchmark"]
+
+[project.scripts]
+chaosbench = "chaosbench.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]

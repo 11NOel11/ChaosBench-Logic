@@ -1,0 +1,42 @@
+{
+  "system_id": "dysts_cellcycle",
+  "name": "CellCycle (dysts)",
+  "category": "chaotic",
+  "equations": "CellCycle system (see dysts package for equations)",
+  "parameters": {
+    "K": 0.01,
+    "Kc": 0.5,
+    "Kd1": 0.02,
+    "Kim": 0.65,
+    "V2": 0.15,
+    "V4": 0.05,
+    "Vm1": 0.3,
+    "Vm3": 0.1,
+    "kd1": 0.001,
+    "vd": 0.025,
+    "vi": 0.05
+  },
+  "dimension": 6,
+  "description_simple": "A simplified model of the cell cycle. The parameter `Kim` controls the bifurcations.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.796516+00:00",
+    "uncertain": false
+  }
+}

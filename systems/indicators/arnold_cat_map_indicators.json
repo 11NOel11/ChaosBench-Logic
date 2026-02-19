@@ -1,0 +1,9 @@
+{
+  "system_id": "arnold_cat_map",
+  "zero_one_K": 0.9949675050178507,
+  "permutation_entropy": 0.9998621780048801,
+  "megno": 1.9249017693883737,
+  "system_type": "map",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:37.484385+00:00"
+}

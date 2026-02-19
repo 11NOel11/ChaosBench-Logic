@@ -1,0 +1,9 @@
+{
+  "system_id": "vdp",
+  "zero_one_K": 0.0010653999751603406,
+  "permutation_entropy": 0.39940996857300476,
+  "megno": -0.33397187289845354,
+  "system_type": "ode",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:36.103828+00:00"
+}

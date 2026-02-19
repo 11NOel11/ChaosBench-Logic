@@ -1,0 +1,35 @@
+{
+  "system_id": "dysts_hyperyan",
+  "name": "HyperYan (dysts)",
+  "category": "chaotic",
+  "equations": "HyperYan system (see dysts package for equations)",
+  "parameters": {
+    "a": 37,
+    "b": 3,
+    "c": 26,
+    "d": 38
+  },
+  "dimension": 4,
+  "description_simple": "A hyperchaotic system.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.850460+00:00",
+    "uncertain": false
+  }
+}

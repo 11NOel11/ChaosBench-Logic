@@ -1,0 +1,40 @@
+{
+  "system_id": "dysts_glycolyticoscillation",
+  "name": "GlycolyticOscillation (dysts)",
+  "category": "chaotic",
+  "equations": "GlycolyticOscillation system (see dysts package for equations)",
+  "parameters": {
+    "d": 0.0,
+    "k": 4.422,
+    "l1": 500000000.0,
+    "l2": 100,
+    "nu": 1.0,
+    "q1": 50,
+    "q2": 0.02,
+    "s1": 22.2222,
+    "s2": 22.2222
+  },
+  "dimension": 3,
+  "description_simple": "A model of feedback in glycolytic reactions. Based on the Monod\u2013Wyman\u2013Changeux model.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.829455+00:00",
+    "uncertain": false
+  }
+}

@@ -1,5 +1,7 @@
 # Published Results
 
+**Note:** These results are from the **v1 dataset** (621 questions, now archived in `data/archive/v1/`). Full evaluation on the v2 dataset (40,886 questions) is pending.
+
 This directory contains the **minimal, verifiable artifacts** used to generate the results tables reported in the main README and documentation.
 
 ## Contents

@@ -1,0 +1,39 @@
+{
+  "system_id": "dysts_itikbankstumor",
+  "name": "ItikBanksTumor (dysts)",
+  "category": "chaotic",
+  "equations": "ItikBanksTumor system (see dysts package for equations)",
+  "parameters": {
+    "a12": 1,
+    "a13": 2.5,
+    "a21": 1.5,
+    "a31": 0.2,
+    "d3": 0.5,
+    "k3": 1,
+    "r2": 0.6,
+    "r3": 4.5
+  },
+  "dimension": 3,
+  "description_simple": "A model of cancer cell populations.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.851690+00:00",
+    "uncertain": false
+  }
+}

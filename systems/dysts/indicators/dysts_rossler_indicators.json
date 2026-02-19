@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_rossler",
+  "maximum_lyapunov_estimated": 0.15059688939547888,
+  "lyapunov_spectrum": [
+    0.0763301393780693,
+    0.007522476799147231,
+    -5.741024338716747
+  ],
+  "kaplan_yorke_dimension": 2.0146095059018845,
+  "correlation_dimension": 1.796820702938341,
+  "multiscale_entropy": 0.605878349292794,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.863081+00:00"
+}

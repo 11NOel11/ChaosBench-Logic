@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_dadras",
+  "maximum_lyapunov_estimated": 0.40591521049520063,
+  "lyapunov_spectrum": [
+    0.47344233096408,
+    0.0064562720284210215,
+    -11.157725546142514
+  ],
+  "kaplan_yorke_dimension": 2.0430103150081735,
+  "correlation_dimension": 1.605056083622306,
+  "multiscale_entropy": 0.8537980405426894,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.812776+00:00"
+}

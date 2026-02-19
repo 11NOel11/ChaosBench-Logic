@@ -1,0 +1,10 @@
+{
+  "model_name": "dummy",
+  "mode": "zeroshot",
+  "max_workers": 1,
+  "num_items_total": 5,
+  "num_items_evaluated": 5,
+  "num_items_unanswered": 0,
+  "num_items_no_gold": 0,
+  "timestamp": "2026-02-17T00:06:04.972921"
+}

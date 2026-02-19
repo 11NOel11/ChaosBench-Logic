@@ -1,0 +1,10 @@
+{
+  "system_id": "kuramoto_sivashinsky",
+  "zero_one_K": 0.0,
+  "permutation_entropy": 0.38950413834332626,
+  "megno": null,
+  "system_type": "ode",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:40.354736+00:00",
+  "megno_failure_reason": "computation_failed_or_invalid"
+}

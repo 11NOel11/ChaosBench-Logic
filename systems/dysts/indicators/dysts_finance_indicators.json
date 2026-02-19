@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_finance",
+  "maximum_lyapunov_estimated": 0.09354106442670211,
+  "lyapunov_spectrum": [
+    0.10708598383274774,
+    0.0009835797228343356,
+    -0.6279525877233353
+  ],
+  "kaplan_yorke_dimension": 2.172040321306389,
+  "correlation_dimension": 1.922279579804101,
+  "multiscale_entropy": 0.7817861077722251,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.821901+00:00"
+}

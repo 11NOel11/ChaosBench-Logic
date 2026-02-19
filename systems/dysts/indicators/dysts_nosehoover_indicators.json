@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_nosehoover",
+  "maximum_lyapunov_estimated": 0.010464383779400952,
+  "lyapunov_spectrum": [
+    0.04757010871740569,
+    0.0013844486958287268,
+    -0.011653762286922777
+  ],
+  "kaplan_yorke_dimension": 6.213204677134776,
+  "correlation_dimension": 1.9624149541987226,
+  "multiscale_entropy": 0.5656074689683536,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.857716+00:00"
+}

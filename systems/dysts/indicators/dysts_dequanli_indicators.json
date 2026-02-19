@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_dequanli",
+  "maximum_lyapunov_estimated": 0.739747976641268,
+  "lyapunov_spectrum": [
+    1.8601963396884453,
+    0.09866428540326228,
+    -2.867185439620747
+  ],
+  "kaplan_yorke_dimension": 2.6848604732863537,
+  "correlation_dimension": 1.9326161168463631,
+  "multiscale_entropy": 0.8319369667525882,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.814676+00:00"
+}

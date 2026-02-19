@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_liddrivencavityflow",
+  "maximum_lyapunov_estimated": 2.172601412109087,
+  "lyapunov_spectrum": [
+    1.00757312,
+    -0.00276829,
+    -1.01941623
+  ],
+  "kaplan_yorke_dimension": 2.9856669109882814,
+  "correlation_dimension": 2.4669485126996986,
+  "multiscale_entropy": 0.7815824521381879,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.852833+00:00"
+}

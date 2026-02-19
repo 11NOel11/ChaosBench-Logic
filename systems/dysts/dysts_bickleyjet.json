@@ -1,0 +1,49 @@
+{
+  "system_id": "dysts_bickleyjet",
+  "name": "BickleyJet (dysts)",
+  "category": "chaotic",
+  "equations": "BickleyJet system (see dysts package for equations)",
+  "parameters": {
+    "ell": 1.77,
+    "eps": [
+      0.0075,
+      0.15,
+      0.3
+    ],
+    "k": [
+      0.313922,
+      0.627845,
+      0.941767
+    ],
+    "omega": 1,
+    "sigma": [
+      9.05854e-06,
+      1.28453e-05,
+      2.88863e-05
+    ],
+    "u": 6.266e-05
+  },
+  "dimension": 3,
+  "description_simple": "A zonal jet passing between two counter rotating vortices. A steady Hamiltonian with a time-dependent perturbation.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.778040+00:00",
+    "uncertain": false
+  }
+}

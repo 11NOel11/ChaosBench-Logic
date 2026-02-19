@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_guckenheimerholmes",
+  "maximum_lyapunov_estimated": 0.7885729042404602,
+  "lyapunov_spectrum": [
+    0.34082003567895874,
+    -0.0032191807339425173,
+    -0.9216135618098852
+  ],
+  "kaplan_yorke_dimension": 2.3663164666051353,
+  "correlation_dimension": 2.072148151317943,
+  "multiscale_entropy": 0.5385101182847213,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.830736+00:00"
+}

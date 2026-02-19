@@ -1,0 +1,9 @@
+{
+  "system_id": "damped_driven_pendulum_nonchaotic",
+  "zero_one_K": 0.0062372408390619395,
+  "permutation_entropy": 0.39672172532758226,
+  "megno": -25.2338144368136,
+  "system_type": "ode",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:33.024943+00:00"
+}

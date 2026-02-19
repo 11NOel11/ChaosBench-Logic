@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_duffing",
+  "maximum_lyapunov_estimated": 0.14026545752865122,
+  "lyapunov_spectrum": [
+    0.09952054532941002,
+    0.0003077550037828977,
+    -0.17595301607629793
+  ],
+  "kaplan_yorke_dimension": 2.561219319140712,
+  "correlation_dimension": 2.019134182605584,
+  "multiscale_entropy": 0.8686568999981737,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.819381+00:00"
+}

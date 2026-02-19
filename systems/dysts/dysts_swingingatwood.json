@@ -1,0 +1,33 @@
+{
+  "system_id": "dysts_swingingatwood",
+  "name": "SwingingAtwood (dysts)",
+  "category": "chaotic",
+  "equations": "SwingingAtwood system (see dysts package for equations)",
+  "parameters": {
+    "m1": 1.0,
+    "m2": 4.5
+  },
+  "dimension": 4,
+  "description_simple": "A mechanical system consisting of two swinging weights connected by ropes and pulleys. This is only chaotic when m2 is sufficiently larger than m1, and there are nonzero initial momenta",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.872599+00:00",
+    "uncertain": false
+  }
+}

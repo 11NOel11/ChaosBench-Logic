@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_isothermalchemical",
+  "maximum_lyapunov_estimated": 0.450090505359164,
+  "lyapunov_spectrum": [
+    0.3365871343421436,
+    -0.05136527222093221,
+    -7.392541736904205
+  ],
+  "kaplan_yorke_dimension": 2.0385823810364654,
+  "correlation_dimension": 1.0903385466106001,
+  "multiscale_entropy": 0.6589422003608746,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.851363+00:00"
+}

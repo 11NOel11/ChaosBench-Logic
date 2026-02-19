@@ -97,6 +97,9 @@ debug_*.jsonl
 AUDIT_REPORT_*.md
 IMPLEMENTATION_SUMMARY_*.md
 
+# Workspace directory (local/non-repo files)
+workspace/
+
 # uv
 .uv/
 # Note: uv.lock should be tracked for reproducibility

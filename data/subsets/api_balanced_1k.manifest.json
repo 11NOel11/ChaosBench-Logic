@@ -1,0 +1,70 @@
+{
+  "created_utc": "2026-02-19T19:27:00.716439+00:00",
+  "size": 1000,
+  "seed": 42,
+  "selection_method": "balanced_by_family",
+  "sha256": "1ac9f1af107b626a",
+  "dataset_global_sha256": "cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279",
+  "label_balance": {
+    "true_count": 498,
+    "false_count": 502,
+    "true_ratio": 0.498
+  },
+  "per_family_counts": {
+    "atomic": {
+      "total": 622,
+      "TRUE": 312,
+      "FALSE": 310
+    },
+    "indicator_diagnostic": {
+      "total": 12,
+      "TRUE": 6,
+      "FALSE": 6
+    },
+    "perturbation": {
+      "total": 48,
+      "TRUE": 24,
+      "FALSE": 24
+    },
+    "multi_hop": {
+      "total": 147,
+      "TRUE": 74,
+      "FALSE": 73
+    },
+    "consistency_paraphrase": {
+      "total": 102,
+      "TRUE": 50,
+      "FALSE": 52
+    },
+    "fol_inference": {
+      "total": 43,
+      "TRUE": 21,
+      "FALSE": 22
+    },
+    "adversarial_misleading": {
+      "total": 12,
+      "TRUE": 6,
+      "FALSE": 6
+    },
+    "adversarial_nearmiss": {
+      "total": 11,
+      "TRUE": 5,
+      "FALSE": 6
+    },
+    "extended_systems": {
+      "total": 1,
+      "TRUE": 0,
+      "FALSE": 1
+    },
+    "regime_transition": {
+      "total": 1,
+      "TRUE": 0,
+      "FALSE": 1
+    },
+    "cross_indicator": {
+      "total": 1,
+      "TRUE": 0,
+      "FALSE": 1
+    }
+  }
+}

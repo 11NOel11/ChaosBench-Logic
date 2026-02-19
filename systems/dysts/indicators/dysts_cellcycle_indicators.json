@@ -1,0 +1,17 @@
+{
+  "system_id": "dysts_cellcycle",
+  "maximum_lyapunov_estimated": 0.010172128409635746,
+  "lyapunov_spectrum": [
+    0.00469985418122158,
+    -0.0003567612310661562,
+    -0.20915644240415007,
+    -0.43394905365820846,
+    -2.850536314608979,
+    -6.767614340964144
+  ],
+  "kaplan_yorke_dimension": 2.020810681242375,
+  "correlation_dimension": 1.7558665560565607,
+  "multiscale_entropy": 1.021736994304444,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.796519+00:00"
+}

@@ -1,0 +1,15 @@
+{
+  "system_id": "dysts_swingingatwood",
+  "maximum_lyapunov_estimated": 1.0111284961954359,
+  "lyapunov_spectrum": [
+    7.735006558021491,
+    3.0380875684439133,
+    -3.002075505122432,
+    -7.664246463289054
+  ],
+  "kaplan_yorke_dimension": 4.0198847313975445,
+  "correlation_dimension": 1.8299454879703774,
+  "multiscale_entropy": null,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.872601+00:00"
+}

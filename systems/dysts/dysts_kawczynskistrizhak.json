@@ -1,0 +1,35 @@
+{
+  "system_id": "dysts_kawczynskistrizhak",
+  "name": "KawczynskiStrizhak (dysts)",
+  "category": "chaotic",
+  "equations": "KawczynskiStrizhak system (see dysts package for equations)",
+  "parameters": {
+    "beta": -0.4,
+    "gamma": 0.49,
+    "kappa": 0.2,
+    "mu": 2.1
+  },
+  "dimension": 3,
+  "description_simple": "A chemical oscillator model describing mixed-modes in the BZ equations.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.852277+00:00",
+    "uncertain": false
+  }
+}

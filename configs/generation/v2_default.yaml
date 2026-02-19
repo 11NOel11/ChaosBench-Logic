@@ -1,0 +1,13 @@
+seed: 42
+template: V2
+
+indicators:
+  seed: 42
+
+adversarial:
+  n_per_type: 50
+  drop_unknown: true
+
+consistency:
+  batch2_take: 50
+  paraphrase_variants: 3

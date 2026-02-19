@@ -1,0 +1,36 @@
+{
+  "system_id": "dysts_duffing",
+  "name": "Duffing (dysts)",
+  "category": "chaotic",
+  "equations": "Duffing system (see dysts package for equations)",
+  "parameters": {
+    "alpha": 1.0,
+    "beta": -1.0,
+    "delta": 0.1,
+    "gamma": 0.35,
+    "omega": 1.4
+  },
+  "dimension": 3,
+  "description_simple": "A monochromatically-forced rigid pendulum, with the nonlinearity approximated as cubic.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.819379+00:00",
+    "uncertain": false
+  }
+}

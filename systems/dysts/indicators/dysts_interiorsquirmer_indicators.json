@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_interiorsquirmer",
+  "maximum_lyapunov_estimated": 0.84473454954854,
+  "lyapunov_spectrum": [
+    0.84473454954854,
+    0.06626639436139446,
+    -0.7318095377786615
+  ],
+  "kaplan_yorke_dimension": 3.244868718449604,
+  "correlation_dimension": 2.4915316423406364,
+  "multiscale_entropy": 0.8772895630687737,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.851140+00:00"
+}

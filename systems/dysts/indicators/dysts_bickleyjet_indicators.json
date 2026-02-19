@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_bickleyjet",
+  "maximum_lyapunov_estimated": 3.0318672544949706e-06,
+  "lyapunov_spectrum": [
+    1.9651794377408363e-07,
+    2.5409880958463764e-09,
+    -9.631983584415862e-08
+  ],
+  "kaplan_yorke_dimension": 4.066710025133773,
+  "correlation_dimension": 2.0025138386006334,
+  "multiscale_entropy": 0.733566708397195,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.778043+00:00"
+}

@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_aizawa",
+  "maximum_lyapunov_estimated": 0.13489555530106362,
+  "lyapunov_spectrum": [
+    0.08947878317195473,
+    0.020305496211675024,
+    -0.3090729926541944
+  ],
+  "kaplan_yorke_dimension": 2.3501297618370773,
+  "correlation_dimension": 1.8926529653780282,
+  "multiscale_entropy": 0.514512246123007,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.760341+00:00"
+}

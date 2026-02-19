@@ -1,0 +1,37 @@
+{
+  "system_id": "dysts_windmireduced",
+  "name": "WindmiReduced (dysts)",
+  "category": "chaotic",
+  "equations": "WindmiReduced system (see dysts package for equations)",
+  "parameters": {
+    "a1": 0.247,
+    "b1": 10.8,
+    "b2": 0.0752,
+    "b3": 1.06,
+    "d1": 2200,
+    "vsw": 5
+  },
+  "dimension": 3,
+  "description_simple": "Energy transfer into the ionosphere and magnetosphere by the solar wind. The parameter vsw controls the onset of chaos.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.875345+00:00",
+    "uncertain": false
+  }
+}

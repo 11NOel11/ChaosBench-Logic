@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_laser",
+  "maximum_lyapunov_estimated": 0.6080602180196161,
+  "lyapunov_spectrum": [
+    0.7637435195473311,
+    0.020943250302999646,
+    -15.909545615344538
+  ],
+  "kaplan_yorke_dimension": 2.049321615812801,
+  "correlation_dimension": 1.7191054642322454,
+  "multiscale_entropy": 1.004437967414151,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.852534+00:00"
+}

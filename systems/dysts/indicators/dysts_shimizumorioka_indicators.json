@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_shimizumorioka",
+  "maximum_lyapunov_estimated": 0.03577425334463406,
+  "lyapunov_spectrum": [
+    0.044032234819090736,
+    -1.3942528300804223e-05,
+    -1.409991553164768
+  ],
+  "kaplan_yorke_dimension": 2.0312187919639926,
+  "correlation_dimension": 1.7168454070369197,
+  "multiscale_entropy": 0.7156563118943259,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.865458+00:00"
+}

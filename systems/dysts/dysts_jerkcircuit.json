@@ -1,0 +1,33 @@
+{
+  "system_id": "dysts_jerkcircuit",
+  "name": "JerkCircuit (dysts)",
+  "category": "chaotic",
+  "equations": "JerkCircuit system (see dysts package for equations)",
+  "parameters": {
+    "eps": 1e-09,
+    "y0": 0.026
+  },
+  "dimension": 3,
+  "description_simple": "An electronic circuit with nonlinearity provided by a diode.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.851981+00:00",
+    "uncertain": false
+  }
+}

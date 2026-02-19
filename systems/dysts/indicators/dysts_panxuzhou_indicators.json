@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_panxuzhou",
+  "maximum_lyapunov_estimated": 0.6132378917107628,
+  "lyapunov_spectrum": [
+    0.8697394318152156,
+    0.01603608355912526,
+    -13.744271396596757
+  ],
+  "kaplan_yorke_dimension": 2.0644468877116084,
+  "correlation_dimension": 0.7715266839229182,
+  "multiscale_entropy": 1.0993195372407014,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.858509+00:00"
+}

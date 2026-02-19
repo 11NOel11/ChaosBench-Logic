@@ -1,0 +1,35 @@
+{
+  "system_id": "dysts_lorenzbounded",
+  "name": "LorenzBounded (dysts)",
+  "category": "chaotic",
+  "equations": "LorenzBounded system (see dysts package for equations)",
+  "parameters": {
+    "beta": 2.667,
+    "r": 64,
+    "rho": 28,
+    "sigma": 10
+  },
+  "dimension": 3,
+  "description_simple": "The Lorenz attractor in the presence of a confining potential.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.854328+00:00",
+    "uncertain": false
+  }
+}

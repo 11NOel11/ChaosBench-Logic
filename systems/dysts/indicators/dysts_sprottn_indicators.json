@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_sprottn",
+  "maximum_lyapunov_estimated": 0.11869612209728901,
+  "lyapunov_spectrum": [
+    0.06095861449194353,
+    6.560209716837452e-05,
+    -2.101648044064128
+  ],
+  "kaplan_yorke_dimension": 2.028951405806632,
+  "correlation_dimension": 1.7798181024992923,
+  "multiscale_entropy": 0.6385218945868028,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.870324+00:00"
+}

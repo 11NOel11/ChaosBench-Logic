@@ -1,0 +1,9 @@
+{
+  "system_id": "rossler",
+  "zero_one_K": 0.04462368714194591,
+  "permutation_entropy": 0.4000085655976585,
+  "megno": 8.116481137893686,
+  "system_type": "ode",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:16.681490+00:00"
+}

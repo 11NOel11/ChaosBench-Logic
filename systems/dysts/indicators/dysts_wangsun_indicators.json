@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_wangsun",
+  "maximum_lyapunov_estimated": 0.06735463002480017,
+  "lyapunov_spectrum": [
+    0.07990874520682271,
+    -0.001043918775422804,
+    -1.3240808432405
+  ],
+  "kaplan_yorke_dimension": 2.0595560098996604,
+  "correlation_dimension": 1.7810104871604908,
+  "multiscale_entropy": 0.9045422097501858,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.874938+00:00"
+}

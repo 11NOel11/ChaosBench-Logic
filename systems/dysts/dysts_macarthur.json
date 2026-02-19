@@ -1,0 +1,115 @@
+{
+  "system_id": "dysts_macarthur",
+  "name": "MacArthur (dysts)",
+  "category": "chaotic",
+  "equations": "MacArthur system (see dysts package for equations)",
+  "parameters": {
+    "c": [
+      [
+        0.04,
+        0.04,
+        0.07,
+        0.04,
+        0.04
+      ],
+      [
+        0.08,
+        0.08,
+        0.08,
+        0.1,
+        0.08
+      ],
+      [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.14
+      ],
+      [
+        0.05,
+        0.03,
+        0.03,
+        0.03,
+        0.03
+      ],
+      [
+        0.07,
+        0.09,
+        0.07,
+        0.07,
+        0.07
+      ]
+    ],
+    "d": 0.25,
+    "k": [
+      [
+        0.39,
+        0.34,
+        0.3,
+        0.24,
+        0.23
+      ],
+      [
+        0.22,
+        0.39,
+        0.34,
+        0.3,
+        0.27
+      ],
+      [
+        0.27,
+        0.22,
+        0.39,
+        0.34,
+        0.3
+      ],
+      [
+        0.3,
+        0.24,
+        0.22,
+        0.39,
+        0.34
+      ],
+      [
+        0.34,
+        0.3,
+        0.22,
+        0.2,
+        0.39
+      ]
+    ],
+    "m": 0.25,
+    "r": 1,
+    "s": [
+      6,
+      10,
+      14,
+      4,
+      9
+    ]
+  },
+  "dimension": 10,
+  "description_simple": "Population abundances in a plankton community, based on MacArthur's consumer resource model. Growth rates are determined using Liebig's law of the maximum",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.856113+00:00",
+    "uncertain": false
+  }
+}

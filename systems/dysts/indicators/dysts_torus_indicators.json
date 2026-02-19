@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_torus",
+  "maximum_lyapunov_estimated": 0.00817284128815307,
+  "lyapunov_spectrum": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "kaplan_yorke_dimension": 2.0,
+  "correlation_dimension": 1.0422059009112339,
+  "multiscale_entropy": 0.47330913201518593,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.873371+00:00"
+}

@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_hindmarshrose",
+  "maximum_lyapunov_estimated": 0.6535393283242747,
+  "lyapunov_spectrum": [
+    0.2621464274609406,
+    0.0017705383465481184,
+    -6.510663065519547
+  ],
+  "kaplan_yorke_dimension": 2.0405369895957373,
+  "correlation_dimension": 1.646027113328854,
+  "multiscale_entropy": 0.8692605688019491,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.836261+00:00"
+}

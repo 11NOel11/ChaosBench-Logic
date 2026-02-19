@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_bouali",
+  "maximum_lyapunov_estimated": 0.06012563518102038,
+  "lyapunov_spectrum": [
+    0.04911273564448129,
+    0.0006869653413631164,
+    -0.22171821407820913
+  ],
+  "kaplan_yorke_dimension": 2.224727237508172,
+  "correlation_dimension": 1.7283783962483246,
+  "multiscale_entropy": 0.7505556173926505,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.786453+00:00"
+}

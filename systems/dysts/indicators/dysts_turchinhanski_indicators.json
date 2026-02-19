@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_turchinhanski",
+  "maximum_lyapunov_estimated": 0.12906862565697674,
+  "lyapunov_spectrum": [
+    0.03719830596656144,
+    -0.181183885924572,
+    -2.522759887828014
+  ],
+  "kaplan_yorke_dimension": 1.2053069221786739,
+  "correlation_dimension": 1.6209562623031344,
+  "multiscale_entropy": 0.4989636261373046,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.874077+00:00"
+}

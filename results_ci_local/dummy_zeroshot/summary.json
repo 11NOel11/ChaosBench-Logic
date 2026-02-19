@@ -1,0 +1,16 @@
+{
+  "overall_accuracy": 1.0,
+  "task_accuracy": {
+    "atomic": 1.0
+  },
+  "bias_error": {},
+  "dialogue_accuracy": null,
+  "contradiction_rate": null,
+  "avg_violations_per_dialogue": 0.0,
+  "violations_breakdown": {
+    "0_violations": 5,
+    "1_violation": 0,
+    "2_violations": 0,
+    "3+_violations": 0
+  }
+}

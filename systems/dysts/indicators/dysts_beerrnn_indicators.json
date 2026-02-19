@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_beerrnn",
+  "maximum_lyapunov_estimated": 0.038767800131815223,
+  "lyapunov_spectrum": [
+    0.016274571192515633,
+    -0.00011803510272572572,
+    -0.5318869010933206
+  ],
+  "kaplan_yorke_dimension": 2.0303797735862443,
+  "correlation_dimension": 1.4274264497038096,
+  "multiscale_entropy": 0.5244807630539362,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.774458+00:00"
+}

@@ -1,0 +1,47 @@
+{
+  "system_id": "dysts_circadianrhythm",
+  "name": "CircadianRhythm (dysts)",
+  "category": "chaotic",
+  "equations": "CircadianRhythm system (see dysts package for equations)",
+  "parameters": {
+    "Ki": 1,
+    "k": 0.5,
+    "k1": 0.3,
+    "k2": 0.15,
+    "kd": 1.4,
+    "kdn": 0.4,
+    "km": 0.4,
+    "ks": 1,
+    "n": 4,
+    "ps": 24,
+    "vc": 2.5,
+    "vd": 6,
+    "vdn": 1.5,
+    "vm": 0.7,
+    "vmax": 4.7,
+    "vmin": 1.0
+  },
+  "dimension": 5,
+  "description_simple": "The Drosophila circadian rhythm under periodic light/dark forcing.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.806508+00:00",
+    "uncertain": false
+  }
+}

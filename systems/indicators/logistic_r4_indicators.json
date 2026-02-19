@@ -1,0 +1,9 @@
+{
+  "system_id": "logistic_r4",
+  "zero_one_K": 0.9968497570439296,
+  "permutation_entropy": 0.8354808086373735,
+  "megno": 1.380305788982237,
+  "system_type": "map",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:36.363466+00:00"
+}

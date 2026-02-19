@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_anishchenkoastakhov",
+  "maximum_lyapunov_estimated": 0.10107726791527546,
+  "lyapunov_spectrum": [
+    0.039777554890210017,
+    0.0008785544495802295,
+    -0.44025308728606666
+  ],
+  "kaplan_yorke_dimension": 2.0916403758729327,
+  "correlation_dimension": 1.934087922565906,
+  "multiscale_entropy": 0.7612343892027325,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.763708+00:00"
+}

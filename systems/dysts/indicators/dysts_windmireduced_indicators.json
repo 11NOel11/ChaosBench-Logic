@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_windmireduced",
+  "maximum_lyapunov_estimated": 0.403521000622694,
+  "lyapunov_spectrum": [
+    0.15595238514031914,
+    9.695760899839663e-05,
+    -1.6450480911820564
+  ],
+  "kaplan_yorke_dimension": 2.0947817139683895,
+  "correlation_dimension": 0.9743571353772181,
+  "multiscale_entropy": 0.5896070173085494,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.875349+00:00"
+}

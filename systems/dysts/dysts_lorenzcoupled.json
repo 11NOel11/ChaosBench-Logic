@@ -1,0 +1,37 @@
+{
+  "system_id": "dysts_lorenzcoupled",
+  "name": "LorenzCoupled (dysts)",
+  "category": "chaotic",
+  "equations": "LorenzCoupled system (see dysts package for equations)",
+  "parameters": {
+    "beta": 2.667,
+    "eps": 2.85,
+    "rho": 28,
+    "rho1": 35,
+    "rho2": 1.15,
+    "sigma": 10
+  },
+  "dimension": 6,
+  "description_simple": "Two coupled Lorenz attractors.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.854732+00:00",
+    "uncertain": false
+  }
+}

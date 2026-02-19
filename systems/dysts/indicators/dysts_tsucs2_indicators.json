@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_tsucs2",
+  "maximum_lyapunov_estimated": 0.13621488344499086,
+  "lyapunov_spectrum": [
+    0.6414001783252772,
+    -0.22409536897391863,
+    -1.3233103558456687
+  ],
+  "kaplan_yorke_dimension": 2.315349160163322,
+  "correlation_dimension": 1.4738205303007272,
+  "multiscale_entropy": 0.3913632586715302,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.873638+00:00"
+}

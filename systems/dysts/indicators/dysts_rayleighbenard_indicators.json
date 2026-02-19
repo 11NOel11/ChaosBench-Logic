@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_rayleighbenard",
+  "maximum_lyapunov_estimated": 1.8138795790741327,
+  "lyapunov_spectrum": [
+    1.7098267053321798,
+    0.3076248958606731,
+    -19.04195798211122
+  ],
+  "kaplan_yorke_dimension": 2.1059475747031655,
+  "correlation_dimension": 1.9218207098924294,
+  "multiscale_entropy": 0.9190517908569512,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.862399+00:00"
+}

@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_jerkcircuit",
+  "maximum_lyapunov_estimated": 0.2922722771543928,
+  "lyapunov_spectrum": [
+    0.394872929553187,
+    0.1849026306096344,
+    -1.1407351759248092
+  ],
+  "kaplan_yorke_dimension": 2.5082428902531144,
+  "correlation_dimension": 1.836822800294913,
+  "multiscale_entropy": 0.38139916676685187,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.851983+00:00"
+}

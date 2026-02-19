@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_rikitakedynamo",
+  "maximum_lyapunov_estimated": 0.1318127385277225,
+  "lyapunov_spectrum": [
+    0.14571192786308473,
+    0.0007222098218782572,
+    -2.1743990404663296
+  ],
+  "kaplan_yorke_dimension": 2.0672834652602137,
+  "correlation_dimension": 1.9056463792003642,
+  "multiscale_entropy": 0.9664471212975273,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.862701+00:00"
+}

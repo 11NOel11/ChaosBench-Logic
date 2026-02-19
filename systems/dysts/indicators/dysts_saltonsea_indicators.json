@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_saltonsea",
+  "maximum_lyapunov_estimated": 1.0702552017260383,
+  "lyapunov_spectrum": [
+    0.3914445015077359,
+    -0.0037578848522063194,
+    -4.592867667006148
+  ],
+  "kaplan_yorke_dimension": 2.0843843542474496,
+  "correlation_dimension": 1.699295461860061,
+  "multiscale_entropy": 0.9335269725171643,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.864333+00:00"
+}

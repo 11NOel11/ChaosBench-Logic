@@ -1,0 +1,9 @@
+{
+  "system_id": "ikeda_map",
+  "zero_one_K": 0.9991611920217804,
+  "permutation_entropy": 0.9258214963586519,
+  "megno": 1.018290730742679,
+  "system_type": "map",
+  "seed": 42,
+  "timestamp": "2026-02-16T10:22:37.202586+00:00"
+}

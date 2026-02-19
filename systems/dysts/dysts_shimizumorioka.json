@@ -1,0 +1,33 @@
+{
+  "system_id": "dysts_shimizumorioka",
+  "name": "ShimizuMorioka (dysts)",
+  "category": "chaotic",
+  "equations": "ShimizuMorioka system (see dysts package for equations)",
+  "parameters": {
+    "a": 0.85,
+    "b": 0.5
+  },
+  "dimension": 3,
+  "description_simple": "A system that bifurcates from a symmetric limit cycle to an asymmetric one, similar to the Lorenz attractor.",
+  "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
+  "truth_assignment": {
+    "Chaotic": true,
+    "Deterministic": true,
+    "PosLyap": true,
+    "Sensitive": true,
+    "StrangeAttr": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false
+  },
+  "provenance": {
+    "source": "dysts",
+    "cite": "arXiv:2110.05266",
+    "dysts_version": "0.96",
+    "import_timestamp": "2026-02-17T12:04:39.865455+00:00",
+    "uncertain": false
+  }
+}

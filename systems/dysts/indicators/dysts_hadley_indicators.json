@@ -1,0 +1,14 @@
+{
+  "system_id": "dysts_hadley",
+  "maximum_lyapunov_estimated": 0.2386587703845738,
+  "lyapunov_spectrum": [
+    0.31166133927315953,
+    -0.0010838827053467116,
+    -0.42739317979015523
+  ],
+  "kaplan_yorke_dimension": 2.7273838319442127,
+  "correlation_dimension": 2.029661693798021,
+  "multiscale_entropy": 0.9351389987191853,
+  "source": "dysts_metadata",
+  "timestamp": "2026-02-17T12:04:39.831762+00:00"
+}
