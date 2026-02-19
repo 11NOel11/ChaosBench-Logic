@@ -1,0 +1,16 @@
+{
+  "schema_version": "v2",
+  "description": "Canonical v2 dataset file list for tooling",
+  "files": [
+    "data/v22_adversarial.jsonl",
+    "data/v22_atomic.jsonl",
+    "data/v22_consistency_paraphrase.jsonl",
+    "data/v22_cross_indicator.jsonl",
+    "data/v22_extended_systems.jsonl",
+    "data/v22_fol_inference.jsonl",
+    "data/v22_indicator_diagnostics.jsonl",
+    "data/v22_multi_hop.jsonl",
+    "data/v22_perturbation_robustness.jsonl",
+    "data/v22_regime_transition.jsonl"
+  ]
+}
