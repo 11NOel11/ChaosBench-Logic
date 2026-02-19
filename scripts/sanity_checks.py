@@ -205,14 +205,22 @@ def main():
     print("# ChaosBench-Logic v2 Sanity Checks")
     print("\nRunning quality and integrity checks on the dataset.")
 
-    # Load all batch files
+    # Load all canonical v2 files
     data_dir = PROJECT_ROOT / "data"
-    all_items = []
-    for batch_file in sorted(data_dir.glob("batch*.jsonl")):
-        items = load_jsonl(batch_file)
-        all_items.extend(items)
+    import json as _json
+    selector_path = data_dir / "canonical_v2_files.json"
+    if selector_path.exists():
+        canonical_files = [PROJECT_ROOT / f for f in _json.loads(selector_path.read_text())["files"]]
+    else:
+        canonical_files = sorted(data_dir.glob("v22_*.jsonl"))
 
-    print(f"\nLoaded {len(all_items)} questions from {len(list(data_dir.glob('batch*.jsonl')))} batches")
+    all_items = []
+    for batch_file in canonical_files:
+        if batch_file.exists():
+            items = load_jsonl(batch_file)
+            all_items.extend(items)
+
+    print(f"\nLoaded {len(all_items)} questions from {len(canonical_files)} canonical files")
 
     # Run checks
     checks = {

@@ -145,15 +145,26 @@ def main():
     print("# ChaosBench-Logic v2 Dataset Analysis")
     print("\nAnalyzing distinctive v2 contributions and dataset composition.")
 
-    # Load all batch files
+    # Load all canonical v2 files
     data_dir = PROJECT_ROOT / "data"
+    selector_path = data_dir / "canonical_v2_files.json"
+    if selector_path.exists():
+        import json as _json
+        canonical_files = [PROJECT_ROOT / f for f in _json.loads(selector_path.read_text())["files"]]
+    else:
+        canonical_files = sorted(data_dir.glob("v22_*.jsonl"))
+
     all_items = []
-    for batch_file in sorted(data_dir.glob("batch*.jsonl")):
-        items = load_jsonl(batch_file)
-        all_items.extend(items)
-        print(f"\nLoaded {batch_file.name}: {len(items)} questions")
+    for batch_file in canonical_files:
+        if batch_file.exists():
+            items = load_jsonl(batch_file)
+            all_items.extend(items)
+            print(f"\nLoaded {batch_file.name}: {len(items)} questions")
 
     print(f"\n**Total questions loaded: {len(all_items)}**")
+    if not all_items:
+        print("\nNo items loaded — skipping analysis.")
+        return
 
     # Run analyses
     analyze_task_family_distribution(all_items)

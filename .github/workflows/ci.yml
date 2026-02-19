@@ -50,8 +50,8 @@ jobs:
               count = sum(1 for line in open(f) if line.strip())
               total += count
               print(f'  {f.name}: {count}')
-          print(f'Total v2.2 questions: {total}')
-          assert total == 21037, f'Expected 21037, got {total}'
+          print(f'Total v2 questions: {total}')
+          assert total == 40886, f'Expected 40886, got {total}'
           "
 
   lint:
@@ -211,7 +211,7 @@ jobs:
               sys.exit(0)
 
           manifest = json.load(open(manifest_path))
-          assert manifest.get('version') == '2.2.0', f"Expected version 2.2.0, got {manifest.get('version')}"
+          assert manifest.get('dataset_release') == 'v2', f"Expected dataset_release='v2', got {manifest.get('dataset_release')!r}"
 
           batches = manifest.get('batches', {})
           for name, info in batches.items():

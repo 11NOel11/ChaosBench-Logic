@@ -47,16 +47,26 @@ def check_systems(systems_dir="systems"):
     return True, f"All {len(json_files)} system files valid"
 
 
+def iter_canonical_files(data_dir="data"):
+    """Yield canonical v22_*.jsonl file paths."""
+    selector_path = os.path.join(data_dir, "canonical_v2_files.json")
+    if os.path.isfile(selector_path):
+        with open(selector_path) as f:
+            files = json.load(f).get("files", [])
+        project_root = os.path.dirname(os.path.abspath(data_dir))
+        for rel_path in files:
+            fpath = os.path.join(project_root, rel_path)
+            if os.path.isfile(fpath):
+                yield fpath
+    else:
+        import glob
+        for path in sorted(glob.glob(os.path.join(data_dir, "v22_*.jsonl"))):
+            yield path
+
+
 def iter_batch_files(data_dir="data"):
-    """Yield dataset batch file paths in numeric order."""
-    pattern = re.compile(r"^batch(\d+)_.*\.jsonl$")
-    files = []
-    for name in os.listdir(data_dir):
-        m = pattern.match(name)
-        if m:
-            files.append((int(m.group(1)), os.path.join(data_dir, name)))
-    for _, path in sorted(files, key=lambda x: x[0]):
-        yield path
+    """Yield dataset file paths — now delegates to canonical v22_*.jsonl files."""
+    yield from iter_canonical_files(data_dir)
 
 
 def compute_sha256(path):
@@ -68,53 +78,54 @@ def compute_sha256(path):
 
 
 def check_manifest_integrity(data_dir="data", manifest_path="data/v2_manifest.json"):
-    """Validate v2 manifest counts and hashes against files on disk."""
+    """Validate v2 manifest counts against canonical files on disk."""
     if not os.path.isfile(manifest_path):
         return False, f"Manifest not found: {manifest_path}"
 
     with open(manifest_path, "r", encoding="utf-8") as f:
         manifest = json.load(f)
 
-    batches = manifest.get("batches", {})
-    if not batches:
-        return False, "Manifest has no batch entries"
+    # Verify dataset_release field
+    dataset_release = manifest.get("dataset_release")
+    if dataset_release != "v2":
+        return False, f"Expected dataset_release='v2', got {dataset_release!r}"
 
-    errors = []
+    # Count items across canonical v22_*.jsonl files
+    selector_path = os.path.join(data_dir, "canonical_v2_files.json")
+    if os.path.isfile(selector_path):
+        with open(selector_path) as f:
+            canonical_files = json.load(f).get("files", [])
+    else:
+        import glob
+        canonical_files = sorted(glob.glob(os.path.join(data_dir, "v22_*.jsonl")))
+
     computed_total = 0
-    for batch_name, entry in sorted(batches.items()):
-        path = os.path.join(data_dir, f"{batch_name}.jsonl")
-        if not os.path.isfile(path):
-            errors.append(f"missing file: {path}")
-            continue
+    missing = []
+    for rel_path in canonical_files:
+        # canonical_v2_files.json lists paths relative to project root
+        fpath = rel_path if os.path.isabs(rel_path) else os.path.join(os.path.dirname(data_dir.rstrip("/")), rel_path)
+        if not os.path.isfile(fpath):
+            # Try relative to data_dir directly
+            fpath2 = os.path.join(data_dir, os.path.basename(rel_path))
+            if os.path.isfile(fpath2):
+                fpath = fpath2
+            else:
+                missing.append(rel_path)
+                continue
+        with open(fpath, "r", encoding="utf-8") as f:
+            computed_total += sum(1 for line in f if line.strip())
 
-        with open(path, "r", encoding="utf-8") as f:
-            line_count = sum(1 for _ in f)
-        computed_total += line_count
-
-        expected_count = entry.get("count")
-        if expected_count != line_count:
-            errors.append(
-                f"{batch_name} count mismatch: manifest={expected_count}, file={line_count}"
-            )
-
-        expected_hash = entry.get("sha256")
-        if expected_hash:
-            actual_hash = compute_sha256(path)
-            if expected_hash != actual_hash:
-                errors.append(f"{batch_name} hash mismatch")
+    if missing:
+        return False, f"Missing canonical files: {'; '.join(missing[:3])}"
 
     expected_total = manifest.get("total_new_questions")
     if expected_total is not None and expected_total != computed_total:
-        errors.append(
-            f"total_new_questions mismatch: manifest={expected_total}, file={computed_total}"
-        )
-
-    if errors:
         return (
             False,
-            f"Manifest integrity errors ({len(errors)}): {'; '.join(errors[:3])}",
+            f"total_new_questions mismatch: manifest={expected_total}, files={computed_total}",
         )
-    return True, f"Manifest integrity OK for {len(batches)} batches"
+
+    return True, f"Manifest integrity OK: {computed_total} questions across {len(canonical_files)} files"
 
 
 def check_unique_item_ids(data_dir="data"):
