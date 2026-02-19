@@ -20,20 +20,18 @@ def test_manifest_integrity_passes_for_matching_counts_and_hashes(tmp_path: Path
     data_dir = tmp_path / "data"
     data_dir.mkdir(parents=True)
 
-    batch_name = "batch8_indicator_diagnostics"
-    batch_path = data_dir / f"{batch_name}.jsonl"
-    _write_jsonl(batch_path, [{"id": "q1", "question": "A", "ground_truth": "TRUE"}])
+    # Use the canonical v22_*.jsonl naming
+    file_path = data_dir / "v22_indicator_diagnostics.jsonl"
+    _write_jsonl(file_path, [{"id": "q1", "question": "A", "ground_truth": "TRUE"}])
 
-    import hashlib
+    # Write a canonical selector so iter_canonical_files finds the file
+    rel = f"data/{file_path.name}"
+    (data_dir / "canonical_v2_files.json").write_text(
+        json.dumps({"files": [rel]}), encoding="utf-8"
+    )
 
-    digest = hashlib.sha256(batch_path.read_bytes()).hexdigest()
     manifest = {
-        "batches": {
-            batch_name: {
-                "count": 1,
-                "sha256": digest,
-            }
-        },
+        "dataset_release": "v2",
         "total_new_questions": 1,
     }
     manifest_path = data_dir / "v2_manifest.json"
@@ -48,11 +46,11 @@ def test_unique_item_ids_fails_on_duplicate(tmp_path: Path):
     data_dir.mkdir(parents=True)
 
     _write_jsonl(
-        data_dir / "batch8_indicator_diagnostics.jsonl",
+        data_dir / "v22_indicator_diagnostics.jsonl",
         [{"id": "q1", "question": "Q1", "ground_truth": "TRUE"}],
     )
     _write_jsonl(
-        data_dir / "batch9_regime_transitions.jsonl",
+        data_dir / "v22_regime_transition.jsonl",
         [{"id": "q1", "question": "Q2", "ground_truth": "FALSE"}],
     )
 
@@ -66,11 +64,11 @@ def test_question_contamination_fails_on_duplicate_question_text(tmp_path: Path)
     data_dir.mkdir(parents=True)
 
     _write_jsonl(
-        data_dir / "batch8_indicator_diagnostics.jsonl",
+        data_dir / "v22_indicator_diagnostics.jsonl",
         [{"id": "q1", "question": "Is this chaotic?", "ground_truth": "TRUE"}],
     )
     _write_jsonl(
-        data_dir / "batch9_regime_transitions.jsonl",
+        data_dir / "v22_regime_transition.jsonl",
         [{"id": "q2", "question": "Is this chaotic?", "ground_truth": "TRUE"}],
     )
 
@@ -83,14 +81,14 @@ def test_question_contamination_respects_duplicate_threshold(tmp_path: Path):
     data_dir.mkdir(parents=True)
 
     _write_jsonl(
-        data_dir / "batch8_indicator_diagnostics.jsonl",
+        data_dir / "v22_indicator_diagnostics.jsonl",
         [
             {"id": "q1", "question": "Repeat me", "ground_truth": "TRUE"},
             {"id": "q2", "question": "Unique", "ground_truth": "TRUE"},
         ],
     )
     _write_jsonl(
-        data_dir / "batch9_regime_transitions.jsonl",
+        data_dir / "v22_regime_transition.jsonl",
         [{"id": "q3", "question": "Repeat me", "ground_truth": "FALSE"}],
     )
 
