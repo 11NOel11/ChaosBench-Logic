@@ -1,0 +1,31 @@
+seed: 42
+template: V2
+
+# CI smoke config: minimal dataset for fast CI validation
+# Uses v2.2 scaled generation (family_targets triggers v2.2 path)
+indicators:
+  seed: 42
+  systems_limit: 5  # Only compute indicators for 5 systems
+
+adversarial:
+  n_per_type: 3  # Minimal adversarial examples
+  drop_unknown: true
+
+consistency:
+  batch2_take: 5  # Only 5 paraphrase base questions
+  paraphrase_variants: 2  # Reduce variants
+
+max_systems: 5  # Cap to 5 systems for fast CI
+
+# v2.2 family targets (minimal for CI smoke)
+family_targets:
+  atomic: 10
+  multi_hop: 10
+  indicator_diagnostics: 15
+  regime_transition: 10
+  fol_inference: 10
+  extended_systems: 5
+  cross_indicator: 10
+  adversarial: 15
+  consistency_paraphrase: 10
+  perturbation_robustness: 15

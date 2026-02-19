@@ -190,7 +190,7 @@ cat .env  # Check file contents
 
 ## Cost Considerations
 
-API costs for running the full benchmark (621 items) vary significantly based on:
+API costs for running the full benchmark vary significantly based on dataset size and configuration:
 - **Current API pricing** (changes frequently - check provider websites)
 - **Prompt mode** (chain-of-thought generates longer outputs than zero-shot)
 - **Model version** (different versions have different pricing tiers)
@@ -200,7 +200,7 @@ API costs for running the full benchmark (621 items) vary significantly based on
 1. Check current pricing at provider dashboards
 2. Estimate ~100-200 tokens input per question (varies by prompt mode)
 3. Estimate ~50-500 tokens output (zeroshot: ~50, CoT: ~200-500)
-4. Multiply by 621 questions
+4. Multiply by number of questions (621 for v1 baseline, 41,507 for full v2)
 
 **Cost-saving tips:**
 - Start with free tiers (Gemini) or cheaper models

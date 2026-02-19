@@ -187,16 +187,16 @@ class TestAllGroundTruthSystems:
                 f"System {system_id} failed validation"
             )
 
-    def test_standard_map_known_inconsistency(self):
-        """standard_map has intentional Chaotic+QuasiPeriodic mixed assignment."""
+    def test_standard_map_now_consistent(self):
+        """standard_map was updated in v2.2 to resolve the mixed phase space inconsistency."""
         systems = _load_all_systems()
         sm = systems["standard_map"]
         assert sm["Chaotic"] == "YES"
-        assert sm["QuasiPeriodic"] == "YES"
-        assert not validate_repair(sm)
+        assert sm["QuasiPeriodic"] == "NO"
+        assert validate_repair(sm)
         repaired, n_flips = repair_assignment(sm)
         assert validate_repair(repaired)
-        assert n_flips >= 1
+        assert n_flips == 0
 
 
 class TestSingleViolationMinimalRepair:

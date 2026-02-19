@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this benchmark in your research, please cite it as below."
 type: software
 title: "ChaosBench-Logic: A Benchmark for Evaluating Large Language Models on Complex Reasoning about Dynamical Systems"
-version: 1.0.0
-date-released: 2025-01-01
+version: 2.0.0
+date-released: 2026-02-18
 url: "https://github.com/11NOel11/ChaosBench-Logic"
 repository-code: "https://github.com/11NOel11/ChaosBench-Logic"
 license: MIT
@@ -26,16 +26,17 @@ keywords:
 abstract: >
   ChaosBench-Logic is a comprehensive benchmark for evaluating Large Language
   Models (LLMs) on complex reasoning tasks involving chaotic and non-chaotic
-  dynamical systems. The benchmark consists of 621 carefully curated questions
-  spanning 30 dynamical systems (27 actively used, 3 reserved for extension) from
-  physics, chemistry, biology, and mathematics. It tests models across 17 task types
-  organized into 7 high-level reasoning categories: atomic facts, logical implications,
-  multi-hop reasoning, cross-system comparison, domain-specific technical reasoning,
-  counterfactual analysis, and multi-turn dialogue. The codebase supports multiple
-  state-of-the-art LLMs (GPT-4, Claude-3.5, Gemini-2.5, LLaMA-3 70B, Mixtral,
-  OpenHermes) in both zero-shot and chain-of-thought modes, providing comprehensive
-  metrics including overall accuracy, dialogue accuracy, task-specific breakdowns,
-  FOL violation detection, and bias analysis.
+  dynamical systems. The benchmark consists of 40,886 v2 questions plus 621
+  archived v1 questions (41,507 total) spanning 165 dynamical systems (30 core
+  + 135 from dysts library) across 10 task families: atomic, multi-hop,
+  indicator diagnostics, regime transition, FOL inference, cross-indicator,
+  extended systems, consistency paraphrase, adversarial, and perturbation
+  robustness. The ontology covers 15 predicates with first-order logic axioms
+  enabling up to 4-hop reasoning chains. The codebase supports multiple
+  state-of-the-art LLMs (GPT-4, Claude-3.5, Gemini-2.5, LLaMA-3 70B) in
+  both zero-shot and chain-of-thought modes, providing comprehensive metrics
+  including overall accuracy, task-specific breakdowns, FOL violation
+  detection, and bias analysis.
 references:
   - type: article
     authors:

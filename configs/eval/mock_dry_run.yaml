@@ -1,0 +1,8 @@
+model: mock
+mode: zeroshot
+data_path: data/ci_smoke/ci_smoke.jsonl
+output_dir: runs/mock_dry_run
+batch_size: 10
+num_workers: 1
+max_retries: 0
+cache_dir: null

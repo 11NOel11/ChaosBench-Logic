@@ -3,6 +3,7 @@
 import re
 from collections import defaultdict
 from dataclasses import dataclass, asdict
+from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from chaosbench.logic.axioms import (
@@ -10,6 +11,13 @@ from chaosbench.logic.axioms import (
     check_fol_violations,
     load_system_ontology,
 )
+
+
+class Outcome(str, Enum):
+    """Three-way evaluation outcome."""
+    VALID_CORRECT = "valid_correct"
+    VALID_INCORRECT = "valid_incorrect"
+    INVALID = "invalid"
 
 
 YES_SET = {"yes", "true", "y", "t"}
@@ -155,6 +163,8 @@ class EvalResult:
         correct: Whether prediction matches gold.
         error_type: Error classification if API call failed.
         question: Original question text.
+        outcome: Three-way outcome (VALID_CORRECT/VALID_INCORRECT/INVALID).
+        group_id: Optional perturbation group identifier for flip rate analysis.
     """
 
     item_id: str
@@ -170,31 +180,54 @@ class EvalResult:
     correct: Optional[bool]
     error_type: Optional[str] = None
     question: Optional[str] = None
+    outcome: Optional[Outcome] = None
+    group_id: Optional[str] = None
 
 
 def compute_summary(results: List[EvalResult]) -> Dict[str, Any]:
     """Compute summary statistics from evaluation results.
 
+    Includes coverage-aware metrics:
+    - coverage: fraction of items with valid (parseable) output
+    - accuracy_valid: accuracy on valid items only
+    - effective_accuracy: coverage * accuracy_valid
+    - invalid_rate: fraction of unparseable outputs
+
     Args:
         results: List of EvalResult objects.
 
     Returns:
-        Dict with keys: overall_accuracy, task_accuracy, dialogue_accuracy,
+        Dict with keys: overall_accuracy, coverage, accuracy_valid,
+        effective_accuracy, invalid_rate, task_accuracy, dialogue_accuracy,
         contradiction_rate, bias_error, avg_violations_per_dialogue,
-        violations_breakdown, and optionally error_breakdown.
+        violations_breakdown, flip_rate, and optionally error_breakdown.
     """
     summary: Dict[str, Any] = {}
 
     total_items = len(results)
     valid = [r for r in results if r.correct is not None]
-    unanswered = [r for r in results if r.correct is None and r.gold is not None]
+    invalid = [r for r in results if r.correct is None and r.pred_raw is not None]
+    unanswered = [r for r in results if r.pred_raw is None or (r.error_type is not None)]
     no_gold = [r for r in results if r.gold is None]
 
     print(f"\n[SUMMARY] Result breakdown:")
     print(f"  Total items: {total_items}")
-    print(f"  Valid (with correct/incorrect): {len(valid)}")
-    print(f"  Unanswered (retries failed): {len(unanswered)}")
+    print(f"  Valid (parsed to TRUE/FALSE): {len(valid)}")
+    print(f"  Invalid (failed to parse): {len(invalid)}")
+    print(f"  Unanswered (API errors): {len(unanswered)}")
     print(f"  No gold label: {len(no_gold)}")
+
+    # Coverage-aware metrics
+    items_with_output = [r for r in results if r.pred_raw is not None and r.gold is not None]
+    if items_with_output:
+        coverage = len(valid) / len(items_with_output)
+        invalid_rate = len(invalid) / len(items_with_output)
+        summary["coverage"] = coverage
+        summary["invalid_rate"] = invalid_rate
+        print(f"\n[COVERAGE] Coverage: {coverage*100:.1f}% | Invalid rate: {invalid_rate*100:.1f}%")
+    else:
+        summary["coverage"] = None
+        summary["invalid_rate"] = None
 
     if unanswered:
         error_counts: Dict[str, int] = defaultdict(int)
@@ -211,7 +244,19 @@ def compute_summary(results: List[EvalResult]) -> Dict[str, Any]:
 
     if valid:
         num_correct = sum(1 for r in valid if r.correct is True)
-        summary["overall_accuracy"] = num_correct / len(valid)
+        accuracy_valid = num_correct / len(valid)
+        summary["accuracy_valid"] = accuracy_valid
+        summary["overall_accuracy"] = accuracy_valid  # Keep for backward compatibility
+
+        # Effective accuracy = coverage * accuracy_valid
+        if summary["coverage"] is not None:
+            summary["effective_accuracy"] = summary["coverage"] * accuracy_valid
+        else:
+            summary["effective_accuracy"] = None
+
+        print(f"\n[ACCURACY] Accuracy (on valid): {accuracy_valid*100:.1f}% ({num_correct}/{len(valid)})")
+        if summary["effective_accuracy"] is not None:
+            print(f"           Effective accuracy (coverage × accuracy): {summary['effective_accuracy']*100:.1f}%")
 
         if summary["overall_accuracy"] == 0.0 and len(valid) > 50:
             print("\nWARNING: Overall accuracy is 0.0% with >50 items!")
@@ -221,9 +266,43 @@ def compute_summary(results: List[EvalResult]) -> Dict[str, Any]:
             print("    - Model responses may not match expected format")
             print(f"    - {len(unanswered)} items had all retries fail\n")
     else:
+        summary["accuracy_valid"] = None
         summary["overall_accuracy"] = None
+        summary["effective_accuracy"] = None
         if total_items > 0:
             print("\nWARNING: No valid items to compute accuracy!")
+
+    # Compute flip rate for perturbation groups
+    flip_rate = _compute_flip_rate(results)
+    if flip_rate is not None:
+        summary["flip_rate"] = flip_rate
+        print(f"\n[FLIP RATE] Perturbation groups: {flip_rate*100:.1f}% had disagreements")
+    else:
+        summary["flip_rate"] = None
+
+    # Compute imbalance-robust metrics
+    balanced_acc = compute_balanced_accuracy(results)
+    mcc = compute_mcc(results)
+    per_class = compute_per_class_metrics(results)
+
+    if balanced_acc is not None:
+        summary["balanced_accuracy"] = balanced_acc
+        print(f"\n[BALANCED METRICS] Balanced accuracy: {balanced_acc*100:.1f}%")
+    else:
+        summary["balanced_accuracy"] = None
+
+    if mcc is not None:
+        summary["mcc"] = mcc
+        print(f"                   MCC: {mcc:.3f}")
+    else:
+        summary["mcc"] = None
+
+    if per_class:
+        summary["per_class_metrics"] = per_class
+        print(f"                   YES - P: {per_class['YES']['precision']:.3f}, R: {per_class['YES']['recall']:.3f}, F1: {per_class['YES']['f1']:.3f}")
+        print(f"                   NO  - P: {per_class['NO']['precision']:.3f}, R: {per_class['NO']['recall']:.3f}, F1: {per_class['NO']['f1']:.3f}")
+    else:
+        summary["per_class_metrics"] = {}
 
     by_task: Dict[str, List[EvalResult]] = defaultdict(list)
     for r in valid:
@@ -367,6 +446,150 @@ def compute_summary(results: List[EvalResult]) -> Dict[str, Any]:
         summary["violations_breakdown"] = {}
 
     return summary
+
+
+def _compute_flip_rate(results: List[EvalResult]) -> Optional[float]:
+    """Compute flip rate across perturbation groups.
+
+    Flip rate = fraction of groups where answers disagree across variants.
+
+    Args:
+        results: List of EvalResult objects.
+
+    Returns:
+        Fraction of groups with disagreements, or None if no groups.
+    """
+    # Group by group_id
+    by_group: Dict[str, List[EvalResult]] = defaultdict(list)
+    for r in results:
+        if r.group_id is not None and r.pred_norm is not None:
+            by_group[r.group_id].append(r)
+
+    if not by_group:
+        return None
+
+    flipped = 0
+    for group_id, group_results in by_group.items():
+        # Check if group has both YES and NO predictions
+        predictions = {r.pred_norm for r in group_results if r.pred_norm is not None}
+        if "YES" in predictions and "NO" in predictions:
+            flipped += 1
+
+    return flipped / len(by_group)
+
+
+def compute_balanced_accuracy(results: List[EvalResult]) -> Optional[float]:
+    """Compute balanced accuracy (average of per-class recall).
+
+    Robust to class imbalance. Balanced accuracy = (TPR + TNR) / 2.
+
+    Args:
+        results: List of EvalResult objects.
+
+    Returns:
+        Balanced accuracy float, or None if insufficient data.
+    """
+    valid = [r for r in results if r.correct is not None and r.gold is not None]
+    if not valid:
+        return None
+
+    # Count by class
+    pos_correct = sum(1 for r in valid if r.gold == "YES" and r.correct is True)
+    pos_total = sum(1 for r in valid if r.gold == "YES")
+    neg_correct = sum(1 for r in valid if r.gold == "NO" and r.correct is True)
+    neg_total = sum(1 for r in valid if r.gold == "NO")
+
+    if pos_total == 0 or neg_total == 0:
+        # Only one class present
+        return None
+
+    tpr = pos_correct / pos_total  # True positive rate (recall for YES)
+    tnr = neg_correct / neg_total  # True negative rate (recall for NO)
+
+    return (tpr + tnr) / 2.0
+
+
+def compute_mcc(results: List[EvalResult]) -> Optional[float]:
+    """Compute Matthews correlation coefficient (MCC).
+
+    MCC is robust to class imbalance and ranges from -1 to +1.
+
+    Args:
+        results: List of EvalResult objects.
+
+    Returns:
+        MCC float, or None if insufficient data.
+    """
+    valid = [r for r in results if r.correct is not None and r.gold is not None]
+    if not valid:
+        return None
+
+    # Confusion matrix counts
+    tp = sum(1 for r in valid if r.gold == "YES" and r.pred_norm == "YES")
+    tn = sum(1 for r in valid if r.gold == "NO" and r.pred_norm == "NO")
+    fp = sum(1 for r in valid if r.gold == "NO" and r.pred_norm == "YES")
+    fn = sum(1 for r in valid if r.gold == "YES" and r.pred_norm == "NO")
+
+    # MCC formula
+    numerator = (tp * tn) - (fp * fn)
+    denominator = ((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)) ** 0.5
+
+    if denominator == 0:
+        return 0.0
+
+    return numerator / denominator
+
+
+def compute_per_class_metrics(results: List[EvalResult]) -> Dict[str, Any]:
+    """Compute per-class precision, recall, and F1.
+
+    Args:
+        results: List of EvalResult objects.
+
+    Returns:
+        Dict with 'YES' and 'NO' class metrics.
+    """
+    valid = [r for r in results if r.correct is not None and r.gold is not None]
+    if not valid:
+        return {}
+
+    # Counts for YES class
+    tp_yes = sum(1 for r in valid if r.gold == "YES" and r.pred_norm == "YES")
+    fp_yes = sum(1 for r in valid if r.gold == "NO" and r.pred_norm == "YES")
+    fn_yes = sum(1 for r in valid if r.gold == "YES" and r.pred_norm == "NO")
+
+    # Counts for NO class
+    tp_no = sum(1 for r in valid if r.gold == "NO" and r.pred_norm == "NO")
+    fp_no = sum(1 for r in valid if r.gold == "YES" and r.pred_norm == "NO")
+    fn_no = sum(1 for r in valid if r.gold == "NO" and r.pred_norm == "YES")
+
+    def safe_div(a, b):
+        return a / b if b > 0 else 0.0
+
+    # YES metrics
+    precision_yes = safe_div(tp_yes, tp_yes + fp_yes)
+    recall_yes = safe_div(tp_yes, tp_yes + fn_yes)
+    f1_yes = safe_div(2 * precision_yes * recall_yes, precision_yes + recall_yes)
+
+    # NO metrics
+    precision_no = safe_div(tp_no, tp_no + fp_no)
+    recall_no = safe_div(tp_no, tp_no + fn_no)
+    f1_no = safe_div(2 * precision_no * recall_no, precision_no + recall_no)
+
+    return {
+        "YES": {
+            "precision": precision_yes,
+            "recall": recall_yes,
+            "f1": f1_yes,
+            "support": tp_yes + fn_yes,
+        },
+        "NO": {
+            "precision": precision_no,
+            "recall": recall_no,
+            "f1": f1_no,
+            "support": tp_no + fn_no,
+        },
+    }
 
 
 def compute_per_task_accuracy(

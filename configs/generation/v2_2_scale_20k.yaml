@@ -1,0 +1,83 @@
+# ChaosBench-Logic v2.2 Phase 1 Scaling Config
+# Target: ~20k-22k total items via template multiplication and 4-hop chains
+# Strategy: Conservative Phase 1 enhancements with proven quality gates
+
+seed: 42
+version: "2.2.0"
+template: "V2"
+
+# System pool settings
+max_systems: null  # null = use all available systems (165)
+
+# Indicator computation settings
+indicators:
+  seed: 42
+
+# Adversarial generation settings
+adversarial:
+  n_per_type: 100  # 2x default (50)
+  drop_unknown: true
+
+# Consistency paraphrase settings
+consistency:
+  batch2_take: 150  # 3x default (50)
+  paraphrase_variants: 3
+
+# Per-system quota configuration
+per_system_items_by_family:
+  atomic: 33              # 11 predicates × 3 templates
+  consistency_paraphrase: 20
+  perturbation_robustness: 32  # 8 predicates × 4 perturbation_types
+  multi_hop: 20
+  fol_inference: 8
+  adversarial: 6
+  indicator_diagnostics: 12
+  cross_indicator: 4
+  regime_transition: 8
+  extended_systems: 4
+
+# Template multiplication settings
+
+# Number of template variants per system-predicate pair for atomic questions
+# Default: 1 (one random template per predicate)
+# Phase 1: 3 (triple the atomic question count)
+# Phase 1b: 4 (quadruple for 20k target)
+# Phase 1c: 5 (5x for final 20k push)
+# Phase 1d: 6 (6x to break 20k barrier)
+templates_per_predicate: 6
+
+# Maximum hop count for multi-hop chains
+# Default: 3 (2-hop and 3-hop chains)
+# Phase 1: 4 (adds 4-hop chains for ~33% increase)
+max_hop_count: 4
+
+# Perturbation multiplier: number of perturbation types applied
+perturbation_multiplier: 4
+
+# Paraphrase variants for consistency questions
+paraphrase_variants: 3
+
+# Family-level target counts (Phase 1 scaling)
+family_targets:
+  atomic: 10890           # 165 systems × 11 predicates × 6 templates
+  perturbation_robustness: 5000  # 3x template multiplication
+  multi_hop: 3500         # +33% via 4-hop chains (from 2631)
+  consistency_paraphrase: 4000   # Increased to compensate dedupe
+  fol_inference: 1200     # +20% (from 1000)
+  adversarial: 1200       # +50% (from 800)
+  indicator_diagnostics: 1500    # Same as before
+  cross_indicator: 300    # Moderate (from 67)
+  regime_transition: 300  # Moderate (from 68)
+  extended_systems: 300   # Moderate (from 45)
+
+# Quality gate thresholds
+quality_gates:
+  max_near_duplicates: 75         # Stricter than full-scale
+  max_label_leaks: 0              # Fail if any label leakage detected
+  class_balance_range: [0.30, 0.70]
+  split_balance_range: [0.35, 0.65]
+  min_items_for_balance_check: 50
+  near_duplicate_jaccard_threshold: 0.85
+
+# Phased build control
+phased_build: false

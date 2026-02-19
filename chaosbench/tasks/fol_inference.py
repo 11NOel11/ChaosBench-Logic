@@ -78,6 +78,24 @@ PREDICATE_DISPLAY = {
     "Random": "random",
     "FixedPointAttr": "having a fixed point attractor",
     "Periodic": "periodic",
+    # v2.2 Extension: New predicates for 4-5 hop chains
+    "Dissipative": "dissipative (volume-contracting)",
+    "Bounded": "bounded",
+    "Mixing": "mixing",
+    "Ergodic": "ergodic",
+    # v2.3 Extension: 12 new predicates from metadata dimensions
+    "HyperChaotic": "hyperchaotic",
+    "Conservative": "conservative (Hamiltonian)",
+    "HighDimensional": "high-dimensional (high Kaplan-Yorke dimension)",
+    "Multifractal": "multifractal",
+    "HighDimSystem": "a high-dimensional system (state space dimension ≥ 4)",
+    "ContinuousTime": "a continuous-time system",
+    "DiscreteTime": "a discrete-time map",
+    "DelaySystem": "a delay differential equation system",
+    "Forced": "externally forced (non-autonomous)",
+    "Autonomous": "autonomous",
+    "StrongMixing": "strongly mixing",
+    "WeakMixing": "weakly mixing",
 }
 
 
@@ -110,6 +128,7 @@ def _generate_implication_questions(
     rules: Dict[str, Dict[str, List[str]]],
     rng: random.Random,
     counter: List[int],
+    cap: int = 700,
 ) -> List[Question]:
     """Generate implication questions: if X is P, must it have Q?"""
     questions: List[Question] = []
@@ -144,32 +163,36 @@ def _generate_implication_questions(
                 ))
 
     rng.shuffle(questions)
-    # Expanded from 30 to 50 to increase batch size (105 questions available)
-    return questions[:50]
+    return questions[:cap]
 
 
 def _generate_exclusion_questions(
+    systems: Dict[str, Dict],
     rules: Dict[str, Dict[str, List[str]]],
+    rng: random.Random,
     counter: List[int],
+    cap: int = 200,
 ) -> List[Question]:
-    """Generate exclusion questions: can a system be both P and Q?"""
-    questions: List[Question] = []
-    seen = set()
+    """Generate exclusion questions: can a system be both P and Q?
 
+    Generates both generic (system-independent) and system-specific variants.
+    """
+    questions: List[Question] = []
+    seen_generic = set()
+
+    # Generic: "Can a system be both P and Q?" — one question per unique pair
     for pred, rule in sorted(rules.items()):
         for excl in rule.get("excludes", []):
             pair = tuple(sorted([pred, excl]))
-            if pair in seen:
+            if pair in seen_generic:
                 continue
-            seen.add(pair)
+            seen_generic.add(pair)
             counter[0] += 1
             p_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
             e_disp = PREDICATE_DISPLAY.get(excl, excl.lower())
             questions.append(Question(
                 item_id=f"fol_excl_{counter[0]:04d}",
-                question_text=(
-                    f"Can a system be both {p_disp} and {e_disp}?"
-                ),
+                question_text=f"Can a system be both {p_disp} and {e_disp}?",
                 system_id="generic",
                 task_family="fol_inference",
                 ground_truth="NO",
@@ -178,19 +201,60 @@ def _generate_exclusion_questions(
                     "question_type": "exclusion",
                     "predicate_a": pred,
                     "predicate_b": excl,
+                    "variant": "generic",
                 },
             ))
 
-    return questions[:25]
+    # System-specific: "Given [name] is P, can it also be Q?"
+    system_ids = sorted(systems.keys())
+    for sid in system_ids:
+        truth = systems[sid].get("truth_assignment", {})
+        name = systems[sid].get("name", sid)
+        for pred, rule in rules.items():
+            if not truth.get(pred, False):
+                continue
+            for excl in rule.get("excludes", []):
+                counter[0] += 1
+                p_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
+                e_disp = PREDICATE_DISPLAY.get(excl, excl.lower())
+                questions.append(Question(
+                    item_id=f"fol_excl_{counter[0]:04d}",
+                    question_text=(
+                        f"Given {name} is {p_disp}, can it also be {e_disp}?"
+                    ),
+                    system_id=sid,
+                    task_family="fol_inference",
+                    ground_truth="NO",
+                    predicates=[pred, excl],
+                    metadata={
+                        "question_type": "exclusion",
+                        "predicate_a": pred,
+                        "predicate_b": excl,
+                        "variant": "system_specific",
+                    },
+                ))
+
+    rng.shuffle(questions)
+    return questions[:cap]
 
 
 def _generate_contrapositive_questions(
+    systems: Dict[str, Dict],
     rules: Dict[str, Dict[str, List[str]]],
+    rng: random.Random,
     counter: List[int],
+    cap: int = 400,
 ) -> List[Question]:
-    """Generate contrapositive questions: if not Q, can it be P?"""
+    """Generate contrapositive questions: if not Q, can it be P?
+
+    Generates both generic and system-specific (modus tollens) variants.
+    Generic: "If a system is not Q, can it be P?" (answer: NO, by contrapositive)
+    System-specific: "Given [name] lacks Q, can it be P?" for systems where
+    truth[req]=False and P→Q exists (answer: NO).
+    """
     questions: List[Question] = []
 
+    # Generic contrapositive: "If a system is not Q, can it be P?"
     for pred, rule in sorted(rules.items()):
         for req in rule.get("requires", []):
             counter[0] += 1
@@ -199,8 +263,7 @@ def _generate_contrapositive_questions(
             questions.append(Question(
                 item_id=f"fol_contra_{counter[0]:04d}",
                 question_text=(
-                    f"If a system is not {req_disp}, can it be "
-                    f"{pred_disp}?"
+                    f"If a system is not {req_disp}, can it be {pred_disp}?"
                 ),
                 system_id="generic",
                 task_family="fol_inference",
@@ -210,10 +273,42 @@ def _generate_contrapositive_questions(
                     "question_type": "contrapositive",
                     "predicate": pred,
                     "required": req,
+                    "variant": "generic",
                 },
             ))
 
-    return questions[:25]
+    # System-specific modus tollens: find systems where req=False but
+    # some other predicate P requires req — "Given [name] lacks Q, can it be P?"
+    system_ids = sorted(systems.keys())
+    for sid in system_ids:
+        truth = systems[sid].get("truth_assignment", {})
+        name = systems[sid].get("name", sid)
+        for pred, rule in rules.items():
+            for req in rule.get("requires", []):
+                if truth.get(req, True):
+                    continue  # req is True in this system — not useful
+                counter[0] += 1
+                pred_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
+                req_disp = PREDICATE_DISPLAY.get(req, req.lower())
+                questions.append(Question(
+                    item_id=f"fol_contra_{counter[0]:04d}",
+                    question_text=(
+                        f"Given {name} is not {req_disp}, can it be {pred_disp}?"
+                    ),
+                    system_id=sid,
+                    task_family="fol_inference",
+                    ground_truth="NO",
+                    predicates=[pred, req],
+                    metadata={
+                        "question_type": "contrapositive",
+                        "predicate": pred,
+                        "required": req,
+                        "variant": "system_specific",
+                    },
+                ))
+
+    rng.shuffle(questions)
+    return questions[:cap]
 
 
 def _generate_chain_questions(
@@ -221,8 +316,15 @@ def _generate_chain_questions(
     rules: Dict[str, Dict[str, List[str]]],
     rng: random.Random,
     counter: List[int],
+    cap: int = 600,
 ) -> List[Question]:
-    """Generate multi-step chain questions."""
+    """Generate multi-step chain questions using all predicates as roots.
+
+    For each system where truth[P]=True, and P requires Q, and Q requires R:
+    generates explicit 2-step reasoning questions. Single-step chains
+    (P→Q) are intentionally NOT generated here to avoid overlap with
+    _generate_implication_questions — only 2-step (P→Q→R) chains are used.
+    """
     questions: List[Question] = []
     system_ids = sorted(systems.keys())
 
@@ -230,42 +332,81 @@ def _generate_chain_questions(
         truth = systems[sid].get("truth_assignment", {})
         name = systems[sid].get("name", sid)
 
-        if not truth.get("Chaotic", False):
-            continue
+        for pred, rule in rules.items():
+            if not truth.get(pred, False):
+                continue
+            pred_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
 
-        for req in rules.get("Chaotic", {}).get("requires", []):
-            counter[0] += 1
-            req_disp = PREDICATE_DISPLAY.get(req, req.lower())
-            questions.append(Question(
-                item_id=f"fol_chain_{counter[0]:04d}",
-                question_text=(
-                    f"If {name} is chaotic, and chaotic systems require "
-                    f"being {req_disp}, does {name} exhibit this property?"
-                ),
-                system_id=sid,
-                task_family="fol_inference",
-                ground_truth="YES",
-                predicates=["Chaotic", req],
-                metadata={
-                    "question_type": "chain",
-                    "chain": ["Chaotic", req],
-                },
-            ))
+            # 2-step requires chains: P → Q → R
+            for q in rule.get("requires", []):
+                if q not in rules:
+                    continue
+                q_disp = PREDICATE_DISPLAY.get(q, q.lower())
+                for r in rules[q].get("requires", []):
+                    counter[0] += 1
+                    r_disp = PREDICATE_DISPLAY.get(r, r.lower())
+                    questions.append(Question(
+                        item_id=f"fol_chain_{counter[0]:04d}",
+                        question_text=(
+                            f"If {name} is {pred_disp}, and systems that are "
+                            f"{pred_disp} must be {q_disp}, and systems that "
+                            f"are {q_disp} must be {r_disp}, does {name} "
+                            f"exhibit {r_disp}?"
+                        ),
+                        system_id=sid,
+                        task_family="fol_inference",
+                        ground_truth="YES",
+                        predicates=[pred, q, r],
+                        metadata={
+                            "question_type": "chain",
+                            "chain": [pred, q, r],
+                            "hop_count": 2,
+                        },
+                    ))
+
+            # 2-step requires-to-excludes chains: P → Q → ¬R (answer: NO)
+            for q in rule.get("requires", []):
+                if q not in rules:
+                    continue
+                q_disp = PREDICATE_DISPLAY.get(q, q.lower())
+                for r in rules[q].get("excludes", []):
+                    counter[0] += 1
+                    r_disp = PREDICATE_DISPLAY.get(r, r.lower())
+                    questions.append(Question(
+                        item_id=f"fol_chain_{counter[0]:04d}",
+                        question_text=(
+                            f"If {name} is {pred_disp}, and systems that are "
+                            f"{pred_disp} must be {q_disp}, and systems that "
+                            f"are {q_disp} cannot be {r_disp}, can {name} "
+                            f"be {r_disp}?"
+                        ),
+                        system_id=sid,
+                        task_family="fol_inference",
+                        ground_truth="NO",
+                        predicates=[pred, q, r],
+                        metadata={
+                            "question_type": "chain",
+                            "chain": [pred, q, r],
+                            "hop_count": 2,
+                            "chain_type": "requires_to_excludes",
+                        },
+                    ))
 
     rng.shuffle(questions)
-    # Expanded from 20 to 30 to increase batch size
-    return questions[:30]
+    return questions[:cap]
 
 
 def _generate_consistency_questions(
     rules: Dict[str, Dict[str, List[str]]],
     rng: random.Random,
     counter: List[int],
+    cap: int = 100,
 ) -> List[Question]:
     """Generate consistency check questions about predicate assignments."""
     questions: List[Question] = []
 
     inconsistent_sets = [
+        # v2.0 / v2.2 core inconsistencies
         ({"Chaotic": True, "Periodic": True, "Deterministic": True},
          "Chaotic, Periodic, and Deterministic"),
         ({"Chaotic": True, "Random": True},
@@ -286,6 +427,27 @@ def _generate_consistency_questions(
          "Periodic and Strange Attractor"),
         ({"Chaotic": True, "PosLyap": False},
          "Chaotic but without positive Lyapunov exponent"),
+        # v2.3 new predicate inconsistencies
+        ({"Conservative": True, "Dissipative": True},
+         "Conservative and Dissipative"),
+        ({"Conservative": True, "StrangeAttr": True},
+         "Conservative and having a Strange Attractor"),
+        ({"HyperChaotic": True, "Conservative": True},
+         "HyperChaotic and Conservative"),
+        ({"ContinuousTime": True, "DiscreteTime": True},
+         "Continuous-Time and Discrete-Time"),
+        ({"Forced": True, "Autonomous": True},
+         "Externally Forced and Autonomous"),
+        ({"HyperChaotic": True, "Periodic": True},
+         "HyperChaotic and Periodic"),
+        ({"StrongMixing": True, "Periodic": True},
+         "Strongly Mixing and Periodic"),
+        ({"WeakMixing": True, "QuasiPeriodic": True},
+         "Weakly Mixing and Quasi-Periodic"),
+        ({"DelaySystem": True, "DiscreteTime": True},
+         "Delay System and Discrete-Time"),
+        ({"Mixing": True, "Periodic": True},
+         "Mixing and Periodic"),
     ]
 
     for assignment, desc in inconsistent_sets:
@@ -307,6 +469,7 @@ def _generate_consistency_questions(
         ))
 
     consistent_sets = [
+        # v2.0 / v2.2 core consistencies
         ({"Chaotic": True, "Deterministic": True, "PosLyap": True,
           "Sensitive": True},
          "Chaotic, Deterministic, Positive Lyapunov, and Sensitive"),
@@ -330,6 +493,30 @@ def _generate_consistency_questions(
          "Fixed Point Attractor, Deterministic, and not Chaotic"),
         ({"Deterministic": True, "Chaotic": False, "Random": False},
          "Deterministic, not Chaotic, not Random"),
+        # v2.3 new predicate consistencies
+        ({"Chaotic": True, "Dissipative": True, "StrangeAttr": True,
+          "Conservative": False},
+         "Chaotic, Dissipative, Strange Attractor, and not Conservative"),
+        ({"Conservative": True, "Bounded": True, "Ergodic": True,
+          "Dissipative": False},
+         "Conservative, Bounded, Ergodic, and not Dissipative"),
+        ({"HyperChaotic": True, "Chaotic": True, "Dissipative": True,
+          "Conservative": False},
+         "HyperChaotic, Chaotic, Dissipative, and not Conservative"),
+        ({"ContinuousTime": True, "DiscreteTime": False, "Autonomous": True},
+         "Continuous-Time, not Discrete-Time, and Autonomous"),
+        ({"DiscreteTime": True, "ContinuousTime": False, "Chaotic": True},
+         "Discrete-Time, not Continuous-Time, and Chaotic"),
+        ({"StrongMixing": True, "WeakMixing": True, "Ergodic": True},
+         "Strongly Mixing, Weakly Mixing, and Ergodic"),
+        ({"DelaySystem": True, "ContinuousTime": True},
+         "Delay System and Continuous-Time"),
+        ({"Forced": True, "Autonomous": False, "ContinuousTime": True},
+         "Forced, not Autonomous, and Continuous-Time"),
+        ({"Chaotic": True, "Mixing": True, "Ergodic": True, "Periodic": False},
+         "Chaotic, Mixing, Ergodic, and not Periodic"),
+        ({"HighDimSystem": True, "ContinuousTime": True, "Chaotic": True},
+         "High-Dimensional System, Continuous-Time, and Chaotic"),
     ]
 
     for assignment, desc in consistent_sets:
@@ -351,18 +538,23 @@ def _generate_consistency_questions(
         ))
 
     rng.shuffle(questions)
-    return questions[:20]
+    return questions[:cap]
 
 
 def generate_fol_questions(
     systems: Dict[str, Dict],
     seed: int = 42,
+    target_count: int = 2000,
 ) -> List[Question]:
     """Generate all FOL inference questions.
 
     Args:
         systems: Dict mapping system_id to system data with truth_assignment.
         seed: Random seed for reproducibility.
+        target_count: Target total number of questions. Caps for each
+            sub-generator are distributed proportionally:
+            implication 35%, chain 30%, contrapositive 20%,
+            exclusion 10%, consistency 5%.
 
     Returns:
         List of Question objects across all FOL question types.
@@ -371,13 +563,21 @@ def generate_fol_questions(
     rules = get_fol_rules()
     counter = [0]
 
-    questions: List[Question] = []
-    questions.extend(_generate_implication_questions(systems, rules, rng, counter))
-    questions.extend(_generate_exclusion_questions(rules, counter))
-    questions.extend(_generate_contrapositive_questions(rules, counter))
-    questions.extend(_generate_chain_questions(systems, rules, rng, counter))
-    questions.extend(_generate_consistency_questions(rules, rng, counter))
+    # Distribute target_count proportionally across question types
+    cap_impl    = int(target_count * 0.35)  # implication  35%
+    cap_chain   = int(target_count * 0.30)  # chain        30%
+    cap_contra  = int(target_count * 0.20)  # contrapositive 20%
+    cap_excl    = int(target_count * 0.10)  # exclusion    10%
+    cap_consist = max(20, target_count - cap_impl - cap_chain - cap_contra - cap_excl)
 
+    questions: List[Question] = []
+    questions.extend(_generate_implication_questions(systems, rules, rng, counter, cap=cap_impl))
+    questions.extend(_generate_exclusion_questions(systems, rules, rng, counter, cap=cap_excl))
+    questions.extend(_generate_contrapositive_questions(systems, rules, rng, counter, cap=cap_contra))
+    questions.extend(_generate_chain_questions(systems, rules, rng, counter, cap=cap_chain))
+    questions.extend(_generate_consistency_questions(rules, rng, counter, cap=cap_consist))
+
+    rng.shuffle(questions)
     return questions
 
 
@@ -389,11 +589,13 @@ class FOLInferenceTask:
         task_family: Always "fol_inference".
         systems: Dict mapping system_id to system data.
         seed: Random seed.
+        target_count: Target number of questions to generate.
     """
 
     task_family: str = "fol_inference"
     systems: Dict[str, Dict] = field(default_factory=dict)
     seed: int = 42
+    target_count: int = 2000
 
     def generate_items(self) -> List[Question]:
         """Generate FOL inference questions.
@@ -403,7 +605,7 @@ class FOLInferenceTask:
         """
         if not self.systems:
             self.systems = _load_systems()
-        return generate_fol_questions(self.systems, self.seed)
+        return generate_fol_questions(self.systems, self.seed, self.target_count)
 
     def score(self, predictions: Dict[str, str]) -> Dict[str, Any]:
         """Score model predictions against ground truth.

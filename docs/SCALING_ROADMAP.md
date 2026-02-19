@@ -1,14 +1,23 @@
-# ChaosBench-Logic Scaling Roadmap (v2.x -> v3)
+# ChaosBench-Logic Future Work / v3 Roadmap
 
-This roadmap defines major rescale initiatives to evolve ChaosBench-Logic from a
-single benchmark release into a repeatable benchmark platform.
+This roadmap defines future initiatives beyond v2.0.0 (40,886 questions, 165 systems).
+Many original v2.x scaling targets have been surpassed.
 
-## North Star
+## Achieved in v2.0.0
 
-- Grow dataset scale from 1,879 to 15,000+ high-quality items.
-- Expand system coverage from 30 to 80+ systems.
-- Run distributed evaluations with shard-native orchestration and canonical merge.
-- Gate releases with strict scientific QA and reproducibility checks.
+- Dataset scaled to 40,886 questions (target was 15,000+)
+- System coverage expanded to 165 systems (30 core + 135 dysts; target was 80+)
+- Quality gates enforced: near-duplicate detection, label leakage scan, class balance
+- 15 predicates with up to 4-hop reasoning chains
+
+## v3 North Star
+
+- 5-hop reasoning chains (requires new axiom edges, e.g., Recurrent predicate)
+- Heldout template population (currently empty set)
+- Extended systems expansion to all 30 core systems
+- Full 15-predicate atomic coverage (regeneration with new predicates)
+- Model evaluation campaign on v2 dataset
+- Distributed evaluation with shard-native orchestration and canonical merge.
 
 ## Workstream A: Dataset Factory at 10x Scale
 

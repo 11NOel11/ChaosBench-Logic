@@ -129,14 +129,29 @@ def generate_near_miss(
     rng = random.Random(seed)
 
     if system_id not in bifurcation_data:
-        ground_truth = "YES" if system_truth.get("Chaotic", False) else "NO"
+        # Fallback: alternate TRUE/FALSE by picking from both true and false predicates.
+        # Avoids the ~93% TRUE bias from always asking "Is X chaotic?" on a corpus
+        # where the vast majority of systems are chaotic.
+        rng_local = random.Random(seed)
+        true_preds = [p for p, v in system_truth.items() if v]
+        false_preds = [p for p, v in system_truth.items() if not v]
+        if true_preds and false_preds and rng_local.random() < 0.5:
+            pred = rng_local.choice(false_preds)
+            ground_truth = "NO"
+        elif true_preds:
+            pred = rng_local.choice(true_preds)
+            ground_truth = "YES"
+        else:
+            pred = "Chaotic"
+            ground_truth = "YES" if system_truth.get("Chaotic", False) else "NO"
+        pred_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
         return Question(
             item_id=f"{system_id}_nearmiss_{seed}",
-            question_text=f"Is the {system_name} system chaotic?",
+            question_text=f"Is the {system_name} system {pred_disp}?",
             system_id=system_id,
             task_family="adversarial_nearmiss",
             ground_truth=ground_truth,
-            predicates=["Chaotic"],
+            predicates=[pred],
             metadata={"adversarial_type": "near_miss", "fallback": True},
         )
 
@@ -155,14 +170,26 @@ def generate_near_miss(
             transition_pairs.append((boundary, chaotic_a, chaotic_b))
 
     if not transition_pairs:
-        ground_truth = "YES" if system_truth.get("Chaotic", False) else "NO"
+        rng_local = random.Random(seed)
+        true_preds = [p for p, v in system_truth.items() if v]
+        false_preds = [p for p, v in system_truth.items() if not v]
+        if true_preds and false_preds and rng_local.random() < 0.5:
+            pred = rng_local.choice(false_preds)
+            ground_truth = "NO"
+        elif true_preds:
+            pred = rng_local.choice(true_preds)
+            ground_truth = "YES"
+        else:
+            pred = "Chaotic"
+            ground_truth = "YES" if system_truth.get("Chaotic", False) else "NO"
+        pred_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
         return Question(
             item_id=f"{system_id}_nearmiss_{seed}",
-            question_text=f"Is the {system_name} system chaotic?",
+            question_text=f"Is the {system_name} system {pred_disp}?",
             system_id=system_id,
             task_family="adversarial_nearmiss",
             ground_truth=ground_truth,
-            predicates=["Chaotic"],
+            predicates=[pred],
             metadata={"adversarial_type": "near_miss", "no_boundary": True},
         )
 

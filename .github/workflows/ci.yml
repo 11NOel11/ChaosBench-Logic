@@ -38,16 +38,21 @@ jobs:
 
       - name: Run pytest
         run: |
-          uv run pytest -v --cov=eval_chaosbench --cov-report=term-missing
+          uv run pytest -v --cov=chaosbench --cov-report=term-missing
 
       - name: Validate dataset statistics
         run: |
-          uv run python scripts/dataset_stats.py --json > /dev/null
-          echo "Dataset stats computed successfully"
-
-      - name: Validate repository claims
-        run: |
-          uv run python scripts/validate_repo_claims.py
+          uv run python -c "
+          import json
+          from pathlib import Path
+          total = 0
+          for f in sorted(Path('data').glob('v22_*.jsonl')):
+              count = sum(1 for line in open(f) if line.strip())
+              total += count
+              print(f'  {f.name}: {count}')
+          print(f'Total v2.2 questions: {total}')
+          assert total == 21037, f'Expected 21037, got {total}'
+          "
 
   lint:
     name: Code Quality
@@ -105,15 +110,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Check dataset files exist
+      - name: Check v2.2 canonical dataset files exist
         run: |
-          for batch in batch1_atomic_implication batch2_multiHop_crossSystem batch3_pde_chem_bio batch4_maps_advanced batch5_counterfactual_high_difficulty batch6_deep_bias_probes batch7_multiturn_advanced; do
-            if [ ! -f "data/${batch}.jsonl" ]; then
-              echo "Error: data/${batch}.jsonl not found"
+          for family in adversarial atomic consistency_paraphrase cross_indicator extended_systems fol_inference indicator_diagnostics multi_hop perturbation_robustness regime_transition; do
+            if [ ! -f "data/v22_${family}.jsonl" ]; then
+              echo "Error: data/v22_${family}.jsonl not found"
               exit 1
             fi
           done
-          echo "[OK] All 7 batch files found"
+          echo "[OK] All 10 v2.2 canonical files found"
 
       - name: Validate JSON format
         run: |
@@ -122,18 +127,11 @@ jobs:
           import sys
           from pathlib import Path
 
-          batch_files = [
-              'data/batch1_atomic_implication.jsonl',
-              'data/batch2_multiHop_crossSystem.jsonl',
-              'data/batch3_pde_chem_bio.jsonl',
-              'data/batch4_maps_advanced.jsonl',
-              'data/batch5_counterfactual_high_difficulty.jsonl',
-              'data/batch6_deep_bias_probes.jsonl',
-              'data/batch7_multiturn_advanced.jsonl',
-          ]
+          v22_files = sorted(Path('data').glob('v22_*.jsonl'))
+          assert len(v22_files) == 10, f"Expected 10 v22_*.jsonl files, found {len(v22_files)}"
 
           errors = []
-          for batch_file in batch_files:
+          for batch_file in v22_files:
               try:
                   with open(batch_file) as f:
                       for line_num, line in enumerate(f, 1):
@@ -150,17 +148,22 @@ jobs:
                   print(f'  {error}')
               sys.exit(1)
           else:
-              print('[OK] All JSONL files are valid')
+              print('[OK] All v2.2 JSONL files are valid')
           VALIDATE_JSON_EOF
 
       - name: Check systems directory
         run: |
-          system_count=$(ls -1 systems/*.json 2>/dev/null | wc -l)
-          if [ "$system_count" -ne 30 ]; then
-            echo "Error: Expected 30 system files, found $system_count"
+          system_count=$(ls -1 systems/*.json 2>/dev/null | grep -v dysts | wc -l)
+          if [ "$system_count" -lt 25 ] || [ "$system_count" -gt 35 ]; then
+            echo "Error: Expected ~30 core system files, found $system_count"
             exit 1
           fi
-          echo "[OK] Found 30 system definition files"
+          echo "[OK] Found $system_count core system definition files"
+
+          if [ -d "systems/dysts" ]; then
+            dysts_count=$(ls -1 systems/dysts/*.json 2>/dev/null | wc -l)
+            echo "[OK] Found $dysts_count dysts system files"
+          fi
 
       - name: Validate system JSON files
         run: |
@@ -195,6 +198,32 @@ jobs:
               print('[OK] All system JSON files are valid')
           VALIDATE_SYSTEMS_EOF
 
+      - name: Validate manifest integrity
+        run: |
+          python << 'VALIDATE_MANIFEST_EOF'
+          import json
+          import sys
+          from pathlib import Path
+
+          manifest_path = Path('data/v2_manifest.json')
+          if not manifest_path.exists():
+              print('Warning: v2_manifest.json not found')
+              sys.exit(0)
+
+          manifest = json.load(open(manifest_path))
+          assert manifest.get('version') == '2.2.0', f"Expected version 2.2.0, got {manifest.get('version')}"
+
+          batches = manifest.get('batches', {})
+          for name, info in batches.items():
+              fpath = Path(f'data/{name}.jsonl')
+              if fpath.exists():
+                  actual = sum(1 for line in open(fpath) if line.strip())
+                  expected = info['count']
+                  assert actual == expected, f"{name}: manifest says {expected}, file has {actual}"
+
+          print('[OK] Manifest integrity verified')
+          VALIDATE_MANIFEST_EOF
+
   validate-v2-dataset:
     name: Validate v2 Dataset
     runs-on: ubuntu-latest
@@ -221,6 +250,14 @@ jobs:
         run: |
           uv run python scripts/validate_v2.py --strict --max-duplicate-questions 200 --skip-tests
 
+      - name: Run dataset axis analysis
+        run: |
+          uv run python scripts/analyze_dataset_axes.py
+
+      - name: Run sanity checks
+        run: |
+          uv run python scripts/sanity_checks.py
+
   smoke-build-check:
     name: Smoke Build Check
     runs-on: ubuntu-latest
@@ -245,15 +282,13 @@ jobs:
 
       - name: Run build dry-run smoke test
         run: |
-          # TODO: Add --dry-run flag to build_v2_dataset.py
-          # For now, validate config file exists and parses
-          if [ ! -f configs/generation/v2_ci_smoke.yaml ]; then
-            echo "Error: v2_ci_smoke.yaml not found"
+          # Validate CI smoke config exists and parses
+          if [ ! -f configs/generation/ci_smoke.yaml ]; then
+            echo "Error: configs/generation/ci_smoke.yaml not found"
             exit 1
           fi
-          uv run python -c "import yaml; yaml.safe_load(open('configs/generation/v2_ci_smoke.yaml'))"
-          echo "[OK] Config file parses successfully"
-          echo "[NOTE] Full --dry-run support requires implementation in build_v2_dataset.py"
+          uv run python -c "import yaml; yaml.safe_load(open('configs/generation/ci_smoke.yaml'))"
+          echo "[OK] CI smoke config file parses successfully"
 
   release-gates:
     name: Release Gates

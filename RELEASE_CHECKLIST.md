@@ -49,16 +49,16 @@ This document outlines the complete release process for ChaosBench-Logic.
 
 ### Version Tagging
 
-- [ ] Update version in `chaosbench/__init__.py` to `2.1.0`
-- [ ] Update version in `pyproject.toml` to `2.1.0`
-- [ ] Commit version bump: `git commit -m "Bump version to 2.1.0"`
-- [ ] Create annotated tag: `git tag -a v2.1.0 -m "Release v2.1.0: Extended dataset and validation"`
-- [ ] Push tag: `git push origin v2.1.0`
+- [ ] Update version in `chaosbench/__init__.py` to `2.2.0`
+- [ ] Update version in `pyproject.toml` to `2.2.0`
+- [ ] Commit version bump: `git commit -m "Bump version to 2.2.0"`
+- [ ] Create annotated tag: `git tag -a v2.2.0 -m "Release v2.2.0: Extended dataset and validation"`
+- [ ] Push tag: `git push origin v2.2.0`
 
 ### GitHub Release
 
-- [ ] Create GitHub release from tag v2.1.0
-- [ ] Release title: "ChaosBench-Logic v2.1.0"
+- [ ] Create GitHub release from tag v2.2.0
+- [ ] Release title: "ChaosBench-Logic v2.2.0"
 - [ ] Release notes include:
   - Summary of changes
   - Dataset statistics
@@ -72,11 +72,11 @@ This document outlines the complete release process for ChaosBench-Logic.
 ### HuggingFace Upload
 
 - [ ] Ensure HuggingFace dataset repo exists: `11NOel11/ChaosBench-Logic`
-- [ ] Update dataset card with v2.1.0 information
+- [ ] Update dataset card with v2.2.0 information
 - [ ] Upload all batch files to HuggingFace
 - [ ] Upload manifest: `v2_manifest.json`
 - [ ] Upload system definitions (if changed)
-- [ ] Tag release on HuggingFace: `v2.1.0`
+- [ ] Tag release on HuggingFace: `v2.2.0`
 - [ ] Verify dataset loads correctly:
   ```python
   from datasets import load_dataset
@@ -108,7 +108,7 @@ This document outlines the complete release process for ChaosBench-Logic.
 
 ### Leaderboard Update
 
-- [ ] If leaderboard exists, add baseline results for v2.1.0
+- [ ] If leaderboard exists, add baseline results for v2.2.0
 - [ ] Document any performance changes from previous version
 - [ ] Update evaluation results in `published_results/` if needed
 
@@ -131,7 +131,7 @@ If critical issues are discovered post-release:
 ### Immediate Response
 
 - [ ] Assess severity and impact
-- [ ] Create hotfix branch from release tag: `git checkout -b hotfix-v2.1.1 v2.1.0`
+- [ ] Create hotfix branch from release tag: `git checkout -b hotfix-v2.1.1 v2.2.0`
 - [ ] Implement minimal fix
 - [ ] Add regression test
 
@@ -168,12 +168,12 @@ ChaosBench-Logic uses semantic versioning:
 - **Minor (2.X.0)**: New features, backward-compatible
 - **Patch (2.1.X)**: Bug fixes, no new features
 
-Current release: **v2.1.0** (minor release with extended dataset and validation)
+Current release: **v2.2.0** (minor release with extended dataset and validation)
 
 ## Release Notes Template
 
 ```markdown
-## ChaosBench-Logic v2.1.0
+## ChaosBench-Logic v2.2.0
 
 **Release Date:** YYYY-MM-DD
 

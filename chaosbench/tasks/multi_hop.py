@@ -23,24 +23,33 @@ Question Types
    deterministic. Systems that are deterministic cannot be random. Therefore,
    can the Lorenz system be random?"
 
-4. **Contrapositive fallacy** (NO):
+4. **4-hop transitive chain** (YES/NO):
+   Tests P→Q→R→S→T chains through four consecutive implications.
+   Example: "The Lorenz system is chaotic. Systems that are chaotic must be
+   deterministic. Systems that are deterministic must be sensitive to initial
+   conditions. Systems that are sensitive must be pointwise unpredictable.
+   Therefore, is the Lorenz system pointwise unpredictable?"
+
+5. **Contrapositive fallacy** (NO):
    Tests understanding that ¬P does not imply ¬Q even if P→Q.
    Example: "If the damped pendulum is NOT chaotic, and chaotic systems require
    positive Lyapunov exponent, does this tell us anything definitive about
    whether it has a positive Lyapunov exponent?"
 
-5. **Modus tollens** (NO):
+6. **Modus tollens** (NO):
    Tests contrapositive: if ¬Q and P→Q, then ¬P.
    Example: "If a system lacks positive Lyapunov exponent, and being chaotic
    requires positive Lyapunov exponent, can it be chaotic?"
 
 Expected Distribution
 ---------------------
-- Total: ~100-150 questions depending on target_count
-- Ground truth balance: Mixed YES/NO based on reasoning type
-- 2-hop questions: majority of dataset
-- 3-hop questions: only for chaotic systems (longest chains available)
+- Total: ~100-3500 questions depending on target_count and max_hop_count
+- Ground truth balance: Mixed YES/NO based on reasoning type (target 30-70%)
+- 2-hop questions: majority of dataset, all systems
+- 3-hop questions: only for chaotic systems (longer chains available)
+- 4-hop questions: only for chaotic systems (longest chains available)
 - Contrapositive questions: for balance and fallacy detection
+- With max_hop_count=4: ~33% increase in question generation capacity
 
 Implementation Notes
 --------------------
@@ -77,6 +86,24 @@ PREDICATE_DISPLAY = {
     "Random": "random",
     "FixedPointAttr": "having a fixed point attractor",
     "Periodic": "periodic",
+    # v2.2 Extension: New predicates for 4-5 hop chains
+    "Dissipative": "dissipative (volume-contracting)",
+    "Bounded": "bounded",
+    "Mixing": "mixing",
+    "Ergodic": "ergodic",
+    # v2.3 Extension: 12 new predicates from metadata dimensions
+    "HyperChaotic": "hyperchaotic",
+    "Conservative": "conservative (Hamiltonian)",
+    "HighDimensional": "high-dimensional (high Kaplan-Yorke dimension)",
+    "Multifractal": "multifractal",
+    "HighDimSystem": "a high-dimensional system (state space dimension ≥ 4)",
+    "ContinuousTime": "a continuous-time system",
+    "DiscreteTime": "a discrete-time map",
+    "DelaySystem": "a delay differential equation system",
+    "Forced": "externally forced (non-autonomous)",
+    "Autonomous": "autonomous",
+    "StrongMixing": "strongly mixing",
+    "WeakMixing": "weakly mixing",
 }
 
 
@@ -172,6 +199,152 @@ def _find_3hop_chains(
                     chains.append((p, q, r, s, "mixed_3hop"))
 
     return chains
+
+
+def _find_4hop_chains(
+    rules: Dict[str, Dict[str, List[str]]]
+) -> List[Tuple[str, str, str, str, str, str]]:
+    """Find all valid 4-hop reasoning chains in the FOL rules.
+
+    Args:
+        rules: FOL rules from get_fol_rules().
+
+    Returns:
+        List of (P, Q, R, S, T, chain_type) tuples where:
+        - P→Q→R→S→T through requires (chain_type="requires_4hop") → YES
+        - P→Q→R→S→¬T through requires then excludes (chain_type="mixed_4hop") → NO
+    """
+    chains = []
+
+    for p, p_rules in rules.items():
+        for q in p_rules.get("requires", []):
+            if q not in rules:
+                continue
+            q_rules = rules[q]
+
+            for r in q_rules.get("requires", []):
+                if r not in rules:
+                    continue
+                r_rules = rules[r]
+
+                for s in r_rules.get("requires", []):
+                    if s not in rules:
+                        continue
+                    s_rules = rules[s]
+
+                    # P→Q→R→S→T (all requires)
+                    for t in s_rules.get("requires", []):
+                        chains.append((p, q, r, s, t, "requires_4hop"))
+
+                    # P→Q→R→S→¬T (last step excludes)
+                    for t in s_rules.get("excludes", []):
+                        chains.append((p, q, r, s, t, "mixed_4hop"))
+
+    return chains
+
+
+def _find_5hop_chains(
+    rules: Dict[str, Dict[str, List[str]]],
+    max_chains: int = 200,
+) -> List[Tuple]:
+    """Find all valid 5-hop reasoning chains in the FOL rules.
+
+    Returns:
+        List of (P, Q, R, S, T, U, chain_type) tuples where:
+        - P→Q→R→S→T→U through requires (chain_type="requires_5hop") → YES
+        - P→Q→R→S→T→¬U through requires then excludes (chain_type="mixed_5hop") → NO
+    """
+    chains = []
+
+    for p, p_rules in rules.items():
+        for q in p_rules.get("requires", []):
+            if q not in rules:
+                continue
+            for r in rules[q].get("requires", []):
+                if r not in rules:
+                    continue
+                for s in rules[r].get("requires", []):
+                    if s not in rules:
+                        continue
+                    for t in rules[s].get("requires", []):
+                        if t not in rules:
+                            continue
+                        for u in rules[t].get("requires", []):
+                            if len(chains) >= max_chains:
+                                return chains
+                            chains.append((p, q, r, s, t, u, "requires_5hop"))
+                        for u in rules[t].get("excludes", []):
+                            if len(chains) >= max_chains:
+                                return chains
+                            chains.append((p, q, r, s, t, u, "mixed_5hop"))
+
+    return chains
+
+
+def _generate_5hop_questions(
+    systems: Dict[str, Dict],
+    rules: Dict[str, Dict[str, List[str]]],
+    rng: random.Random,
+    counter: List[int],
+) -> List[Question]:
+    """Generate 5-hop chain reasoning questions."""
+    questions: List[Question] = []
+    chains = _find_5hop_chains(rules)
+    system_ids = sorted(systems.keys())
+
+    for sid in system_ids:
+        truth = systems[sid].get("truth_assignment", {})
+        name = systems[sid].get("name", sid)
+
+        if not truth.get("Chaotic", False) and not truth.get("HyperChaotic", False):
+            continue  # Only generate for chaotic/hyperchaotic systems
+
+        for p, q, r, s, t, u, chain_type in chains:
+            if not truth.get(p, False):
+                continue
+
+            counter[0] += 1
+            p_disp = PREDICATE_DISPLAY.get(p, p.lower())
+            q_disp = PREDICATE_DISPLAY.get(q, q.lower())
+            r_disp = PREDICATE_DISPLAY.get(r, r.lower())
+            s_disp = PREDICATE_DISPLAY.get(s, s.lower())
+            t_disp = PREDICATE_DISPLAY.get(t, t.lower())
+            u_disp = PREDICATE_DISPLAY.get(u, u.lower())
+
+            if chain_type == "requires_5hop":
+                question_text = (
+                    f"{name} is {p_disp}. Systems that are {p_disp} must be {q_disp}. "
+                    f"Systems that are {q_disp} must be {r_disp}. Systems that are {r_disp} "
+                    f"must be {s_disp}. Systems that are {s_disp} must be {t_disp}. "
+                    f"Therefore, is {name} {u_disp}?"
+                )
+                ground_truth = "YES"
+            else:  # mixed_5hop
+                question_text = (
+                    f"{name} is {p_disp}. Systems that are {p_disp} must be {q_disp}. "
+                    f"Systems that are {q_disp} must be {r_disp}. Systems that are {r_disp} "
+                    f"must be {s_disp}. Systems that are {s_disp} must be {t_disp}. "
+                    f"Systems that are {t_disp} cannot be {u_disp}. "
+                    f"Therefore, can {name} be {u_disp}?"
+                )
+                ground_truth = "NO"
+
+            questions.append(Question(
+                item_id=f"mhop_{counter[0]:04d}",
+                question_text=question_text,
+                system_id=sid,
+                task_family="multi_hop",
+                ground_truth=ground_truth,
+                predicates=[p, q, r, s, t, u],
+                metadata={
+                    "hop_count": 5,
+                    "chain": [p, q, r, s, t, u],
+                    "reasoning_type": chain_type,
+                },
+            ))
+
+    rng.shuffle(questions)
+    return questions
 
 
 def _generate_2hop_questions(
@@ -316,6 +489,83 @@ def _generate_3hop_questions(
     return questions
 
 
+def _generate_4hop_questions(
+    systems: Dict[str, Dict],
+    rules: Dict[str, Dict[str, List[str]]],
+    rng: random.Random,
+    counter: List[int],
+) -> List[Question]:
+    """Generate 4-hop chain reasoning questions.
+
+    Args:
+        systems: Dict mapping system_id to system data.
+        rules: FOL rules from get_fol_rules().
+        rng: Random number generator.
+        counter: Counter for item_id generation.
+
+    Returns:
+        List of 4-hop Question objects.
+    """
+    questions: List[Question] = []
+    chains = _find_4hop_chains(rules)
+    system_ids = sorted(systems.keys())
+
+    # Only generate for chaotic systems (have longest chains)
+    for sid in system_ids:
+        truth = systems[sid].get("truth_assignment", {})
+        name = systems[sid].get("name", sid)
+
+        if not truth.get("Chaotic", False):
+            continue
+
+        for p, q, r, s, t, chain_type in chains:
+            # Only generate if P is true for this system
+            if not truth.get(p, False):
+                continue
+
+            counter[0] += 1
+            p_disp = PREDICATE_DISPLAY.get(p, p.lower())
+            q_disp = PREDICATE_DISPLAY.get(q, q.lower())
+            r_disp = PREDICATE_DISPLAY.get(r, r.lower())
+            s_disp = PREDICATE_DISPLAY.get(s, s.lower())
+            t_disp = PREDICATE_DISPLAY.get(t, t.lower())
+
+            if chain_type == "requires_4hop":
+                # P→Q→R→S→T (YES)
+                question_text = (
+                    f"{name} is {p_disp}. Systems that are {p_disp} must be {q_disp}. "
+                    f"Systems that are {q_disp} must be {r_disp}. Systems that are {r_disp} "
+                    f"must be {s_disp}. Therefore, is {name} {t_disp}?"
+                )
+                ground_truth = "YES"
+            else:  # mixed_4hop
+                # P→Q→R→S→¬T (NO)
+                question_text = (
+                    f"{name} is {p_disp}. Systems that are {p_disp} must be {q_disp}. "
+                    f"Systems that are {q_disp} must be {r_disp}. Systems that are {r_disp} "
+                    f"must be {s_disp}. Systems that are {s_disp} cannot be {t_disp}. "
+                    f"Therefore, can {name} be {t_disp}?"
+                )
+                ground_truth = "NO"
+
+            questions.append(Question(
+                item_id=f"mhop_{counter[0]:04d}",
+                question_text=question_text,
+                system_id=sid,
+                task_family="multi_hop",
+                ground_truth=ground_truth,
+                predicates=[p, q, r, s, t],
+                metadata={
+                    "hop_count": 4,
+                    "chain": [p, q, r, s, t],
+                    "reasoning_type": chain_type,
+                },
+            ))
+
+    rng.shuffle(questions)
+    return questions
+
+
 def _generate_contrapositive_fallacy_questions(
     systems: Dict[str, Dict],
     rules: Dict[str, Dict[str, List[str]]],
@@ -435,10 +685,127 @@ def _generate_modus_tollens_questions(
     return questions
 
 
+def _generate_affirmative_chain_questions(
+    systems: Dict[str, Dict],
+    rules: Dict[str, Dict[str, List[str]]],
+    rng: random.Random,
+    counter: List[int],
+    max_hop_count: int = 3,
+) -> List[Question]:
+    """Generate affirmative chain questions (direct TRUE answers).
+
+    These questions test understanding of direct implications without negation.
+    They balance out the FALSE-heavy contrapositive and modus tollens questions.
+
+    Example: "The Lorenz system is chaotic. Chaotic systems are bounded.
+    Is the Lorenz system bounded?" → YES
+
+    Args:
+        systems: Dict mapping system_id to system data.
+        rules: FOL rules from get_fol_rules().
+        rng: Random number generator.
+        counter: Counter for item_id generation.
+        max_hop_count: Maximum chain length to generate.
+
+    Returns:
+        List of affirmative Question objects (all TRUE/YES).
+    """
+    questions: List[Question] = []
+    system_ids = sorted(systems.keys())
+
+    for sid in system_ids:
+        truth = systems[sid].get("truth_assignment", {})
+        name = systems[sid].get("name", sid)
+
+        # Generate affirmative 2-hop chains
+        for p, p_rules in rules.items():
+            if not truth.get(p, False):
+                continue
+
+            for q in p_rules.get("requires", []):
+                if q not in rules:
+                    continue
+
+                for r in rules[q].get("requires", []):
+                    # Only generate if final conclusion is TRUE
+                    if not truth.get(r, False):
+                        continue
+
+                    counter[0] += 1
+                    p_disp = PREDICATE_DISPLAY.get(p, p.lower())
+                    q_disp = PREDICATE_DISPLAY.get(q, q.lower())
+                    r_disp = PREDICATE_DISPLAY.get(r, r.lower())
+
+                    question_text = (
+                        f"The {name} is {p_disp}. Systems that are {p_disp} must be {q_disp}. "
+                        f"Systems that are {q_disp} must be {r_disp}. Is the {name} {r_disp}?"
+                    )
+
+                    questions.append(Question(
+                        item_id=f"mhop_{counter[0]:04d}",
+                        question_text=question_text,
+                        system_id=sid,
+                        task_family="multi_hop",
+                        ground_truth="YES",
+                        predicates=[p, q, r],
+                        metadata={
+                            "hop_count": 2,
+                            "chain": [p, q, r],
+                            "reasoning_type": "affirmative_2hop",
+                        },
+                    ))
+
+        # Generate affirmative 3-hop chains if max_hop_count >= 3
+        if max_hop_count >= 3:
+            for p, p_rules in rules.items():
+                if not truth.get(p, False):
+                    continue
+
+                for q in p_rules.get("requires", []):
+                    if q not in rules:
+                        continue
+                    for r in rules[q].get("requires", []):
+                        if r not in rules:
+                            continue
+                        for s in rules[r].get("requires", []):
+                            if not truth.get(s, False):
+                                continue
+
+                            counter[0] += 1
+                            p_disp = PREDICATE_DISPLAY.get(p, p.lower())
+                            q_disp = PREDICATE_DISPLAY.get(q, q.lower())
+                            r_disp = PREDICATE_DISPLAY.get(r, r.lower())
+                            s_disp = PREDICATE_DISPLAY.get(s, s.lower())
+
+                            question_text = (
+                                f"The {name} is {p_disp}. Systems that are {p_disp} must be {q_disp}. "
+                                f"Systems that are {q_disp} must be {r_disp}. Systems that are {r_disp} "
+                                f"must be {s_disp}. Is the {name} {s_disp}?"
+                            )
+
+                            questions.append(Question(
+                                item_id=f"mhop_{counter[0]:04d}",
+                                question_text=question_text,
+                                system_id=sid,
+                                task_family="multi_hop",
+                                ground_truth="YES",
+                                predicates=[p, q, r, s],
+                                metadata={
+                                    "hop_count": 3,
+                                    "chain": [p, q, r, s],
+                                    "reasoning_type": "affirmative_3hop",
+                                },
+                            ))
+
+    rng.shuffle(questions)
+    return questions
+
+
 def generate_multi_hop_questions(
     systems: Dict[str, Dict],
     seed: int = 42,
     target_count: int = None,
+    max_hop_count: int = 3,
 ) -> List[Question]:
     """Generate multi-hop FOL reasoning questions.
 
@@ -447,6 +814,8 @@ def generate_multi_hop_questions(
         seed: Random seed for reproducibility.
         target_count: Optional target number of questions. If specified,
             questions are truncated to this count after shuffling.
+        max_hop_count: Maximum chain length (2, 3, 4, or 5). Default 3 for
+            backward compatibility.
 
     Returns:
         List of Question objects with multi-hop reasoning chains.
@@ -459,31 +828,64 @@ def generate_multi_hop_questions(
 
     # Generate all question types
     questions.extend(_generate_2hop_questions(systems, rules, rng, counter))
-    questions.extend(_generate_3hop_questions(systems, rules, rng, counter))
+
+    if max_hop_count >= 3:
+        questions.extend(_generate_3hop_questions(systems, rules, rng, counter))
+
+    if max_hop_count >= 4:
+        questions.extend(_generate_4hop_questions(systems, rules, rng, counter))
+
+    if max_hop_count >= 5:
+        questions.extend(_generate_5hop_questions(systems, rules, rng, counter))
+
+    # Add affirmative chain questions to balance TRUE/FALSE (v2.2 fix for 23.4% TRUE issue)
+    questions.extend(_generate_affirmative_chain_questions(systems, rules, rng, counter, max_hop_count))
+
     questions.extend(_generate_contrapositive_fallacy_questions(systems, rules, rng, counter))
     questions.extend(_generate_modus_tollens_questions(systems, rules, rng, counter))
 
     # Shuffle all questions together
     rng.shuffle(questions)
 
-    # Balance YES/NO by alternating if target_count is specified
+    # Balance TRUE/FALSE to ensure both labels are well-represented (30-70% range)
     if target_count is not None:
-        yes_questions = [q for q in questions if q.ground_truth == "YES"]
-        no_questions = [q for q in questions if q.ground_truth == "NO"]
+        # Normalize ground truth labels (YES → TRUE, NO → FALSE for consistency)
+        true_questions = [q for q in questions if q.ground_truth in ("YES", "TRUE")]
+        false_questions = [q for q in questions if q.ground_truth in ("NO", "FALSE")]
 
-        balanced = []
-        for i in range(max(len(yes_questions), len(no_questions))):
-            if i < len(yes_questions):
-                balanced.append(yes_questions[i])
-            if i < len(no_questions):
-                balanced.append(no_questions[i])
-            if len(balanced) >= target_count:
-                break
+        # Target: aim for 40-60% TRUE (balanced), minimum 30%
+        min_true_pct = 0.30
+        target_true_pct = 0.45  # Slightly favor TRUE to offset historical FALSE bias
 
-        questions = balanced[:target_count]
+        min_true_count = int(target_count * min_true_pct)
+        target_true_count = int(target_count * target_true_pct)
+
+        # Determine actual counts based on availability
+        if len(true_questions) < min_true_count:
+            # Not enough TRUE questions - use all available
+            n_true = len(true_questions)
+            n_false = min(target_count - n_true, len(false_questions))
+        elif len(true_questions) >= target_true_count:
+            # Enough TRUE questions - use target ratio
+            n_true = target_true_count
+            n_false = target_count - n_true
+        else:
+            # Between min and target - use all TRUE available
+            n_true = len(true_questions)
+            n_false = min(target_count - n_true, len(false_questions))
+
+        # Sample and combine
+        sampled_true = true_questions[:n_true]
+        sampled_false = false_questions[:n_false]
+        balanced = sampled_true + sampled_false
 
         # Final shuffle to avoid strict alternation pattern
-        rng.shuffle(questions)
+        rng.shuffle(balanced)
+        questions = balanced[:target_count]
+
+        # Log balance for debugging
+        final_true_count = sum(1 for q in questions if q.ground_truth in ("YES", "TRUE"))
+        final_true_pct = final_true_count / len(questions) * 100 if questions else 0
 
     return questions
 
@@ -497,12 +899,14 @@ class MultiHopTask:
         systems: Dict mapping system_id to system data.
         seed: Random seed for reproducibility.
         target_count: Optional target number of questions to generate.
+        max_hop_count: Maximum chain length (2, 3, or 4).
     """
 
     task_family: str = "multi_hop"
     systems: Dict[str, Dict] = field(default_factory=dict)
     seed: int = 42
     target_count: int = None
+    max_hop_count: int = 3
 
     def generate_items(self) -> List[Question]:
         """Generate multi-hop reasoning questions.
@@ -516,6 +920,7 @@ class MultiHopTask:
             self.systems,
             self.seed,
             self.target_count,
+            self.max_hop_count,
         )
 
     def score(self, predictions: Dict[str, str]) -> Dict[str, Any]:

@@ -15,7 +15,7 @@
     "s2": 22.2222
   },
   "dimension": 3,
-  "description_simple": "A model of feedback in glycolytic reactions. Based on the Monod\u2013Wyman\u2013Changeux model.",
+  "description_simple": "A model of feedback in glycolytic reactions. Based on the Monod–Wyman–Changeux model.",
   "description_complex": "A chaotic dynamical system imported from the dysts package. This system exhibits complex, sensitive dynamics characteristic of deterministic chaos.",
   "truth_assignment": {
     "Chaotic": true,
@@ -28,7 +28,23 @@
     "QuasiPeriodic": false,
     "Random": false,
     "FixedPointAttr": false,
-    "Periodic": false
+    "Periodic": false,
+    "Dissipative": true,
+    "Bounded": true,
+    "Mixing": true,
+    "Ergodic": true,
+    "HyperChaotic": false,
+    "Conservative": false,
+    "HighDimensional": false,
+    "Multifractal": false,
+    "HighDimSystem": false,
+    "ContinuousTime": true,
+    "DiscreteTime": false,
+    "DelaySystem": false,
+    "Forced": false,
+    "Autonomous": true,
+    "StrongMixing": true,
+    "WeakMixing": true
   },
   "provenance": {
     "source": "dysts",

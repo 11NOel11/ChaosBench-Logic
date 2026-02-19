@@ -1,0 +1,34 @@
+# ChaosBench-Logic v2 Full-Scale Generation Config
+# Target: ~25k-30k questions (production scale)
+# Strategy: 4-5x scale on dysts batches, keep core batches stable
+
+seed: 42
+template: V2
+version: "2.1.0"
+
+# Indicator computation settings
+indicators:
+  seed: 42
+
+# Adversarial generation settings
+adversarial:
+  n_per_type: 50
+  drop_unknown: true
+
+# Consistency paraphrase settings
+consistency:
+  batch2_take: 50
+  paraphrase_variants: 3
+
+# Batch-specific target counts
+# Core batches (batch8-14) use defaults
+# Dysts batches (batch15-18) are scaled 4-5x for full production scale
+batches:
+  batch15_atomic_dysts:
+    target_count: 15000  # 5x default (3000)
+  batch16_multi_hop_dysts:
+    target_count: 2500   # 5x default (500)
+  batch17_perturbation_robustness:
+    target_count: 15000  # 5x default (3000)
+  batch18_fol_dysts:
+    target_count: 12000  # ~5x default (2500)

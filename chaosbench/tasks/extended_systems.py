@@ -91,6 +91,11 @@ PREDICATE_DISPLAY = {
     "Random": "random",
     "FixedPointAttr": "having a fixed point attractor",
     "Periodic": "periodic",
+    # v2.2 Extension: New predicates for 4-5 hop chains
+    "Dissipative": "dissipative (volume-contracting)",
+    "Bounded": "bounded",
+    "Mixing": "mixing",
+    "Ergodic": "ergodic",
 }
 
 TARGET_SYSTEMS = [

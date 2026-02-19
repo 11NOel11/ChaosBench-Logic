@@ -1,0 +1,114 @@
+# ChaosBench-Logic v2 Full-Scale Generation Config
+# Target: ~21,000 total items across all families
+# Strategy: Per-system quota generation for scalable families
+
+seed: 42
+version: "2.1.0"
+template: "V2"
+
+# System pool settings
+max_systems: null  # null = use all available systems (165)
+
+# Indicator computation settings
+indicators:
+  seed: 42
+
+# Adversarial generation settings
+adversarial:
+  n_per_type: 50
+  drop_unknown: true
+
+# Consistency paraphrase settings
+consistency:
+  batch2_take: 50
+  paraphrase_variants: 3
+
+# Per-system quota configuration
+# These control how many items each family generates per eligible system
+per_system_items_by_family:
+  atomic: 33              # 11 predicates × 3 template_variants
+  consistency_paraphrase: 20  # ~20 base items × paraphrase_variants each
+  perturbation_robustness: 32 # 8 predicates × 4 perturbation_types
+  multi_hop: 10           # ~10 chains per system
+  fol_inference: 6        # ~6 inference patterns per system
+  adversarial: 5          # ~5 traps per system
+  indicator_diagnostics: 14   # ~14 indicator questions per eligible system
+  cross_indicator: 4      # ~4 cross-indicator questions per eligible system
+  regime_transition: 7    # ~7 regime probes per eligible system
+  extended_systems: 3     # 3 predicates per underrepresented system
+
+# Perturbation multiplier: number of perturbation types applied
+# Types: paraphrase, negation, entity_swap, distractor
+perturbation_multiplier: 4
+
+# Template variants for atomic questions
+template_variants: 3
+
+# Paraphrase variants for consistency questions
+paraphrase_variants: 3
+
+# Family-level target counts (overrides per_system_items when set)
+# These are the maximum items per family; actual count depends on eligible systems
+family_targets:
+  atomic: 5445            # 165 sys × 11 pred × 3 templates
+  consistency_paraphrase: 3300  # 1100 bases × 3 variants
+  perturbation_robustness: 5280 # 165 sys × 8 pred × 4 types
+  multi_hop: 1650         # 165 sys × 10 chains avg
+  fol_inference: 1000     # expanded inference patterns
+  adversarial: 800        # 165 sys × ~5 traps
+  indicator_diagnostics: 1500   # ~110 eligible × 14
+  cross_indicator: 400    # ~110 eligible × ~4
+  regime_transition: 400  # ~60 eligible × ~7
+  extended_systems: 300   # broader coverage
+
+# Heldout systems for split protocol (15 dysts systems)
+# These are reserved for the heldout_systems split
+heldout_system_ids:
+  - dysts_sprotta
+  - dysts_sprottb
+  - dysts_sprottc
+  - dysts_sprottd
+  - dysts_sprotte
+  - dysts_sprottf
+  - dysts_sprottg
+  - dysts_sprotth
+  - dysts_sprotti
+  - dysts_sprottj
+  - dysts_sprottk
+  - dysts_sprottl
+  - dysts_sprottm
+  - dysts_sprottn
+  - dysts_sprotto
+
+# Quality gate thresholds
+quality_gates:
+  max_near_duplicates: 50         # Fail if > 50 near-duplicates (excluding paraphrases)
+  max_label_leaks: 0              # Fail if any label leakage detected
+  class_balance_range: [0.35, 0.65]  # Per-family YES/NO range
+  split_balance_range: [0.40, 0.60]  # Per-split YES/NO range
+  min_items_for_balance_check: 20    # Only check balance for families with >= N items
+  near_duplicate_jaccard_threshold: 0.85  # Jaccard similarity threshold
+
+# Eval subset definitions
+eval_subsets:
+  api_smoke:
+    size: 100
+    description: "CI sanity check"
+  api_core_1k:
+    size: 1000
+    description: "Development iteration"
+  api_hard_500:
+    size: 500
+    splits: ["hard"]
+    description: "Adversarial testing"
+  api_robust_500:
+    size: 500
+    splits: ["robustness"]
+    description: "Robustness testing"
+  api_full:
+    size: null  # all items
+    description: "Publication benchmarking"
+
+# Phased build control
+# Set to true to stop after each phase for quality review
+phased_build: false
