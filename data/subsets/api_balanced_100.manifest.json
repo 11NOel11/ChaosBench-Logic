@@ -1,0 +1,11 @@
+{
+  "size": 100,
+  "seed": 42,
+  "balance": true,
+  "sha256": "f9ff280fc8c2dfbac8be044a4a595934629b688a8b1e733dd384bdf01aa43d6f",
+  "label_balance": {
+    "true_count": 43,
+    "false_count": 57,
+    "true_ratio": 0.43
+  }
+}

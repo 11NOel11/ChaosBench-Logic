@@ -1,0 +1,70 @@
+{
+  "created_utc": "2026-02-19T19:27:12.400896+00:00",
+  "size": 5000,
+  "seed": 42,
+  "selection_method": "balanced_by_family",
+  "sha256": "de9b10fca80b6dae",
+  "dataset_global_sha256": "cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279",
+  "label_balance": {
+    "true_count": 2497,
+    "false_count": 2503,
+    "true_ratio": 0.4994
+  },
+  "per_family_counts": {
+    "atomic": {
+      "total": 3097,
+      "TRUE": 1548,
+      "FALSE": 1549
+    },
+    "fol_inference": {
+      "total": 214,
+      "TRUE": 107,
+      "FALSE": 107
+    },
+    "adversarial_nearmiss": {
+      "total": 58,
+      "TRUE": 29,
+      "FALSE": 29
+    },
+    "multi_hop": {
+      "total": 735,
+      "TRUE": 367,
+      "FALSE": 368
+    },
+    "consistency_paraphrase": {
+      "total": 506,
+      "TRUE": 253,
+      "FALSE": 253
+    },
+    "perturbation": {
+      "total": 243,
+      "TRUE": 121,
+      "FALSE": 122
+    },
+    "adversarial_misleading": {
+      "total": 62,
+      "TRUE": 30,
+      "FALSE": 32
+    },
+    "indicator_diagnostic": {
+      "total": 64,
+      "TRUE": 32,
+      "FALSE": 32
+    },
+    "extended_systems": {
+      "total": 5,
+      "TRUE": 2,
+      "FALSE": 3
+    },
+    "regime_transition": {
+      "total": 8,
+      "TRUE": 4,
+      "FALSE": 4
+    },
+    "cross_indicator": {
+      "total": 8,
+      "TRUE": 4,
+      "FALSE": 4
+    }
+  }
+}
