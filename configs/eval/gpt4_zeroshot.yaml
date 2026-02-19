@@ -1,0 +1,9 @@
+model: gpt-4
+mode: zeroshot
+data_path: data/batch*.jsonl
+output_dir: runs/gpt4_zeroshot
+batch_size: 20
+num_workers: 4
+max_retries: 3
+cache_dir: .cache/responses
+temperature: 0.0

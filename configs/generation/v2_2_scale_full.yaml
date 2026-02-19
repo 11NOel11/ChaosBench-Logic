@@ -1,0 +1,71 @@
+# ChaosBench-Logic v2.2 Full-Scale Generation Config
+# Target: ~25k-30k total items across all families
+# Strategy: Aggressive scaling of all family targets
+
+seed: 42
+version: "2.2.0"
+template: "V2"
+
+# System pool settings
+max_systems: null  # null = use all available systems (165)
+
+# Indicator computation settings
+indicators:
+  seed: 42
+
+# Adversarial generation settings
+adversarial:
+  n_per_type: 150  # 3x default (50)
+  drop_unknown: true
+
+# Consistency paraphrase settings
+consistency:
+  batch2_take: 200  # 4x default (50)
+  paraphrase_variants: 5  # increased from 3
+
+# Per-system quota configuration (for future use)
+per_system_items_by_family:
+  atomic: 66              # 2x: 11 predicates × 6 template_variants
+  consistency_paraphrase: 40  # 2x
+  perturbation_robustness: 64 # 2x: 8 predicates × 8 perturbation_types
+  multi_hop: 20           # 2x
+  fol_inference: 12       # 2x
+  adversarial: 10         # 2x
+  indicator_diagnostics: 28   # 2x
+  cross_indicator: 8      # 2x
+  regime_transition: 14   # 2x
+  extended_systems: 6     # 2x
+
+# Perturbation multiplier: number of perturbation types applied
+perturbation_multiplier: 4
+
+# Template variants for atomic questions
+template_variants: 6  # 2x default (3)
+
+# Paraphrase variants for consistency questions
+paraphrase_variants: 5  # increased from 3
+
+# Family-level target counts (very aggressive for full scale)
+family_targets:
+  atomic: 12000           # ~2.2x previous (5445)
+  consistency_paraphrase: 8000  # ~2.4x previous (3300)
+  perturbation_robustness: 12000 # ~2.3x previous (5280)
+  multi_hop: 4000         # ~2.4x previous (1650)
+  fol_inference: 2500     # ~2.5x previous (1000)
+  adversarial: 2000       # ~2.5x previous (800)
+  indicator_diagnostics: 3500   # ~2.3x previous (1500)
+  cross_indicator: 1000   # ~2.5x previous (400)
+  regime_transition: 1000 # ~2.5x previous (400)
+  extended_systems: 750   # ~2.5x previous (300)
+
+# Quality gate thresholds
+quality_gates:
+  max_near_duplicates: 100        # Allow more for larger dataset
+  max_label_leaks: 0              # Fail if any label leakage detected
+  class_balance_range: [0.30, 0.70]  # Wider range for production
+  split_balance_range: [0.35, 0.65]  # Wider range for production
+  min_items_for_balance_check: 50    # Only check balance for families with >= N items
+  near_duplicate_jaccard_threshold: 0.85  # Jaccard similarity threshold
+
+# Phased build control
+phased_build: false

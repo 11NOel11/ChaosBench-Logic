@@ -1,0 +1,126 @@
+# ChaosBench-Logic v2.3 Full-Scale Generation Config
+# Target: ~49,400 total items across all families
+# Changes from v2.2:
+#   - 27 predicates (up from 15): +12 new predicates from metadata dimensions
+#   - 32 templates per predicate (up from 8): 4 linguistic frames × 8 templates
+#   - max_hop_count: 6 (up from 4) — new axiom edges enable 5-6 hop chains
+#   - Multiframe atomic generation enabled
+#   - New predicate families: HyperChaotic, Conservative, HighDimensional, etc.
+
+seed: 42
+version: "2.3.0"
+template: "V2"
+
+# System pool settings
+max_systems: null  # null = use all available systems (165)
+
+# Indicator computation settings
+indicators:
+  seed: 42
+
+# Adversarial generation settings
+adversarial:
+  n_per_type: 50
+  drop_unknown: true
+
+# Consistency paraphrase settings
+consistency:
+  batch2_take: 50
+  paraphrase_variants: 3
+
+# Template settings
+# With 4 frames (A/B/C/D) × 8 templates = 32 templates total
+templates_per_predicate: 2      # templates from Frame A per predicate
+enable_multiframe: true         # enable all 4 linguistic frames
+paraphrase_variants: 3
+
+# Multi-hop chain settings
+max_hop_count: 6               # expanded from 4 to 6 with new axiom edges
+
+# Per-system quota configuration
+per_system_items_by_family:
+  atomic: 108              # 27 predicates × 4 frames (capped)
+  consistency_paraphrase: 20
+  perturbation_robustness: 32
+  multi_hop: 12            # more chains per system with 6-hop depth
+  fol_inference: 8
+  adversarial: 5
+  indicator_diagnostics: 14
+  cross_indicator: 4
+  regime_transition: 7
+  extended_systems: 3
+
+# Family-level target counts
+# atomic: 165 sys × 27 pred × ~6 templates (balanced to 50/50) ≈ 25,000
+# multi_hop: 165 sys × 12 chains avg (6-hop depth) ≈ 6,000
+# fol_inference: expanded inference patterns ≈ 2,000
+# consistency_paraphrase: 165 sys × 3 variants ≈ 6,000
+family_targets:
+  atomic: 25000           # 165 sys × 27 pred × 4 frames (balanced)
+  consistency_paraphrase: 6000
+  perturbation_robustness: 5000
+  multi_hop: 6000         # 6-hop chains enabled
+  fol_inference: 2000     # new axiom edges → more inference patterns
+  adversarial: 1500       # more predicates → more near-miss pairs
+  indicator_diagnostics: 2500
+  cross_indicator: 600    # new predicate comparisons
+  regime_transition: 300
+  extended_systems: 500   # hyper-systems support
+
+# Heldout systems for split protocol (15 dysts systems)
+heldout_system_ids:
+  - dysts_sprotta
+  - dysts_sprottb
+  - dysts_sprottc
+  - dysts_sprottd
+  - dysts_sprotte
+  - dysts_sprottf
+  - dysts_sprottg
+  - dysts_sprotth
+  - dysts_sprotti
+  - dysts_sprottj
+  - dysts_sprottk
+  - dysts_sprottl
+  - dysts_sprottm
+  - dysts_sprottn
+  - dysts_sprotto
+
+# Quality gate thresholds
+# Note: structurally imbalanced predicates are exempt from class_balance check:
+#   HyperChaotic (~8%), Conservative (~10%), DiscreteTime (~10%), DelaySystem (~5%)
+quality_gates:
+  max_near_duplicates: 50
+  max_label_leaks: 0
+  class_balance_range: [0.35, 0.65]
+  split_balance_range: [0.40, 0.60]
+  min_items_for_balance_check: 20
+  near_duplicate_jaccard_threshold: 0.85
+  # Predicates exempt from class balance check due to structural imbalance
+  exempt_predicates_from_balance:
+    - HyperChaotic
+    - Conservative
+    - DiscreteTime
+    - DelaySystem
+
+# Eval subset definitions
+eval_subsets:
+  api_smoke:
+    size: 100
+    description: "CI sanity check"
+  api_core_1k:
+    size: 1000
+    description: "Development iteration"
+  api_hard_500:
+    size: 500
+    splits: ["hard"]
+    description: "Adversarial testing"
+  api_robust_500:
+    size: 500
+    splits: ["robustness"]
+    description: "Robustness testing"
+  api_full:
+    size: null
+    description: "Publication benchmarking"
+
+# Phased build control
+phased_build: false

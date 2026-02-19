@@ -65,7 +65,28 @@ docs/_build/
 # Raw/large outputs are NOT tracked - only published_results/ is committed
 results/
 results_raw/
+results_ci_local/
+runs/
+figures/
 *.log
+
+# Data directory - ignore generated batches but track CI smoke, manifests, and v22 canonical files
+data/batch*.jsonl
+!data/ci_smoke/
+# Note: data/v2_manifest.json is tracked (do NOT ignore)
+# Note: data/v22_*.jsonl are tracked (canonical v2.2 dataset)
+
+# Backup directories (local only)
+data/backup_*/
+
+# Generated artifacts (never tracked)
+artifacts/
+
+# Workspace and reports (local only)
+workspace/
+reports/
+scratch/
+tmp/
 
 # Checkpoints
 checkpoint.json
@@ -97,8 +118,8 @@ debug_*.jsonl
 AUDIT_REPORT_*.md
 IMPLEMENTATION_SUMMARY_*.md
 
-# Workspace directory (local/non-repo files)
-workspace/
+# Workspace directory (local/non-repo files, tracked for paper/poster materials)
+# workspace/ is currently tracked, but consider moving to separate repo
 
 # uv
 .uv/
