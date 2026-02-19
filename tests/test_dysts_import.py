@@ -52,17 +52,22 @@ class TestDystsImport:
         reason="systems/dysts directory is empty (dysts not installed or not imported)"
     )
     def test_truth_assignment_complete(self):
-        """Verify all 11 predicates present in truth_assignment."""
+        """Verify all 27 predicates present in truth_assignment (v2.3)."""
         dysts_dir = "systems/dysts"
         json_files = [f for f in os.listdir(dysts_dir) if f.endswith(".json")]
 
         assert len(json_files) > 0, "No JSON files found in systems/dysts/"
 
-        # Expected predicates
-        expected_predicates = {
+        # Required predicates (v2.3: 27 predicates)
+        required_predicates = {
             "Chaotic", "Deterministic", "PosLyap", "Sensitive", "StrangeAttr",
             "PointUnpredictable", "StatPredictable", "QuasiPeriodic",
-            "Random", "FixedPointAttr", "Periodic"
+            "Random", "FixedPointAttr", "Periodic",
+            "Dissipative", "Bounded", "Mixing", "Ergodic",
+            # v2.3 new predicates
+            "HyperChaotic", "Conservative", "HighDimensional", "Multifractal",
+            "HighDimSystem", "ContinuousTime", "DiscreteTime", "DelaySystem",
+            "Forced", "Autonomous", "StrongMixing", "WeakMixing",
         }
 
         # Load first JSON file
@@ -71,7 +76,8 @@ class TestDystsImport:
             data = json.load(f)
 
         truth = data["truth_assignment"]
-        assert set(truth.keys()) == expected_predicates, "Missing or extra predicates in truth_assignment"
+        missing = required_predicates - set(truth.keys())
+        assert not missing, f"Missing predicates in truth_assignment: {missing}"
 
     @pytest.mark.skipif(
         not os.path.isdir("systems/dysts") or len(os.listdir("systems/dysts")) == 0,

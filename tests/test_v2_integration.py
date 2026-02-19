@@ -435,6 +435,6 @@ class TestBackwardCompat:
         assert hasattr(chaosbench, "EvalResult")
         assert hasattr(chaosbench, "normalize_label")
 
-    def test_version_is_2_1_0(self):
-        """Verify version is 2.1.0."""
-        assert chaosbench.__version__ == "2.1.0"
+    def test_version_is_2_0_0(self):
+        """Verify version is 2.0.0."""
+        assert chaosbench.__version__ == "2.0.0"

@@ -98,33 +98,18 @@ class TestJSONLValidation:
 
     @pytest.fixture
     def batch_files(self):
-        """Return paths to new batch files if they exist."""
-        data_dir = "data"
-        batches = [
-            "batch8_indicator_diagnostics.jsonl",
-            "batch9_regime_transitions.jsonl",
-            "batch10_adversarial.jsonl",
-            "batch11_consistency_paraphrase.jsonl",
-            "batch12_fol_inference.jsonl",
-            "batch13_extended_systems.jsonl",
-            "batch14_cross_indicator.jsonl",
-        ]
-        existing = []
-        for b in batches:
-            path = os.path.join(data_dir, b)
-            if os.path.isfile(path):
-                existing.append(path)
-        return existing
+        """Return paths to canonical v2.2 dataset files."""
+        import glob
+        return sorted(glob.glob("data/v22_*.jsonl"))
 
     def test_batch_files_exist(self, batch_files):
-        """At least some batch files have been generated."""
-        if not batch_files:
-            pytest.skip("Batch files not yet generated (run build_v2_dataset.py first)")
+        """Canonical v2.2 dataset files are present."""
+        assert len(batch_files) >= 10, (
+            f"Expected at least 10 v22_*.jsonl files, found {len(batch_files)}"
+        )
 
     def test_valid_json_lines(self, batch_files):
-        """Every line in each batch file is valid JSON."""
-        if not batch_files:
-            pytest.skip("Batch files not yet generated")
+        """Every line in each v2.2 batch file is valid JSON."""
         for path in batch_files:
             with open(path, "r") as f:
                 for i, line in enumerate(f, 1):
@@ -138,8 +123,6 @@ class TestJSONLValidation:
 
     def test_ground_truth_values(self, batch_files):
         """Every ground_truth is TRUE or FALSE."""
-        if not batch_files:
-            pytest.skip("Batch files not yet generated")
         for path in batch_files:
             with open(path, "r") as f:
                 for i, line in enumerate(f, 1):
@@ -154,8 +137,6 @@ class TestJSONLValidation:
 
     def test_required_fields(self, batch_files):
         """Every record has required fields."""
-        if not batch_files:
-            pytest.skip("Batch files not yet generated")
         required = {"id", "question", "ground_truth", "type", "system_id", "template"}
         for path in batch_files:
             with open(path, "r") as f:

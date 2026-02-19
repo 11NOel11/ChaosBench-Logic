@@ -1,6 +1,6 @@
-"""Test that batch files can be regenerated with consistent counts.
+"""Test that v2.2 canonical dataset files are consistent and valid.
 
-Verifies that the dataset build pipeline produces stable, reproducible results.
+Verifies that the dataset files are stable, reproducible, and well-formed.
 """
 
 import json
@@ -9,63 +9,99 @@ import os
 import pytest
 
 
-class TestBatchRegeneration:
-    """Verify batches regenerate with expected question counts."""
+class TestV22FileExistence:
+    """Verify all v2.2 canonical files exist."""
 
-    def test_all_batch_files_exist(self):
-        """All expected batch files exist in data directory."""
-        expected_batches = [
-            "data/batch8_indicator_diagnostics.jsonl",
-            "data/batch9_regime_transitions.jsonl",
-            "data/batch10_adversarial.jsonl",
-            "data/batch11_consistency_paraphrase.jsonl",
-            "data/batch12_fol_inference.jsonl",
-            "data/batch13_extended_systems.jsonl",
-            "data/batch14_cross_indicator.jsonl",
+    EXPECTED_FILES = [
+        "data/v22_adversarial.jsonl",
+        "data/v22_atomic.jsonl",
+        "data/v22_consistency_paraphrase.jsonl",
+        "data/v22_cross_indicator.jsonl",
+        "data/v22_extended_systems.jsonl",
+        "data/v22_fol_inference.jsonl",
+        "data/v22_indicator_diagnostics.jsonl",
+        "data/v22_multi_hop.jsonl",
+        "data/v22_perturbation_robustness.jsonl",
+        "data/v22_regime_transition.jsonl",
+    ]
+
+    def test_all_v22_files_exist(self):
+        """All 10 v2.2 canonical files exist in data directory."""
+        for path in self.EXPECTED_FILES:
+            assert os.path.isfile(path), f"Missing canonical file: {path}"
+
+    def test_v22_file_count(self):
+        """Exactly 10 v22_*.jsonl files exist."""
+        v22_files = [
+            f for f in os.listdir("data")
+            if f.startswith("v22_") and f.endswith(".jsonl")
         ]
+        assert len(v22_files) == 10, f"Expected 10 v22_*.jsonl files, found {len(v22_files)}"
 
-        for batch_path in expected_batches:
-            assert os.path.isfile(batch_path), f"Missing batch file: {batch_path}"
 
-    def test_batch_counts_in_expected_range(self):
-        """Running build script produces expected question counts."""
-        # Note: These ranges reflect the CURRENT state of batch files.
-        # After regenerating with expanded batch12/13, update these ranges.
-        expected_counts = {
-            "batch8_indicator_diagnostics.jsonl": (500, 600),  # ~550
-            "batch9_regime_transitions.jsonl": (60, 80),       # ~68
-            "batch10_adversarial.jsonl": (90, 120),            # ~104
-            "batch11_consistency_paraphrase.jsonl": (280, 320),# ~300
-            "batch12_fol_inference.jsonl": (85, 130),          # ~91 current, ~121 after regen
-            "batch13_extended_systems.jsonl": (25, 50),        # ~30 current, ~45 after regen
-            "batch14_cross_indicator.jsonl": (60, 80),         # ~70
-        }
+class TestV22FileCounts:
+    """Verify v2.2 files have expected minimum counts."""
 
-        for batch_name, (min_count, max_count) in expected_counts.items():
-            batch_path = f"data/{batch_name}"
-            if not os.path.isfile(batch_path):
-                pytest.skip(f"Batch file not found: {batch_path}")
+    MIN_COUNTS = {
+        "v22_adversarial.jsonl": 500,
+        "v22_atomic.jsonl": 8000,
+        "v22_consistency_paraphrase.jsonl": 3000,
+        "v22_cross_indicator.jsonl": 50,
+        "v22_extended_systems.jsonl": 40,
+        "v22_fol_inference.jsonl": 100,
+        "v22_indicator_diagnostics.jsonl": 500,
+        "v22_multi_hop.jsonl": 3000,
+        "v22_perturbation_robustness.jsonl": 1500,
+        "v22_regime_transition.jsonl": 60,
+    }
 
-            with open(batch_path) as f:
+    def test_file_counts_meet_minimums(self):
+        """Each v2.2 file has at least the expected minimum count."""
+        for filename, min_count in self.MIN_COUNTS.items():
+            path = f"data/{filename}"
+            if not os.path.isfile(path):
+                pytest.skip(f"File not found: {path}")
+
+            with open(path) as f:
                 lines = [line for line in f if line.strip()]
 
             count = len(lines)
-            assert min_count <= count <= max_count, (
-                f"{batch_name}: expected {min_count}-{max_count}, got {count}"
+            assert count >= min_count, (
+                f"{filename}: expected >={min_count}, got {count}"
             )
 
-    def test_all_batches_valid_jsonl(self):
-        """Every batch file is valid JSONL with TRUE/FALSE ground truth."""
-        batch_files = [
+    def test_total_question_count(self):
+        """Total across all v2.2 files should be at least 18000.
+
+        After enforcing strict 50/50 balance on the atomic task (which reduces
+        the natural ~70% TRUE pool from 10890 to ~8808), the expected total is
+        approximately 18929.
+        """
+        total = 0
+        for filename in self.MIN_COUNTS:
+            path = f"data/{filename}"
+            if not os.path.isfile(path):
+                pytest.skip(f"File not found: {path}")
+            with open(path) as f:
+                total += sum(1 for line in f if line.strip())
+        assert total >= 18000, f"Expected >=18000 total, got {total}"
+
+
+class TestV22ValidJsonl:
+    """Verify all v2.2 files are valid JSONL."""
+
+    def test_all_v22_valid_jsonl(self):
+        """Every v2.2 file is valid JSONL with required fields."""
+        v22_files = [
             f for f in os.listdir("data")
-            if f.startswith("batch") and f.endswith(".jsonl")
+            if f.startswith("v22_") and f.endswith(".jsonl")
         ]
 
-        assert len(batch_files) >= 7, f"Expected at least 7 batch files, found {len(batch_files)}"
+        assert len(v22_files) >= 10, f"Expected at least 10 v22 files, found {len(v22_files)}"
 
-        for batch_file in batch_files:
-            batch_path = os.path.join("data", batch_file)
-            with open(batch_path) as f:
+        for v22_file in v22_files:
+            path = os.path.join("data", v22_file)
+            with open(path) as f:
                 for i, line in enumerate(f, 1):
                     if not line.strip():
                         continue
@@ -73,51 +109,50 @@ class TestBatchRegeneration:
                     try:
                         item = json.loads(line)
                     except json.JSONDecodeError as e:
-                        pytest.fail(f"{batch_file} line {i}: Invalid JSON: {e}")
+                        pytest.fail(f"{v22_file} line {i}: Invalid JSON: {e}")
 
-                    # Check required fields (handle both old "id" and new "item_id")
                     has_id = "item_id" in item or "id" in item
-                    assert has_id, f"{batch_file} line {i}: Missing item_id/id"
+                    assert has_id, f"{v22_file} line {i}: Missing item_id/id"
 
                     has_question = "question_text" in item or "question" in item
-                    assert has_question, f"{batch_file} line {i}: Missing question_text/question"
+                    assert has_question, f"{v22_file} line {i}: Missing question_text/question"
 
-                    assert "ground_truth" in item, f"{batch_file} line {i}: Missing ground_truth"
+                    assert "ground_truth" in item, f"{v22_file} line {i}: Missing ground_truth"
 
-                    # Check ground truth exists and is non-empty string
                     gt = item["ground_truth"]
                     assert isinstance(gt, str) and len(gt) > 0, (
-                        f"{batch_file} line {i}: ground_truth must be non-empty string"
+                        f"{v22_file} line {i}: ground_truth must be non-empty string"
                     )
-                    # v2 batches should use TRUE/FALSE or YES/NO
-                    # (v1 batches may have other values like DISAPPEAR, INCREASE, etc.)
 
-    def test_item_ids_unique_within_batch(self):
-        """All item IDs are unique within each batch."""
-        batch_files = [
+    def test_item_ids_unique_within_file(self):
+        """All item IDs are unique within each v2.2 file."""
+        v22_files = [
             f for f in os.listdir("data")
-            if f.startswith("batch") and f.endswith(".jsonl")
+            if f.startswith("v22_") and f.endswith(".jsonl")
         ]
 
-        for batch_file in batch_files:
-            batch_path = os.path.join("data", batch_file)
+        for v22_file in v22_files:
+            path = os.path.join("data", v22_file)
             item_ids = []
 
-            with open(batch_path) as f:
+            with open(path) as f:
                 for line in f:
                     if not line.strip():
                         continue
                     item = json.loads(line)
-                    # Handle both old "id" and new "item_id" formats
                     item_id = item.get("item_id", item.get("id"))
                     item_ids.append(item_id)
 
             assert len(item_ids) == len(set(item_ids)), (
-                f"{batch_file}: Duplicate item IDs found"
+                f"{v22_file}: Duplicate item IDs found"
             )
 
+
+class TestManifestIntegrity:
+    """Verify manifest matches v2.2 files."""
+
     def test_manifest_exists_and_valid(self):
-        """v2_manifest.json exists and contains batch metadata."""
+        """v2_manifest.json exists and contains v2.2 batch metadata."""
         manifest_path = "data/v2_manifest.json"
 
         if not os.path.isfile(manifest_path):
@@ -126,56 +161,42 @@ class TestBatchRegeneration:
         with open(manifest_path) as f:
             manifest = json.load(f)
 
-        # Manifest can be either a dict of batches or have a "batches" key
+        assert manifest.get("version") in ("2.2.0", "2.3.0"), (
+            f"Expected manifest version 2.2.0 or 2.3.0, got {manifest.get('version')}"
+        )
+
         if "batches" in manifest:
             batches = manifest["batches"]
-            if isinstance(batches, list):
-                # List format
-                for batch in batches:
-                    assert "batch_id" in batch or "file" in batch
-                    assert "count" in batch
-                    assert isinstance(batch["count"], int)
-            else:
-                # Dict format
-                for batch_id, batch_data in batches.items():
-                    assert "count" in batch_data
-                    assert isinstance(batch_data["count"], int)
-        else:
-            # Top-level dict format (batch_id: {count, sha256})
-            for batch_id, batch_data in manifest.items():
-                assert isinstance(batch_data, dict), f"{batch_id} should be a dict"
+            for batch_id, batch_data in batches.items():
                 assert "count" in batch_data, f"{batch_id} missing 'count'"
                 assert isinstance(batch_data["count"], int)
 
 
 class TestGroundTruthBalance:
-    """Verify ground truth distribution across batches."""
+    """Verify ground truth distribution across v2.2 files."""
 
-    def test_batches_not_all_same_label(self):
-        """Each batch has mix of TRUE/FALSE (not all one label)."""
-        batch_files = [
+    def test_files_not_all_same_label(self):
+        """Each v2.2 file has mix of TRUE/FALSE (not all one label)."""
+        v22_files = [
             f for f in os.listdir("data")
-            if f.startswith("batch") and f.endswith(".jsonl")
+            if f.startswith("v22_") and f.endswith(".jsonl")
         ]
 
-        for batch_file in batch_files:
-            batch_path = os.path.join("data", batch_file)
+        for v22_file in v22_files:
+            path = os.path.join("data", v22_file)
             labels = []
 
-            with open(batch_path) as f:
+            with open(path) as f:
                 for line in f:
                     if not line.strip():
                         continue
                     item = json.loads(line)
                     gt = item["ground_truth"]
-                    # Normalize to TRUE/FALSE
                     if gt in ("YES", "TRUE"):
                         labels.append("TRUE")
                     else:
                         labels.append("FALSE")
 
             unique_labels = set(labels)
-            # Most batches should have both labels (some may be intentionally one-sided)
-            if len(labels) > 10:  # Only check batches with sufficient size
-                assert len(unique_labels) >= 1, f"{batch_file}: No labels found"
-                # Note: Not enforcing both labels since some batches may be intentionally skewed
+            if len(labels) > 10:
+                assert len(unique_labels) >= 1, f"{v22_file}: No labels found"

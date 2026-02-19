@@ -27,6 +27,10 @@ class TestAtomicTaskGeneration:
                     "Random": False,
                     "FixedPointAttr": False,
                     "Periodic": False,
+                    "Dissipative": True,
+                    "Bounded": True,
+                    "Mixing": True,
+                    "Ergodic": True,
                 },
             },
             "shm": {
@@ -43,6 +47,10 @@ class TestAtomicTaskGeneration:
                     "Random": False,
                     "FixedPointAttr": False,
                     "Periodic": True,
+                    "Dissipative": False,
+                    "Bounded": True,
+                    "Mixing": False,
+                    "Ergodic": False,
                 },
             },
             "rossler": {
@@ -59,6 +67,10 @@ class TestAtomicTaskGeneration:
                     "Random": False,
                     "FixedPointAttr": False,
                     "Periodic": False,
+                    "Dissipative": True,
+                    "Bounded": True,
+                    "Mixing": True,
+                    "Ergodic": True,
                 },
             },
         }
