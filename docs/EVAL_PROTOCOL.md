@@ -4,7 +4,9 @@ This document describes the evaluation procedure, metrics, and reporting format 
 
 ## Overview
 
-ChaosBench-Logic evaluates LLM reasoning capabilities on dynamical systems through zero-shot binary classification. Models receive questions in natural language and must respond with TRUE/FALSE (or YES/NO).
+ChaosBench-Logic evaluates LLM reasoning capabilities on dynamical systems through zero-shot binary classification. Models receive questions in natural language and must respond with TRUE/FALSE.
+
+**Default evaluation target**: v2 dataset (40,886 questions in `data/v22_*.jsonl`, 10 files). v1 (621 questions, archived in `data/archive/v1/`) available for baseline comparison. Dataset version: 2.0.0.
 
 ## Evaluation Procedure
 
@@ -46,34 +48,49 @@ Question: If a system is chaotic, must it be deterministic?
 Reasoning:
 ```
 
-### Answer Normalization
+### Answer Normalization and 3-Way Outcomes
 
-Model outputs are normalized using an 8-step cascade:
+Model outputs are parsed into one of three outcomes:
+
+| Outcome | Meaning |
+|---------|---------|
+| `VALID_TRUE` | Parsed unambiguously as TRUE (includes YES normalisation) |
+| `VALID_FALSE` | Parsed unambiguously as FALSE (includes NO normalisation) |
+| `INVALID` | Could not extract a binary label; counted against coverage |
+
+Parsing uses an 8-step cascade (`chaosbench/eval/parsing.py`):
 
 1. Extract explicit `FINAL_ANSWER:` markers
-2. Identify conclusion phrases ("Therefore,", "In conclusion,")
-3. Parse revision patterns ("yes... actually no")
-4. Map TRUE/FALSE variants
-5. Handle markdown formatting
-6. Last-line extraction
-7. Keyword matching (yes, no, true, false)
-8. Return UNKNOWN if no valid answer found
+2. Identify answer phrases ("Answer: TRUE", "the answer is FALSE")
+3. Parse conclusion signals ("Therefore:", "Conclusion:")
+4. Final-line token extraction
+5. YES/NO → TRUE/FALSE normalisation
+6. Ambiguity detection (reject "it depends", "cannot determine")
+7. Confidence scoring
+8. Return INVALID if unparseable
 
-UNKNOWN answers are excluded from accuracy calculations.
+**Retry policy**: if INVALID on first attempt, one reprompt is issued:
+`"Reply with EXACTLY one word: TRUE or FALSE."` If still INVALID, the outcome
+remains INVALID. Retries are configurable (`--retries 0` to disable).
 
 ## Metrics
 
 ### Primary Metrics
 
-#### Overall Accuracy
-
-Proportion of correct predictions across all questions:
+#### Coverage and 3-Way Metrics
 
 ```
-accuracy = correct_predictions / total_evaluated
+coverage          = valid / total
+invalid_rate      = invalid / total
+accuracy_valid    = correct / valid          (only over parseable responses)
+effective_accuracy = coverage × accuracy_valid  (primary paper metric)
+balanced_accuracy  = (TPR + TNR) / 2          (robust to class imbalance)
+mcc               = (TP·TN − FP·FN) / sqrt(…) (Matthews Correlation Coefficient)
 ```
 
-Questions with UNKNOWN answers or missing ground truth are excluded from denominator.
+**Reporting convention**: report `effective_accuracy` as the headline number; also
+report `coverage` and `accuracy_valid` separately so formatting artifacts can be
+distinguished from reasoning errors.
 
 #### Per-Split Accuracy
 
@@ -157,19 +174,50 @@ bias_error_rate = incorrect_bias_questions / total_bias_questions
 
 ## Running Evaluations
 
-### Basic Usage
+### Canonical Eval Commands (v2 runner)
 
 ```bash
-python run_benchmark.py --model <model_name> --mode zeroshot
+# Freeze dataset first (produces artifacts/freeze/v2_freeze_manifest.json)
+chaosbench freeze
+
+# Smoke test with mock provider (no network, 50 items)
+chaosbench eval --provider mock --dataset canonical --max-items 50
+
+# Local Ollama — 1k balanced subset (primary baseline)
+chaosbench eval --provider ollama --model qwen2.5:7b \
+  --subset data/subsets/api_balanced_1k.jsonl \
+  --workers 6 --retries 1
+
+# Local Ollama — 5k subset
+chaosbench eval --provider ollama --model qwen2.5:14b \
+  --subset data/subsets/api_balanced_5k.jsonl \
+  --workers 2 --retries 1
+
+# Full canonical (40,886 items) — slow
+chaosbench eval --provider ollama --model qwen2.5:7b \
+  --dataset canonical --workers 6
 ```
 
-**Supported models:**
-- gpt4
-- claude3
-- gemini
-- llama3
-- mixtral
-- openhermes
+All run outputs go to `runs/<run_id>/` (gitignored).
+
+### Create / Verify Locked Subsets
+
+```bash
+# Create 1k subset (seed=42, balanced)
+python scripts/make_api_subset.py \
+  --data_dir data/ --out_path data/subsets/api_balanced_1k.jsonl \
+  --size 1000 --balance --seed 42
+
+# Create 5k subset
+python scripts/make_api_subset.py \
+  --data_dir data/ --out_path data/subsets/api_balanced_5k.jsonl \
+  --size 5000 --balance --seed 42
+```
+
+Manifest SHA256 (`api_balanced_1k`): `1ac9f1af107b626a`
+Manifest SHA256 (`api_balanced_5k`): `de9b10fca80b6dae`
+
+### Legacy Usage
 
 ### Configuration Options
 
@@ -231,7 +279,7 @@ results/gpt4_zeroshot/
   "overall_accuracy": 0.94,
   "coverage": 0.998,
   "total_evaluated": 620,
-  "total_questions": 621,
+  "total_questions": 41507,
   "num_unknown": 1,
   "split_accuracy": {
     "core": 0.95,
@@ -268,7 +316,7 @@ results/gpt4_zeroshot/
   "mode": "zeroshot",
   "timestamp": "2026-02-17T10:30:00Z",
   "num_workers": 4,
-  "total_questions": 621,
+  "total_questions": 41507,
   "num_items_no_gold": 1,
   "dataset_version": "2.0.0",
   "config_hash": "a3f7b9c1e4d8...",
