@@ -1,6 +1,6 @@
 """ChaosBench-Logic v2: Benchmarking LLMs on dynamical systems reasoning."""
 
-__version__ = "2.1.0"
+__version__ = "2.0.0"
 
 from chaosbench.data.schemas import (
     SystemInstance,
@@ -18,7 +18,7 @@ from chaosbench.eval.metrics import (
     compute_summary,
     normalize_label,
 )
-from chaosbench.eval.runner import load_jsonl, load_batches
+from chaosbench.eval.runner import load_jsonl, load_batches, normalize_ground_truth
 from chaosbench.eval.belief_dynamics import (
     hamming_distance,
     belief_divergence_curve,

@@ -131,6 +131,7 @@ from typing import Any, Dict, List, Optional, Set
 from chaosbench.data.schemas import Question
 from chaosbench.data.perturb import paraphrase, DISTRACTOR_TEMPLATES
 from chaosbench.logic.ontology import PREDICATES
+from chaosbench.data.grouping import _normalize_text
 
 
 # Negation templates for logical sense flipping
@@ -139,6 +140,221 @@ NEGATION_TEMPLATES = [
     "Is it NOT the case that {question_core}?",
     "Would you say it is incorrect that {question_core}?",
 ]
+
+
+def _levenshtein_distance(s1: str, s2: str) -> int:
+    """Compute Levenshtein distance between two strings.
+
+    Args:
+        s1: First string.
+        s2: Second string.
+
+    Returns:
+        Edit distance (number of insertions/deletions/substitutions).
+    """
+    if len(s1) < len(s2):
+        return _levenshtein_distance(s2, s1)
+
+    if len(s2) == 0:
+        return len(s1)
+
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            # Cost of insertions, deletions, or substitutions
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+
+    return previous_row[-1]
+
+
+def _generate_name_aliases(system_id: str, system_name: str) -> List[str]:
+    """Generate common name variants for a system (v2.2 entity swap fix).
+
+    Creates aliases to improve entity swap success rate by handling
+    common name format differences.
+
+    Args:
+        system_id: System identifier.
+        system_name: System display name.
+
+    Returns:
+        List of name variants to try during entity swap.
+    """
+    aliases = []
+
+    # Always include original name
+    aliases.append(system_name)
+
+    # Remove leading "the"
+    if system_name.lower().startswith("the "):
+        aliases.append(system_name[4:])
+
+    # Add/remove "system", "map", "oscillator", etc.
+    for suffix in [" system", " map", " oscillator", " model", " equation"]:
+        if suffix in system_name.lower():
+            # Remove suffix
+            aliases.append(system_name.replace(suffix, "").replace(suffix.title(), "").strip())
+        else:
+            # Add suffix
+            aliases.append(f"{system_name}{suffix}")
+
+    # Add system_id as fallback
+    aliases.append(system_id)
+
+    # Handle unicode variants (Rössler → Rossler, Poincaré → Poincare)
+    unicode_map = {
+        'ö': 'o', 'ü': 'u', 'ä': 'a',
+        'é': 'e', 'è': 'e', 'ê': 'e',
+        'á': 'a', 'à': 'a', 'â': 'a',
+        'ñ': 'n',
+    }
+    ascii_name = system_name
+    for unicode_char, ascii_char in unicode_map.items():
+        ascii_name = ascii_name.replace(unicode_char, ascii_char)
+    if ascii_name != system_name:
+        aliases.append(ascii_name)
+
+    # Extract first word (often the key identifier: "Lorenz", "Rössler")
+    first_word = system_name.split()[0] if system_name else ""
+    if first_word and len(first_word) > 3:  # Avoid short words like "The"
+        aliases.append(first_word)
+
+    # Remove duplicates while preserving order
+    seen = set()
+    unique_aliases = []
+    for alias in aliases:
+        alias_lower = alias.lower()
+        if alias_lower not in seen:
+            seen.add(alias_lower)
+            unique_aliases.append(alias)
+
+    return unique_aliases
+
+
+def _try_entity_swap_with_fallback(
+    base_text: str,
+    base_system_id: str,
+    base_name: str,
+    target_name: str,
+    systems: Dict[str, Dict],
+) -> tuple[bool, str]:
+    """Try entity swap with multiple fallback strategies (v2.2 robustness fix).
+
+    Attempts entity swap using multiple strategies to maximize success rate:
+    1. Exact name match (current behavior)
+    2. Name aliases (with/without "system", unicode variants, etc.)
+    3. Fuzzy match (Levenshtein distance ≤2)
+    4. First word match (e.g., "Lorenz" in "Lorenz system")
+
+    Args:
+        base_text: Original question text.
+        base_system_id: Original system identifier.
+        base_name: Original system name.
+        target_name: Target system name to swap to.
+        systems: Dict of all systems.
+
+    Returns:
+        Tuple of (success: bool, swapped_text: str).
+    """
+    # Generate aliases for base system
+    base_aliases = _generate_name_aliases(base_system_id, base_name)
+
+    # Strategy 1: Try exact match with each alias
+    for alias in base_aliases:
+        alias_escaped = re.escape(alias)
+        swapped = re.sub(
+            r'\b' + alias_escaped + r'\b',
+            target_name,
+            base_text,
+            flags=re.IGNORECASE,
+            count=1,  # Only replace first occurrence
+        )
+        if swapped != base_text:
+            return True, swapped
+
+    # Strategy 2: Try case-insensitive partial match (remove word boundaries)
+    for alias in base_aliases:
+        alias_escaped = re.escape(alias)
+        swapped = re.sub(
+            alias_escaped,
+            target_name,
+            base_text,
+            flags=re.IGNORECASE,
+            count=1,
+        )
+        if swapped != base_text:
+            return True, swapped
+
+    # Strategy 3: Fuzzy match (Levenshtein distance ≤2)
+    # Find words in base_text that are close to base_name
+    words = base_text.split()
+    for i, word in enumerate(words):
+        word_clean = word.strip('.,?!;:"\'')
+        for alias in base_aliases:
+            if _levenshtein_distance(word_clean.lower(), alias.lower()) <= 2 and len(alias) > 3:
+                # Replace this word
+                words[i] = word.replace(word_clean, target_name)
+                swapped = ' '.join(words)
+                if swapped != base_text:
+                    return True, swapped
+
+    # Strategy 4: Try replacing just the first significant word (e.g., "Lorenz" in "Lorenz system")
+    first_word = base_name.split()[0] if base_name else ""
+    if first_word and len(first_word) > 3:
+        # Replace first word, case-insensitive
+        first_word_escaped = re.escape(first_word)
+        swapped = re.sub(
+            r'\b' + first_word_escaped + r'\b',
+            target_name.split()[0] if target_name else target_name,
+            base_text,
+            flags=re.IGNORECASE,
+            count=1,
+        )
+        if swapped != base_text:
+            return True, swapped
+
+    # Strategy 5: Try replacing system_id literally
+    if base_system_id in base_text:
+        swapped = base_text.replace(base_system_id, target_name, 1)
+        if swapped != base_text:
+            return True, swapped
+
+    # Strategy 6: Aggressive fallback - find the longest common substring
+    # between base_name and text, replace it with target_name
+    for alias in base_aliases:
+        if len(alias) > 4:  # Avoid very short matches
+            alias_lower = alias.lower()
+            text_lower = base_text.lower()
+            if alias_lower in text_lower:
+                # Find position and replace
+                start = text_lower.index(alias_lower)
+                swapped = base_text[:start] + target_name + base_text[start + len(alias):]
+                if swapped != base_text:
+                    return True, swapped
+
+    # All strategies failed
+    return False, base_text
+
+
+def _compute_uniqueness_key(question_text: str, system_id: str, ground_truth: str, family: str) -> str:
+    """Compute uniqueness key for duplicate detection.
+
+    Args:
+        question_text: Question text.
+        system_id: System identifier.
+        ground_truth: Ground truth label.
+        family: Task family.
+
+    Returns:
+        Uniqueness key string.
+    """
+    norm_text = _normalize_text(question_text)
+    return f"{family}:{system_id}:{norm_text}:{ground_truth}"
 
 
 def _strip_question_mark(text: str) -> str:
@@ -344,6 +560,9 @@ def _apply_entity_swap_perturbation(
     based on new system's truth_assignment. Only swaps to systems where
     the answer differs.
 
+    Uses regex-based name replacement to ensure actual text change occurs.
+    Skips swaps where replacement fails to produce different text.
+
     Args:
         base_questions: List of base atomic questions.
         systems: Dict mapping system_id to system info.
@@ -392,9 +611,21 @@ def _apply_entity_swap_perturbation(
         target_truth = target_info.get("truth_assignment", {})
         new_ground_truth = "YES" if target_truth[predicate] else "NO"
 
-        # Replace system name in question text
+        # Replace system name using fallback strategy (v2.2 fix for 64% failure rate)
         base_name = systems[base_system_id].get("name", base_system_id)
-        swapped_text = base_q.question_text.replace(base_name, target_name)
+
+        # Try entity swap with multiple fallback strategies
+        success, swapped_text = _try_entity_swap_with_fallback(
+            base_q.question_text,
+            base_system_id,
+            base_name,
+            target_name,
+            systems,
+        )
+
+        # Skip if all strategies failed (text unchanged)
+        if not success or swapped_text == base_q.question_text:
+            continue
 
         counter += 1
         swapped_q = Question(
@@ -515,29 +746,41 @@ def generate_perturbation_questions(
     # Phase 1: Generate base atomic questions
     base_questions = _generate_base_atomic_questions(systems, num_predicates=5, seed=seed)
 
-    # Phase 2: Apply perturbations
+    # Phase 2: Apply perturbations with uniqueness tracking
     all_questions: List[Question] = []
     counter = 0
+    seen_keys: Set[str] = set()
+
+    def add_unique_questions(questions: List[Question]) -> int:
+        """Add questions to all_questions, skipping accidental duplicates."""
+        added = 0
+        for q in questions:
+            key = _compute_uniqueness_key(q.question_text, q.system_id, q.ground_truth, q.task_family)
+            if key not in seen_keys:
+                all_questions.append(q)
+                seen_keys.add(key)
+                added += 1
+        return added
 
     if "paraphrase" in perturbation_types:
         paraphrase_qs = _apply_paraphrase_perturbation(base_questions, counter, seed)
-        all_questions.extend(paraphrase_qs)
-        counter += len(paraphrase_qs)
+        added = add_unique_questions(paraphrase_qs)
+        counter += added
 
     if "negation" in perturbation_types:
         negation_qs = _apply_negation_perturbation(base_questions, counter, seed)
-        all_questions.extend(negation_qs)
-        counter += len(negation_qs)
+        added = add_unique_questions(negation_qs)
+        counter += added
 
     if "entity_swap" in perturbation_types:
         swap_qs = _apply_entity_swap_perturbation(base_questions, systems, counter, seed)
-        all_questions.extend(swap_qs)
-        counter += len(swap_qs)
+        added = add_unique_questions(swap_qs)
+        counter += added
 
     if "distractor" in perturbation_types:
         distractor_qs = _apply_distractor_perturbation(base_questions, counter, seed)
-        all_questions.extend(distractor_qs)
-        counter += len(distractor_qs)
+        added = add_unique_questions(distractor_qs)
+        counter += added
 
     # Balance YES/NO distribution
     yes_questions = [q for q in all_questions if q.ground_truth == "YES"]

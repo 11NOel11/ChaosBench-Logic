@@ -233,7 +233,7 @@ def _generate_direct_questions(
             },
         ))
 
-    if "megno" in ind:
+    if "megno" in ind and ind["megno"] is not None:
         megno_val = ind["megno"]
         regular = not chaotic
         counter[0] += 1
@@ -265,6 +265,11 @@ def _generate_comparative_questions(
 ) -> List[Question]:
     """Generate comparative questions between pairs of systems.
 
+    Only generates cross-regime pairs (one chaotic, one non-chaotic) and
+    produces BOTH orderings of each pair so the TRUE/FALSE balance is ~50/50.
+    Same-regime pairs are excluded because the answer depends on indicator
+    thresholds that vary, making reliable ground truth ambiguous.
+
     Args:
         systems: Dict mapping system_id to system info with truth_assignment.
         indicators: Dict mapping system_id to indicator values.
@@ -272,34 +277,43 @@ def _generate_comparative_questions(
         counter: Mutable list with a single int for item numbering.
 
     Returns:
-        List of comparative Question objects.
+        List of comparative Question objects (~50% YES, ~50% NO).
     """
     questions: List[Question] = []
     system_ids = sorted(indicators.keys())
-    pairs: List[Tuple[str, str]] = []
 
-    for i, sid_a in enumerate(system_ids):
-        for sid_b in system_ids[i + 1:]:
-            if "zero_one_K" in indicators[sid_a] and "zero_one_K" in indicators[sid_b]:
-                pairs.append((sid_a, sid_b))
-
-    rng.shuffle(pairs)
-
-    for sid_a, sid_b in pairs:
-        if sid_a not in systems or sid_b not in systems:
+    # Collect all cross-regime pairs (chaotic vs non-chaotic, both orderings)
+    ordered_pairs: List[Tuple[str, str]] = []
+    for sid_a in system_ids:
+        if sid_a not in systems or "zero_one_K" not in indicators[sid_a]:
             continue
+        chaotic_a = _is_chaotic(systems[sid_a].get("truth_assignment", {}))
+        for sid_b in system_ids:
+            if sid_b == sid_a:
+                continue
+            if sid_b not in systems or "zero_one_K" not in indicators[sid_b]:
+                continue
+            chaotic_b = _is_chaotic(systems[sid_b].get("truth_assignment", {}))
+            # Only cross-regime pairs: one chaotic, one non-chaotic
+            if chaotic_a and not chaotic_b:
+                ordered_pairs.append((sid_a, sid_b))  # YES
+            elif not chaotic_a and chaotic_b:
+                ordered_pairs.append((sid_a, sid_b))  # NO
 
+    rng.shuffle(ordered_pairs)
+
+    for sid_a, sid_b in ordered_pairs:
         truth_a = systems[sid_a].get("truth_assignment", {})
         truth_b = systems[sid_b].get("truth_assignment", {})
         k_a = indicators[sid_a]["zero_one_K"]
         k_b = indicators[sid_b]["zero_one_K"]
         chaotic_a = _is_chaotic(truth_a)
-        chaotic_b = _is_chaotic(truth_b)
 
         name_a = systems[sid_a].get("name", sid_a)
         name_b = systems[sid_b].get("name", sid_b)
 
-        answer = "YES" if (k_a > k_b and chaotic_a and not chaotic_b) else "NO"
+        # YES iff A is chaotic and B is not (clear directional comparison)
+        answer = "YES" if chaotic_a else "NO"
 
         counter[0] += 1
         questions.append(Question(
@@ -357,15 +371,17 @@ def _generate_multi_indicator_questions(
         chaotic = _is_chaotic(truth)
         both_suggest = _both_indicators_suggest_chaotic(k_val, pe_val)
 
-        answer = "YES" if (both_suggest and chaotic) else "NO"
+        # Ground truth is the system's actual chaotic status (not threshold logic).
+        # The question presents indicator values as evidence; the model must reason
+        # about whether the evidence matches the system's actual classification.
+        answer = "YES" if chaotic else "NO"
 
         counter[0] += 1
         questions.append(Question(
             item_id=f"ind_multi_{counter[0]:04d}",
             question_text=(
                 f"System {name} has K={k_val:.2f} and PE={pe_val:.2f}. "
-                f"Both indicators suggest chaotic dynamics. "
-                f"Is this system chaotic?"
+                f"Based on these indicators, is this system chaotic?"
             ),
             system_id=sid,
             task_family="indicator_diagnostic",

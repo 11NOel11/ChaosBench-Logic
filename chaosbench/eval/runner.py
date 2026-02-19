@@ -12,7 +12,8 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from chaosbench.models.prompt import ModelConfig, ModelClient
-from chaosbench.eval.metrics import EvalResult, normalize_label, compute_summary
+from chaosbench.eval.metrics import EvalResult, normalize_label, compute_summary, Outcome
+from chaosbench.data.grouping import compute_group_id
 
 if TYPE_CHECKING:
     from chaosbench.eval.cache import ResponseCache
@@ -125,14 +126,37 @@ def retry_with_backoff(func, max_retries=4, initial_delay=1.0):
     return None, last_error_type, f"Unexpected retry loop exit: {str(last_error)[:200]}"
 
 
+def normalize_ground_truth(value: str) -> str:
+    """Normalize ground truth to canonical TRUE/FALSE format.
+
+    Accepts legacy v1 format (YES/NO) and v2 format (TRUE/FALSE).
+    Passes through non-binary values unchanged for v1 compatibility.
+
+    Args:
+        value: Ground truth value.
+
+    Returns:
+        Normalized value: "TRUE", "FALSE", or unchanged if non-binary.
+    """
+    normalized = value.upper().strip()
+    if normalized in {"TRUE", "YES", "Y", "T"}:
+        return "TRUE"
+    elif normalized in {"FALSE", "NO", "N", "F"}:
+        return "FALSE"
+    else:
+        return value
+
+
 def load_jsonl(path: str) -> List[Dict[str, Any]]:
     """Load records from a JSONL file.
+
+    Normalizes ground_truth field from legacy YES/NO to TRUE/FALSE.
 
     Args:
         path: Path to JSONL file.
 
     Returns:
-        List of parsed JSON records.
+        List of parsed JSON records with normalized ground_truth.
     """
     records: List[Dict[str, Any]] = []
     with open(path, "r", encoding="utf-8") as f:
@@ -140,7 +164,10 @@ def load_jsonl(path: str) -> List[Dict[str, Any]]:
             line = line.strip()
             if not line:
                 continue
-            records.append(json.loads(line))
+            record = json.loads(line)
+            if "ground_truth" in record:
+                record["ground_truth"] = normalize_ground_truth(record["ground_truth"])
+            records.append(record)
     return records
 
 
@@ -241,13 +268,33 @@ def evaluate_single_item_robust(
             f"  Warning: normalize_label failed to extract YES/NO from: {pred_text[:100]}..."
         )
 
+    # Compute outcome (3-way)
+    outcome: Optional[Outcome] = None
     correct: Optional[bool] = None
+
     if pred_text is None:
+        # API error or no response
+        outcome = None
         correct = None
-    elif gold is not None and pred_norm is not None:
-        correct = pred_norm == gold
-    elif gold is not None and pred_norm is None:
-        correct = False
+    elif pred_norm is None:
+        # Invalid: output exists but could not parse
+        outcome = Outcome.INVALID
+        correct = None
+    elif gold is not None:
+        # Valid: parsed to YES/NO
+        if pred_norm == gold:
+            outcome = Outcome.VALID_CORRECT
+            correct = True
+        else:
+            outcome = Outcome.VALID_INCORRECT
+            correct = False
+    else:
+        # Valid parse but no gold label
+        outcome = None
+        correct = None
+
+    # Compute group_id for perturbation groups
+    group_id = compute_group_id(item)
 
     return EvalResult(
         item_id=item.get("id", ""),
@@ -267,6 +314,8 @@ def evaluate_single_item_robust(
         correct=correct,
         error_type=error_type,
         question=q,
+        outcome=outcome,
+        group_id=group_id,
     )
 
 
@@ -515,9 +564,22 @@ def evaluate_items(
         )
         gold = normalize_label(gold_raw)
 
+        # Compute outcome
+        outcome: Optional[Outcome] = None
         correct: Optional[bool] = None
-        if gold is not None and pred_norm is not None:
-            correct = pred_norm == gold
+        if pred_norm is None:
+            outcome = Outcome.INVALID
+            correct = None
+        elif gold is not None:
+            if pred_norm == gold:
+                outcome = Outcome.VALID_CORRECT
+                correct = True
+            else:
+                outcome = Outcome.VALID_INCORRECT
+                correct = False
+
+        # Compute group_id
+        group_id = compute_group_id(item)
 
         res = EvalResult(
             item_id=item.get("id", ""),
@@ -533,6 +595,8 @@ def evaluate_items(
             correct=correct,
             error_type=None,
             question=q,
+            outcome=outcome,
+            group_id=group_id,
         )
         results.append(res)
 
