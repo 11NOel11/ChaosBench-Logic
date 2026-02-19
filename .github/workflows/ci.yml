@@ -78,8 +78,10 @@ jobs:
 
       - name: Check for placeholder URLs
         run: |
-          # Check for placeholder URLs in key files
-          if grep -r "yourusername" --include="*.md" --include="*.toml" --include="*.cff" .; then
+          # Check for placeholder URLs in key files (exclude RELEASE_CHECKLIST.md which
+          # legitimately references the term as a meta-instruction, not a real placeholder)
+          if grep -r "yourusername" --include="*.md" --include="*.toml" --include="*.cff" \
+              --exclude="RELEASE_CHECKLIST.md" .; then
             echo "Error: Found placeholder URLs (yourusername)"
             exit 1
           fi
