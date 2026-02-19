@@ -2,9 +2,11 @@
 
 ## Dataset Summary
 
-ChaosBench-Logic is a benchmark dataset for evaluating Large Language Model reasoning capabilities on dynamical systems and chaos theory. The dataset tests logical inference, symbolic manipulation, multi-hop reasoning, cross-system comparison, and counterfactual analysis through binary classification questions.
+ChaosBench-Logic is a benchmark dataset for evaluating Large Language Model reasoning capabilities on dynamical systems and chaos theory. The dataset tests logical inference, symbolic manipulation, multi-hop reasoning, indicator diagnostics, regime transitions, and FOL consistency through binary classification questions.
 
-The benchmark consists of approximately 25,000 questions spanning 30 core manually-curated dynamical systems and approximately 100 systems imported from the dysts library. Questions are organized into 10 task families and 5 evaluation splits to comprehensively assess model capabilities.
+**Version 2.0.0** (default) consists of **40,886 questions** spanning 30 core manually-curated dynamical systems and 135 systems imported from the dysts library (165 total). Questions are organized into 10 task families, testing diverse reasoning capabilities from basic atomic queries to complex multi-indicator cross-validation.
+
+**Version 1** (621 questions, archived in `data/archive/v1/`) established baseline performance metrics. Total dataset: 41,507 questions.
 
 ## Dataset Description
 
@@ -13,23 +15,31 @@ The benchmark consists of approximately 25,000 questions spanning 30 core manual
 - **Version**: 2.0.0
 - **License**: MIT (code), CC BY 4.0 (dataset)
 
-### Dataset Size
+### Dataset Size (v2 - default)
 
-| Split | Questions | Description |
-|-------|-----------|-------------|
-| core | ~10,000 | Primary evaluation split with all task families |
-| robustness | ~5,000 | Paraphrase and adversarial variants |
-| heldout_systems | ~3,750 | Questions on dysts-imported systems |
-| heldout_templates | ~3,750 | Novel question templates |
-| hard | ~2,500 | Multi-hop chains and complex reasoning |
-| **Total** | **~25,000** | Complete benchmark |
+| Family | Questions | Description |
+|--------|-----------|-------------|
+| atomic | 25,000 | Single predicate queries about system properties |
+| multi_hop | 6,000 | Chained logical inference (2-6 reasoning steps) |
+| consistency_paraphrase | 4,139 | Linguistic variations testing answer consistency |
+| perturbation_robustness | 1,994 | Minor perturbations to phrasing |
+| adversarial | 1,285 | Common misconceptions and edge cases |
+| fol_inference | 1,758 | First-order logic reasoning from premises |
+| indicator_diagnostics | 530 | Interpretation of chaos indicators |
+| regime_transition | 68 | Bifurcation and parameter-dependent behavior |
+| cross_indicator | 67 | Reasoning across multiple chaos indicators |
+| extended_systems | 45 | Questions on underrepresented systems |
+| **v2 Total** | **40,886** | |
+
+**Archived v1** (data/archive/v1/): 621 questions (batches 1-7, original baseline)
+**Combined Total**: 41,507 questions
 
 ### Task Families
 
 The dataset includes 10 task families testing different reasoning capabilities:
 
 1. **atomic**: Single predicate queries about system properties
-2. **multi_hop**: Chained logical inference (2-3 reasoning steps)
+2. **multi_hop**: Chained logical inference (2-4 reasoning steps)
 3. **indicator_diagnostics**: Interpretation of chaos indicators (K-test, permutation entropy, MEGNO)
 4. **regime_transition**: Bifurcation and parameter-dependent behavior changes
 5. **fol_inference**: First-order logic reasoning from premises
@@ -41,20 +51,20 @@ The dataset includes 10 task families testing different reasoning capabilities:
 
 ### System Coverage
 
-**30 Core Systems:**
+**30 Core Systems (manually curated):**
 - Classical chaos: Lorenz-63, Lorenz-84, Lorenz-96, Rössler, Duffing, Chen system
 - Chemical systems: Brusselator, Oregonator
 - Biological models: FitzHugh-Nagumo, Hindmarsh-Rose, Lotka-Volterra, Mackey-Glass
 - Discrete maps: Logistic (multiple parameters), Hénon, Ikeda, Standard, Arnold cat, Baker's, Circle
 - PDEs: Kuramoto-Sivashinsky, Sine-Gordon
 - Neural models: Rikitake dynamo
-- Oscillators: Van der Pol, Simple harmonic, Damped driven pendulum
+- Oscillators: Van der Pol, Simple harmonic, Damped driven pendulum, Chua circuit, Double pendulum, Damped oscillator
 - Stochastic: Ornstein-Uhlenbeck process
 
-**~100 Extended Systems:**
-- Additional chaotic ODEs from dysts library
-- Expanded coverage of bifurcation scenarios
-- Rare system classes and edge cases
+**135 Extended Systems (from dysts):**
+- Additional chaotic ODEs imported from dysts library
+- Used for extended_systems task family
+- Enables testing generalization to unseen systems
 
 ## Languages
 
@@ -86,17 +96,22 @@ Questions are stored in JSONL format:
 - **system_id** (string, nullable): System identifier, `null` for ontology questions
 - **template** (string): Template version label
 
-### Data Splits
+### Data Organization
 
-Questions are partitioned into 5 splits for comprehensive evaluation:
+Questions are organized into 10 task families:
 
-- **core**: Primary split with balanced coverage of all task families
-- **robustness**: Tests consistency under linguistic variation
-- **heldout_systems**: Tests generalization to unseen systems
-- **heldout_templates**: Tests compositional generalization with novel templates
-- **hard**: High-difficulty questions requiring multi-step reasoning
+- **v22_atomic.jsonl**: Single predicate queries about system properties
+- **v22_multi_hop.jsonl**: Chained logical inference (2-4 reasoning steps)
+- **v22_consistency_paraphrase.jsonl**: Linguistic variations testing answer consistency
+- **v22_perturbation_robustness.jsonl**: Minor perturbations to phrasing
+- **v22_adversarial.jsonl**: Common misconceptions and edge cases
+- **v22_indicator_diagnostics.jsonl**: Interpretation of chaos indicators
+- **v22_fol_inference.jsonl**: First-order logic reasoning from premises
+- **v22_regime_transition.jsonl**: Bifurcation and parameter-dependent behavior
+- **v22_cross_indicator.jsonl**: Reasoning across multiple chaos indicators
+- **v22_extended_systems.jsonl**: Questions on underrepresented systems
 
-Split assignment is deterministic based on system ID, template hash, and complexity metadata.
+All data is available in `data/v22_*.jsonl` files (10 canonical files).
 
 ## Dataset Creation
 
@@ -118,11 +133,11 @@ ChaosBench-Logic was created to evaluate LLM reasoning on scientific domains req
 - Landmark papers (Lorenz 1963, Rössler 1976)
 - Standard benchmarks in chaos theory
 
-Each system includes verified ground truth for 11 predicates based on mathematical analysis.
+Each system includes verified ground truth for 15 predicates based on mathematical analysis.
 
 #### Extended Systems
 
-Approximately 100 systems imported from the dysts library (Gilpin et al., 2021) with provenance tracking. Systems were selected for:
+135 systems imported from the dysts library (Gilpin et al., 2021) with provenance tracking. Systems were selected for:
 - Diversity in system classes (ODEs, maps, PDEs)
 - Coverage of chaotic and non-chaotic regimes
 - Representation of different scientific domains

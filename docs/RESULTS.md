@@ -1,8 +1,10 @@
 # ChaosBench-Logic: Complete Evaluation Results
 
-## Executive Summary
+## Executive Summary (v1 Baseline - Archived)
 
-Successfully evaluated **6 model configurations** on the ChaosBench-Logic benchmark (621 questions across 17 task types). Results include GPT-4, Claude-3.5, Gemini-2.5, and LLaMA-3 70B in both zero-shot and chain-of-thought modes.
+Successfully evaluated **6 model configurations** on the ChaosBench-Logic **v1 baseline** (621 questions, batches 1-7, archived in `data/archive/v1/`). Results include GPT-4, Claude-3.5, Gemini-2.5, and LLaMA-3 70B in both zero-shot and chain-of-thought modes.
+
+**Note:** These results are from the v1 dataset (archived). **v2 (default)** contains 40,886 questions (`data/v22_*.jsonl`) across 10 task families and 165 systems. Full v2 evaluation pending.
 
 ---
 

@@ -4,7 +4,7 @@ This document defines the v2 dataset format, schema, and generation protocol for
 
 ## Overview
 
-ChaosBench-Logic v2 is a comprehensive benchmark for evaluating LLM reasoning on dynamical systems. The dataset consists of approximately 25,000 binary classification questions across 30 core systems and ~100 dysts-imported systems.
+ChaosBench-Logic v2 is a comprehensive benchmark for evaluating LLM reasoning on dynamical systems. **The current dataset contains 41,507 binary classification questions** (621 v1 archived + 40,886 v2) across 30 core systems and 135 dysts-imported systems (165 total), organized into 10 canonical files (`v22_*.jsonl`) and 10 task families.
 
 ## Dataset Schema
 
@@ -56,14 +56,18 @@ System definitions are stored as individual JSON files in `systems/` directory:
     "Chaotic": true,
     "Deterministic": true,
     "Periodic": false,
-    "StrangeAttractor": true,
-    "PositiveLyapunov": true,
-    "Bounded": true,
-    "Conservative": false,
+    "StrangeAttr": true,
+    "PosLyap": true,
+    "PointUnpredictable": true,
+    "StatPredictable": true,
+    "QuasiPeriodic": false,
+    "Random": false,
+    "FixedPointAttr": false,
+    "Periodic": false,
     "Dissipative": true,
-    "Stochastic": false,
-    "Stable": false,
-    "SensitiveToIC": true
+    "Bounded": true,
+    "Mixing": true,
+    "Ergodic": true
   },
   "provenance": null
 }
@@ -77,7 +81,7 @@ System definitions are stored as individual JSON files in `systems/` directory:
 - **equations** (list[string], required): Mathematical equations defining the system.
 - **parameters** (dict, required): Default parameter values used for computations.
 - **dimension** (integer, required): State space dimension.
-- **truth_assignment** (dict, required): Ground truth for 11 predicates (see Ontology).
+- **truth_assignment** (dict, required): Ground truth for 15 predicates (11 core + 4 extension; see Ontology).
 - **provenance** (dict, nullable): For dysts-imported systems only (see Provenance section).
 
 ### Dysts-Imported Systems
@@ -102,7 +106,7 @@ Systems imported from the dysts library include provenance metadata:
 }
 ```
 
-Approximately 100 dysts systems are included to expand coverage of chaotic ODEs.
+135 dysts systems are included to expand coverage of chaotic ODEs.
 
 ## Data Splits
 
@@ -228,17 +232,15 @@ Each dataset build produces a manifest:
 
 ```json
 {
+  "schema_version": "v2",
   "version": "2.0.0",
-  "timestamp": "2026-02-16T14:45:35.912946+00:00",
+  "timestamp": "2026-02-18T15:25:04.864653+00:00",
   "batches": {
-    "batch8_indicator_diagnostics": {
-      "count": 550,
-      "sha256": "e87c378672e30677c5b8e56d37a1f46fcd4040959cebfc6f70f33d98331692ee"
-    }
+    "v22_atomic": {"count": 10890, "sha256": "..."},
+    "v22_multi_hop": {"count": 3500, "sha256": "..."},
+    "v22_adversarial": {"count": 598, "sha256": "..."}
   },
-  "total_new_questions": 1258,
-  "total_existing_questions": 621,
-  "grand_total": 1879
+  "total_questions": 21658
 }
 ```
 
@@ -249,7 +251,7 @@ Each dataset build produces a manifest:
 1. **System Loading**
    - Load 30 core systems from `systems/*.json`
    - Validate schema and truth assignments
-   - Load ~100 dysts systems from `systems/dysts/*.json`
+   - Load 135 dysts systems from `systems/dysts/*.json`
 
 2. **Indicator Computation**
    - Compute chaos indicators for all systems
@@ -341,8 +343,9 @@ CI runs validation on every commit:
 
 ## Version History
 
-- **v2.0.0** (February 2026): Initial v2 release with ~25k questions
-- **v1.0.0** (2025): Original 621-question benchmark
+- **v2.0.0** (February 2026): Scaled release with 40,886 v2 questions across 10 families, 165 systems, 15 predicates
+- **v2.1.0** (February 2026): Intermediate scaling with 11 batches (archived to data/archive/v21_intermediate/)
+- **v1.0.0** (2025): Original 621-question benchmark (archived to data/archive/v1/)
 
 ## References
 

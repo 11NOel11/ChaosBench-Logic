@@ -2,35 +2,43 @@
 
 ## Dataset Description
 
-**ChaosBench-Logic** is a comprehensive benchmark dataset for evaluating Large Language Models (LLMs) on complex reasoning tasks about dynamical systems. The dataset tests models across multiple dimensions: logical inference, symbolic manipulation, multi-hop reasoning, cross-system comparison, and counterfactual analysis.
+**ChaosBench-Logic** is a comprehensive benchmark dataset for evaluating Large Language Models (LLMs) on complex reasoning tasks about dynamical systems. The dataset tests models across multiple dimensions: logical inference, symbolic manipulation, multi-hop reasoning, indicator diagnostics, regime transitions, and FOL consistency.
 
-### Key Statistics
+### Key Statistics (v2 - default)
 
 | Metric | Value |
 |--------|-------|
-| **Total Questions** | 621 |
-| **Unique Question IDs** | 621 (q0001 to q0621) |
-| **Systems Used** | 27 dynamical systems |
-| **Systems Defined** | 30 (3 unused, reserved for future work) |
-| **Unique Predicates** | 11 logical predicates per system |
-| **Dialogues** | 49 multi-turn dialogues |
-| **Dialogue Turns** | 3-6 turns per dialogue (avg: 4.1) |
+| **v2 Questions** | 40,886 (default evaluation target) |
+| **v1 Questions (archived)** | 621 (in `data/archive/v1/`) |
+| **Total** | 41,507 |
+| **Question ID Format** | Various (e.g., ind_direct_0001 for indicators, fol_0001 for FOL, etc.) |
+| **Core Systems** | 30 manually curated |
+| **Extended Systems** | 135 from dysts library |
+| **Total Systems** | 165 |
+| **Unique Predicates** | 15 logical predicates per system |
 | **Data Format** | JSONL (JSON Lines) |
-| **Total Files** | 7 batch files |
+| **v2 Files** | 10 (v22_*.jsonl) |
+| **v1 Batch Files (archived)** | 7 (batches 1-7) |
 
-### Data Split
+### Data Split (v2 - default)
 
-The dataset is divided into 7 thematic batches:
+The v2 dataset uses 10 canonical files:
 
-| Batch | File | Items | Primary Task Types |
-|-------|------|-------|-------------------|
-| 1 | `batch1_atomic_implication.jsonl` | 50 | atomic, bias, counterfactual, implication, multi_turn |
-| 2 | `batch2_multiHop_crossSystem.jsonl` | 60 | multi_hop, cross_system, bias, hard, adversarial, trap, structural |
-| 3 | `batch3_pde_chem_bio.jsonl` | 80 | atomic, bias, multi_hop, cross_system, hard |
-| 4 | `batch4_maps_advanced.jsonl` | 70 | atomic, bias, multi_hop, cross_system, hard |
-| 5 | `batch5_counterfactual_high_difficulty.jsonl` | 70 | counterfactual |
-| 6 | `batch6_deep_bias_probes.jsonl` | 90 | bias |
-| 7 | `batch7_multiturn_advanced.jsonl` | 201 | multi_turn (all 49 dialogues) |
+| File | Items | Primary Task Types |
+|------|-------|-------------------|
+| v22_atomic.jsonl | 25,000 | atomic |
+| v22_multi_hop.jsonl | 6,000 | multi_hop |
+| v22_consistency_paraphrase.jsonl | 4,139 | consistency_paraphrase |
+| v22_perturbation_robustness.jsonl | 1,994 | perturbation |
+| v22_adversarial.jsonl | 1,285 | adversarial_misleading, adversarial_nearmiss |
+| v22_fol_inference.jsonl | 1,758 | fol_inference |
+| v22_indicator_diagnostics.jsonl | 530 | indicator_diagnostics |
+| v22_regime_transition.jsonl | 68 | regime_transition |
+| v22_cross_indicator.jsonl | 67 | cross_indicator |
+| v22_extended_systems.jsonl | 45 | extended_systems |
+
+**v1 Archived** (data/archive/v1/, 621 questions):
+- Batches 1-7: Original baseline tasks on 30 core systems
 
 ---
 
@@ -44,7 +52,7 @@ Every question in the dataset has these fields:
 |-------|------|-------------|---------|
 | `id` | string | Unique question identifier | `"q0001"` |
 | `question` | string | Natural language question text | `"Is the Lorenz-63 system chaotic?"` |
-| `ground_truth` | string | Ground truth answer label | `"YES"`, `"NO"`, `"TRUE"`, `"FALSE"`, `"DISAPPEAR"` |
+| `ground_truth` | string | Ground truth answer label | `"TRUE"`, `"FALSE"` (v2); `"YES"`, `"NO"` (v1 archived) |
 | `type` | string | Task type / reasoning category | `"atomic"`, `"multi_hop"`, `"bias"`, etc. |
 | `template` | string | Template ID used for generation | `"A1"`, `"B_chain_2"`, `"C1"`, etc. |
 
@@ -54,8 +62,8 @@ Some questions have additional context:
 
 | Field | Type | Description | When Present |
 |-------|------|-------------|--------------|
-| `system_id` | string | Dynamical system identifier | 462/621 items (74.4%) - absent for system-agnostic bias questions |
-| `dialogue_id` | string | Multi-turn dialogue identifier | 201/621 items (32.4%) - only in batch7 |
+| `system_id` | string | Dynamical system identifier | Present for most items - absent for ontology/FOL questions |
+| `dialogue_id` | string | Multi-turn dialogue identifier | Only in batch7 (201 items) |
 | `turn` | integer | Turn number within dialogue (1-indexed) | Present when `dialogue_id` exists |
 
 **Note on Missing `system_id`:** 159 questions (25.6%) are system-agnostic bias probes designed to test general reasoning about chaos theory concepts without reference to a specific system. This is intentional.
@@ -225,9 +233,9 @@ Each of the 30 systems is defined in `systems/{system_id}.json` with:
 
 - **System metadata:** Name, category, equations, parameters
 - **Descriptions:** Simple and detailed explanations
-- **Truth assignment:** Boolean values for all 11 predicates
+- **Truth assignment:** Boolean values for all 15 predicates
 
-See [ONTOLOGY.md](ONTOLOGY.md) for details on the 11 predicates and logical axioms.
+See [ONTOLOGY.md](ONTOLOGY.md) for details on the 15 predicates and logical axioms.
 
 ---
 
@@ -235,8 +243,8 @@ See [ONTOLOGY.md](ONTOLOGY.md) for details on the 11 predicates and logical axio
 
 ### Validation Checks
 
-✅ **No duplicate IDs:** All 621 IDs are unique  
-✅ **Sequential IDs:** IDs range from q0001 to q0621 with no gaps  
+✅ **No duplicate IDs:** All 41,507 IDs are unique across 10 v2 files + 7 v1 archive files
+✅ **Structured IDs:** IDs follow task-specific patterns (q0001-q0621 for v1, ind_direct_0001 for indicators, etc.)  
 ✅ **All questions have ground truth:** 0 missing labels  
 ✅ **Well-formed JSON:** All JSONL files parse correctly  
 ✅ **Consistent schema:** All required fields present in every item  
@@ -255,26 +263,15 @@ See [ONTOLOGY.md](ONTOLOGY.md) for details on the 11 predicates and logical axio
 
 ```python
 import json
+from pathlib import Path
 
-# Load all batches
 all_items = []
-batches = [
-    "data/batch1_atomic_implication.jsonl",
-    "data/batch2_multiHop_crossSystem.jsonl",
-    "data/batch3_pde_chem_bio.jsonl",
-    "data/batch4_maps_advanced.jsonl",
-    "data/batch5_counterfactual_high_difficulty.jsonl",
-    "data/batch6_deep_bias_probes.jsonl",
-    "data/batch7_multiturn_advanced.jsonl",
-]
-
-for batch_file in batches:
-    with open(batch_file) as f:
-        for line in f:
+for f in sorted(Path("data").glob("v22_*.jsonl")):
+    with open(f) as fh:
+        for line in fh:
             if line.strip():
                 all_items.append(json.loads(line))
-
-print(f"Loaded {len(all_items)} questions")
+print(f"Loaded {len(all_items)} questions")  # 40,886
 ```
 
 ### Filtering by Type
@@ -337,8 +334,17 @@ For questions, issues, or contributions, please:
 
 ## Changelog
 
+### Version 2.0.0 (2026-02-18)
+- Scaled to 40,886 questions across 10 task families, 165 systems, 15 predicates. Quality gates enforced. Canonical v22_*.jsonl naming.
+
+### Version 2.1.0 (2026-02-17)
+- Intermediate scaling with 11 batches (archived to data/archive/v21_intermediate/)
+- New task families: indicator diagnostics, regime transitions, FOL inference, cross-indicator, adversarial, consistency paraphrases, extended systems
+- 30 core systems + 136 dysts-imported systems (166 total)
+- Empirically validated indicator thresholds
+
 ### Version 1.0.0 (2025-01-01)
 - Initial public release
-- 621 questions across 27 dynamical systems
+- 621 questions (batches 1-7) across 27 dynamical systems
 - 7 batches covering 17 task types
 - 49 multi-turn dialogues

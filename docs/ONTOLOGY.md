@@ -2,13 +2,13 @@
 
 ## Overview
 
-This document defines the formal ontology used in ChaosBench-Logic: the 11 logical predicates that characterize dynamical systems and the First-Order Logic (FOL) axioms that govern their relationships.
+This document defines the formal ontology used in ChaosBench-Logic: the 15 logical predicates that characterize dynamical systems and the First-Order Logic (FOL) axioms that govern their relationships.
 
 ---
 
-## The 11 Predicates
+## The 15 Predicates
 
-Each dynamical system in ChaosBench-Logic is characterized by 11 boolean predicates representing key mathematical and behavioral properties.
+Each dynamical system in ChaosBench-Logic is characterized by 15 boolean predicates representing key mathematical and behavioral properties. The original 11 predicates (1-11) are required for system eligibility; the 4 extension predicates (12-15) were added in v2 for deeper reasoning chains.
 
 ### 1. Chaotic
 
@@ -173,6 +173,63 @@ Each dynamical system in ChaosBench-Logic is characterized by 11 boolean predica
 
 ---
 
+### 12. Dissipative
+
+**Definition:** The system's phase space volume contracts over time (div(v) < 0).
+
+**Formal properties:**
+- Volume contraction → trajectories converge to lower-dimensional attractor
+- Distinguishes dissipative chaos from Hamiltonian (conservative) chaos
+
+**Example:** Lorenz system (dissipative), Rössler system, Hénon map (area-contracting)
+
+**Counter-example:** Standard map (conservative/area-preserving), Arnold cat map
+
+---
+
+### 13. Bounded
+
+**Definition:** All trajectories remain in a bounded region of phase space.
+
+**Formal properties:**
+- Attractors are bounded by definition
+- Statistical predictability requires bounded ensemble
+- Required for physical realizability of chaotic dynamics
+
+**Example:** Lorenz system (bounded attractor), logistic map (bounded on [0,1])
+
+---
+
+### 14. Mixing
+
+**Definition:** The system has the strong mixing property: correlation functions decay to zero.
+
+**Formal properties:**
+- Mixing is stronger than ergodicity (mixing ⊂ ergodic)
+- Essential for statistical mechanics interpretation of chaos
+- Hyperbolic chaotic systems typically exhibit mixing
+
+**Example:** Lorenz system, Arnold cat map (hyperbolic mixing)
+
+**Counter-example:** Periodic orbits, quasi-periodic tori
+
+---
+
+### 15. Ergodic
+
+**Definition:** Time averages along typical trajectories equal ensemble averages (Birkhoff ergodic theorem).
+
+**Formal properties:**
+- Foundation of statistical mechanics
+- Weaker than mixing but essential for statistical predictability
+- Enables long-time statistical forecasting
+
+**Example:** Lorenz system (ergodic on attractor), quasi-periodic torus
+
+**Counter-example:** Periodic orbits, multi-attractor systems
+
+---
+
 ## First-Order Logic (FOL) Axioms
 
 The predicates are not independent — they obey logical constraints formalized as FOL axioms.
@@ -314,7 +371,7 @@ This is counted as a **logical inconsistency** even if the model doesn't contrad
 
 ### Ground Truth Assignment
 
-Each system in `systems/*.json` has a `truth_assignment` field with boolean values for all 11 predicates:
+Each system in `systems/*.json` has a `truth_assignment` field with boolean values for the predicates (11 core required, 4 extension optional):
 
 ```json
 {
@@ -356,8 +413,12 @@ The evaluation pipeline maps natural language questions to predicates using keyw
 | "random", "randomness", "stochastic" | `Random` |
 | "fixed point", "fixedpoint" | `FixedPointAttr` |
 | "periodic" | `Periodic` |
+| "dissipative", "volume-contracting" | `Dissipative` |
+| "bounded", "bounded attractor" | `Bounded` |
+| "mixing", "topological mixing" | `Mixing` |
+| "ergodic", "ergodicity" | `Ergodic` |
 
-See `eval_chaosbench.py:extract_predicate_from_question()` for implementation.
+See `chaosbench/logic/ontology.py:KEYWORD_MAP` for implementation.
 
 ---
 
