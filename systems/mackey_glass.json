@@ -22,6 +22,22 @@
     "QuasiPeriodic": false,
     "Random": false,
     "FixedPointAttr": false,
-    "Periodic": false
+    "Periodic": false,
+    "Dissipative": true,
+    "Bounded": true,
+    "Mixing": true,
+    "Ergodic": true,
+    "HyperChaotic": false,
+    "Conservative": false,
+    "HighDimensional": true,
+    "Multifractal": false,
+    "HighDimSystem": true,
+    "ContinuousTime": true,
+    "DiscreteTime": false,
+    "DelaySystem": true,
+    "Forced": false,
+    "Autonomous": true,
+    "StrongMixing": true,
+    "WeakMixing": true
   }
 }

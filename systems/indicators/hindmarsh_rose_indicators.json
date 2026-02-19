@@ -1,9 +1,9 @@
 {
   "system_id": "hindmarsh_rose",
-  "zero_one_K": 0.002223876315564588,
+  "zero_one_K": 0.0022238763155645646,
   "permutation_entropy": 0.21359093032093285,
   "megno": 7.238321792610147,
   "system_type": "ode",
   "seed": 42,
-  "timestamp": "2026-02-16T10:22:27.267799+00:00"
+  "timestamp": "2026-02-18T16:45:01.351567+00:00"
 }

@@ -1,9 +1,9 @@
 {
   "system_id": "standard_map",
-  "zero_one_K": 0.9977046863924198,
+  "zero_one_K": 0.9977046863924197,
   "permutation_entropy": 0.9781487273547854,
   "megno": 0.6481457362872394,
   "system_type": "map",
   "seed": 42,
-  "timestamp": "2026-02-16T10:22:38.317064+00:00"
+  "timestamp": "2026-02-18T16:45:08.760952+00:00"
 }
