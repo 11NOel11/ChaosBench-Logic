@@ -30,10 +30,10 @@ def get_template_path():
     """Get the path to the SLURM template script.
 
     Returns:
-        Path to slurm_template.sh in the scripts directory.
+        Path to slurm_template.sh in the infra/slurm directory.
     """
     script_dir = Path(__file__).parent.resolve()
-    return script_dir / "slurm_template.sh"
+    return script_dir.parent / "infra" / "slurm" / "slurm_template.sh"
 
 
 def generate_job_script(
