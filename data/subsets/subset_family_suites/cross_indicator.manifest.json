@@ -1,0 +1,38 @@
+{
+  "created_utc": "2026-02-20T14:30:47.796103+00:00",
+  "subset_name": "cross_indicator",
+  "size": 67,
+  "target_size": 456,
+  "seed": 42,
+  "source": "data/v22_cross_indicator.jsonl",
+  "selection_method": "proportional",
+  "balance_labels": true,
+  "balance_families": false,
+  "family_weights": {},
+  "min_per_family": 1,
+  "sha256": "7d961a2bed6b7a63",
+  "dataset_global_sha256": "cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279",
+  "label_balance": {
+    "true_count": 38,
+    "false_count": 29,
+    "true_ratio": 0.5672
+  },
+  "per_family_counts": {
+    "cross_indicator": {
+      "total": 67,
+      "TRUE": 38,
+      "FALSE": 29
+    }
+  },
+  "per_family_sampling_log": {
+    "cross_indicator": {
+      "available": 67,
+      "requested": 67,
+      "achieved": 67,
+      "label_balance": "57% TRUE (38T/29F)",
+      "true_available": 38,
+      "false_available": 29,
+      "quota_note": "quota=67 of available=67"
+    }
+  }
+}

@@ -130,6 +130,7 @@ def cmd_eval(args):
         retries=args.retries,
         strict_parsing=not args.lenient,
         resume_run_id=getattr(args, "resume", None),
+        shuffle_seed=getattr(args, "shuffle_seed", None),
     )
 
     runner = EvalRunner(cfg)
@@ -191,6 +192,14 @@ def cmd_analyze_runs(args):
     ]
     result = subprocess.run(cmd, cwd=PROJECT_ROOT)
     sys.exit(result.returncode)
+
+
+def cmd_subset(args):
+    """Create a dataset subset via SubsetConfig API."""
+    sys.path.insert(0, PROJECT_ROOT)
+    os.chdir(PROJECT_ROOT)
+    from chaosbench.data.subsets import main as _subset_main
+    _subset_main(sys.argv[2:])
 
 
 def main():
@@ -259,6 +268,20 @@ def main():
         metavar="RUN_ID",
         help="Resume an interrupted run by its run_id (must match an existing runs/<run_id>/ dir)",
     )
+    eval_parser.add_argument(
+        "--shuffle-seed",
+        type=int,
+        default=None,
+        dest="shuffle_seed",
+        help="Shuffle items with this seed before eval (deterministic ordering guard)",
+    )
+    eval_parser.add_argument(
+        "--shuffle-seed",
+        type=int,
+        default=None,
+        dest="shuffle_seed",
+        help="Shuffle items with this seed before eval (deterministic ordering guard)",
+    )
 
     # Publish-run command
     pub_parser = subparsers.add_parser("publish-run", help="Publish run artifacts to published_results/")
@@ -289,6 +312,9 @@ def main():
     ar_parser.add_argument("--runs-dir", default="runs", help="Runs directory")
     ar_parser.add_argument("--out-dir", default="artifacts/runs_audit", help="Audit output directory")
 
+    # Subset command (passes remaining args to chaosbench.data.subsets)
+    subparsers.add_parser("subset", help="Create a dataset subset (wraps chaosbench.data.subsets)")
+
     args = parser.parse_args()
 
     if args.command is None:
@@ -303,6 +329,7 @@ def main():
         "eval": cmd_eval,
         "publish-run": cmd_publish_run,
         "analyze-runs": cmd_analyze_runs,
+        "subset": cmd_subset,
     }
     commands[args.command](args)
 

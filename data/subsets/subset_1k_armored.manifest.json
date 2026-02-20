@@ -1,0 +1,178 @@
+{
+  "created_utc": "2026-02-20T14:29:11.656800+00:00",
+  "subset_name": "subset_1k_armored",
+  "size": 1000,
+  "target_size": 1000,
+  "seed": 42,
+  "source": "canonical",
+  "selection_method": "balanced_by_family",
+  "balance_labels": true,
+  "balance_families": true,
+  "family_weights": {},
+  "min_per_family": 1,
+  "sha256": "194884503e7dcb0a",
+  "dataset_global_sha256": "cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279",
+  "label_balance": {
+    "true_count": 497,
+    "false_count": 503,
+    "true_ratio": 0.497
+  },
+  "per_family_counts": {
+    "multi_hop": {
+      "total": 146,
+      "TRUE": 73,
+      "FALSE": 73
+    },
+    "atomic": {
+      "total": 625,
+      "TRUE": 312,
+      "FALSE": 313
+    },
+    "fol_inference": {
+      "total": 42,
+      "TRUE": 21,
+      "FALSE": 21
+    },
+    "perturbation": {
+      "total": 48,
+      "TRUE": 24,
+      "FALSE": 24
+    },
+    "adversarial_misleading": {
+      "total": 12,
+      "TRUE": 6,
+      "FALSE": 6
+    },
+    "consistency_paraphrase": {
+      "total": 101,
+      "TRUE": 50,
+      "FALSE": 51
+    },
+    "indicator_diagnostic": {
+      "total": 12,
+      "TRUE": 6,
+      "FALSE": 6
+    },
+    "extended_systems": {
+      "total": 1,
+      "TRUE": 0,
+      "FALSE": 1
+    },
+    "adversarial_nearmiss": {
+      "total": 11,
+      "TRUE": 5,
+      "FALSE": 6
+    },
+    "cross_indicator": {
+      "total": 1,
+      "TRUE": 0,
+      "FALSE": 1
+    },
+    "regime_transition": {
+      "total": 1,
+      "TRUE": 0,
+      "FALSE": 1
+    }
+  },
+  "per_family_sampling_log": {
+    "adversarial_misleading": {
+      "available": 500,
+      "requested": 12,
+      "achieved": 12,
+      "label_balance": "50% TRUE (6T/6F)",
+      "true_available": 252,
+      "false_available": 248,
+      "quota_note": "quota=12 of available=500"
+    },
+    "adversarial_nearmiss": {
+      "available": 478,
+      "requested": 11,
+      "achieved": 11,
+      "label_balance": "45% TRUE (5T/6F)",
+      "true_available": 229,
+      "false_available": 249,
+      "quota_note": "quota=11 of available=478"
+    },
+    "atomic": {
+      "available": 25307,
+      "requested": 625,
+      "achieved": 625,
+      "label_balance": "50% TRUE (312T/313F)",
+      "true_available": 12675,
+      "false_available": 12632,
+      "quota_note": "quota=618 of available=25307 (+7 padding)"
+    },
+    "consistency_paraphrase": {
+      "available": 4139,
+      "requested": 101,
+      "achieved": 101,
+      "label_balance": "50% TRUE (50T/51F)",
+      "true_available": 2036,
+      "false_available": 2103,
+      "quota_note": "quota=101 of available=4139"
+    },
+    "cross_indicator": {
+      "available": 67,
+      "requested": 1,
+      "achieved": 1,
+      "label_balance": "0% TRUE (0T/1F)",
+      "true_available": 38,
+      "false_available": 29,
+      "quota_note": "quota=1 of available=67"
+    },
+    "extended_systems": {
+      "available": 45,
+      "requested": 1,
+      "achieved": 1,
+      "label_balance": "0% TRUE (0T/1F)",
+      "true_available": 22,
+      "false_available": 23,
+      "quota_note": "quota=1 of available=45"
+    },
+    "fol_inference": {
+      "available": 1758,
+      "requested": 42,
+      "achieved": 42,
+      "label_balance": "50% TRUE (21T/21F)",
+      "true_available": 977,
+      "false_available": 781,
+      "quota_note": "quota=42 of available=1758"
+    },
+    "indicator_diagnostic": {
+      "available": 530,
+      "requested": 12,
+      "achieved": 12,
+      "label_balance": "50% TRUE (6T/6F)",
+      "true_available": 275,
+      "false_available": 255,
+      "quota_note": "quota=12 of available=530"
+    },
+    "multi_hop": {
+      "available": 6000,
+      "requested": 146,
+      "achieved": 146,
+      "label_balance": "50% TRUE (73T/73F)",
+      "true_available": 2700,
+      "false_available": 3300,
+      "quota_note": "quota=146 of available=6000"
+    },
+    "perturbation": {
+      "available": 1994,
+      "requested": 48,
+      "achieved": 48,
+      "label_balance": "50% TRUE (24T/24F)",
+      "true_available": 997,
+      "false_available": 997,
+      "quota_note": "quota=48 of available=1994"
+    },
+    "regime_transition": {
+      "available": 68,
+      "requested": 1,
+      "achieved": 1,
+      "label_balance": "0% TRUE (0T/1F)",
+      "true_available": 31,
+      "false_available": 37,
+      "quota_note": "quota=1 of available=68"
+    }
+  }
+}

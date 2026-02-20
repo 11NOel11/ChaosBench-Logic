@@ -1,0 +1,38 @@
+{
+  "created_utc": "2026-02-20T14:30:51.634510+00:00",
+  "subset_name": "regime_transition",
+  "size": 68,
+  "target_size": 456,
+  "seed": 42,
+  "source": "data/v22_regime_transition.jsonl",
+  "selection_method": "proportional",
+  "balance_labels": true,
+  "balance_families": false,
+  "family_weights": {},
+  "min_per_family": 1,
+  "sha256": "bd1b83404329c286",
+  "dataset_global_sha256": "cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279",
+  "label_balance": {
+    "true_count": 31,
+    "false_count": 37,
+    "true_ratio": 0.4559
+  },
+  "per_family_counts": {
+    "regime_transition": {
+      "total": 68,
+      "TRUE": 31,
+      "FALSE": 37
+    }
+  },
+  "per_family_sampling_log": {
+    "regime_transition": {
+      "available": 68,
+      "requested": 68,
+      "achieved": 68,
+      "label_balance": "46% TRUE (31T/37F)",
+      "true_available": 31,
+      "false_available": 37,
+      "quota_note": "quota=68 of available=68"
+    }
+  }
+}
