@@ -1,0 +1,25 @@
+{
+  "run_id": "20260220T132439Z_ollama_gemma2:9b",
+  "created_utc": "2026-02-20T13:29:14.696517+00:00",
+  "provider": "ollama/gemma2:9b",
+  "prompt_version": "v1",
+  "prompt_hash": "5881f664c444e3d3",
+  "dataset_global_sha256": "cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279",
+  "canonical_selector": "data/canonical_v2_files.json",
+  "total_items_evaluated": 3828,
+  "max_items": null,
+  "seed": 42,
+  "retries": 1,
+  "strict_parsing": true,
+  "workers": 4,
+  "git_commit": "72c3cf0",
+  "python_version": "3.12.12",
+  "metrics_summary": {
+    "coverage": 1.0,
+    "accuracy_valid": 0.675,
+    "effective_accuracy": 0.675,
+    "balanced_accuracy": 0.675,
+    "mcc": 0.3504
+  },
+  "resumed_from": null
+}
