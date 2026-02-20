@@ -1,5 +1,5 @@
 # ChaosBench-Logic — Runs Audit Report
-_Generated: 2026-02-20T12:44:19Z_
+_Generated: 2026-02-20T13:04:40Z_
 
 ---
 
@@ -22,6 +22,7 @@ _Generated: 2026-02-20T12:44:19Z_
 | `20260219T193151Z_ollama_qwen2.5:7b` | ollama | qwen2.5:7b | 1,000 | 0.6243 | 0.2680 | ⚠️ BIASED | ✅ PASS |
 | `20260219T193320Z_ollama_llama3.1:8b` | ollama | llama3.1:8b | 1,000 | 0.5978 | 0.2497 | ⚠️ BIASED | ✅ PASS |
 | `20260219T193425Z_ollama_qwen2.5:14b` | ollama | qwen2.5:14b | 1,000 | 0.6977 | 0.4016 | ✅ OK | ✅ PASS |
+| `20260220T130435Z_mock` | mock | mock | 50 | 0.5000 | 0.0000 | ⚠️ BIASED | ✅ PASS |
 | `20260220T104105Z_ollama_llama3.1:8b` | ollama | llama3.1:8b | 40,886 | 0.5988 | 0.2400 | ⚠️ BIASED | ✅ PASS |
 
 ---
@@ -143,6 +144,38 @@ C) **Minimal rationale first-token constraint**: require a 1-sentence
 | balanced_accuracy | 0.6977 |
 | MCC | 0.4016 |
 
+### 20260220T130435Z_mock — `mock`
+
+**Verdict: LABEL-BIASED**
+
+| Metric | Value |
+|--------|-------|
+| GT TRUE rate | 0.5800 (29/50) |
+| Pred TRUE rate | 1.0000 (50/50) |
+| Bias score | 0.4200 |
+| TP / FP / TN / FN | 29 / 21 / 0 / 0 |
+| TPR (recall) | 1.0000 |
+| TNR (specificity) | 0.0000 |
+| FPR | 1.0000 |
+| FNR | 0.0000 |
+| balanced_accuracy | 0.5000 |
+| MCC | 0.0000 |
+
+#### Defaulting Detector
+
+- **Dominant predicted label**: `TRUE`
+- **TPR/TNR gap**: 1.0000  (TPR=1.0000, TNR=0.0000)
+
+**Recommended diagnostic runs:**
+
+A) **Balanced prior reminder prompt**: add to system prompt:
+   _"Answer TRUE or FALSE based purely on the question. Do not default to any label."_
+B) **Allow UNKNOWN token** (analysis-only mode): re-run with a 3-way
+   output space (TRUE / FALSE / UNKNOWN) to surface genuinely uncertain
+   cases without forcing a FALSE default.
+C) **Minimal rationale first-token constraint**: require a 1-sentence
+   chain-of-thought before the final token to prevent shallow defaulting.
+
 ### 20260220T104105Z_ollama_llama3.1:8b — `llama3.1:8b`
 
 **Verdict: LABEL-BIASED**
@@ -182,7 +215,7 @@ C) **Minimal rationale first-token constraint**: require a 1-sentence
 ### Finding
 
 - **Freeze manifest global SHA** (`v2_freeze_manifest.json`): `cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279`
-- **Run manifests store** (all runs): `00ec17e31193de42c525ff3c8f166b4b59fae2c2631fa84a4c78b33fb01f9374` _(computed by run.py)_
+- **Run manifests store** (all runs): `unified (chaosbench.data.hashing)` _(computed by run.py)_
 
 ### Root Cause
 
@@ -237,6 +270,12 @@ while `run.py` uses `path:sha256` (no count).  This is a **tooling inconsistency
 ### 20260219T193425Z_ollama_qwen2.5:14b
 
 - Total: 1,000 | Valid: 1,000 | Invalid: 0
+- Invalid rate: 0.0000%
+- No invalid predictions. ✅
+
+### 20260220T130435Z_mock
+
+- Total: 50 | Valid: 50 | Invalid: 0
 - Invalid rate: 0.0000%
 - No invalid predictions. ✅
 
@@ -340,6 +379,10 @@ Recommend adding `group_id` to the prediction schema for full per-group flip ana
 ### 20260219T193425Z_ollama_qwen2.5:14b
 - workers=2, retries=1
 - Throughput: **0.8 q/s**  (avg latency: 1250.0 ms/q)
+
+### 20260220T130435Z_mock
+- workers=1, retries=1
+- Throughput: **3499197.3 q/s**  (avg latency: 0.0 ms/q)
 
 ### 20260220T104105Z_ollama_llama3.1:8b
 - workers=4, retries=1
