@@ -64,6 +64,10 @@ class RunConfig:
     strict_parsing: bool = True
     run_id: Optional[str] = None  # auto-generated if None
     resume_run_id: Optional[str] = None  # if set, resume an interrupted run
+    shuffle_seed: Optional[int] = None  # if set, shuffle items after loading
+    order_mode: str = "canonical"  # "canonical" | "shuffled"; recorded in manifest
+    shuffle_seed: Optional[int] = None   # if set, shuffle items after loading
+    order_mode: str = "canonical"        # "canonical" | "shuffled"; recorded in manifest
 
 
 @dataclass
@@ -399,7 +403,24 @@ class EvalRunner:
             rng = random.Random(cfg.seed)
             items = rng.sample(items, cfg.max_items)
 
+        # --- Ordering ---------------------------------------------------------
+        if cfg.shuffle_seed is not None:
+            rng_order = random.Random(cfg.shuffle_seed)
+            items = list(items)
+            rng_order.shuffle(items)
+            order_mode = "shuffled"
+        else:
+            order_mode = getattr(cfg, "order_mode", "canonical")
+
         total_planned = len(items)
+
+        # --- Ordering ---------------------------------------------------------
+        if cfg.shuffle_seed is not None:
+            rng_order = random.Random(cfg.shuffle_seed)
+            rng_order.shuffle(items)
+            order_mode = "shuffled"
+        else:
+            order_mode = getattr(cfg, "order_mode", "canonical")
 
         # --- Resume: skip already-completed items ------------------------
         already_done: Dict[str, PredictionRecord] = {}
@@ -530,6 +551,8 @@ class EvalRunner:
             "retries": cfg.retries,
             "strict_parsing": cfg.strict_parsing,
             "workers": cfg.workers,
+            "order_mode": order_mode,
+            "shuffle_seed": cfg.shuffle_seed,
             "git_commit": _git_commit(),
             "python_version": platform.python_version(),
             "metrics_summary": {
@@ -538,6 +561,8 @@ class EvalRunner:
                 if k in metrics
             },
             "resumed_from": cfg.resume_run_id,
+            "order_mode": order_mode,
+            "shuffle_seed": cfg.shuffle_seed,
         }
         manifest_path = out_dir / "run_manifest.json"
         manifest_path.write_text(json.dumps(manifest, indent=2))
