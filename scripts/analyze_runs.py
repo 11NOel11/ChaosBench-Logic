@@ -981,42 +981,70 @@ def main() -> int:
     parser.add_argument("--runs_dir", default="runs", help="Path to runs/ directory")
     parser.add_argument("--out_dir", default="artifacts/runs_audit", help="Output directory for audit files")
     parser.add_argument("--paper_assets_dir", default=str(PAPER_ASSETS_DIR), help="Output for paper CSV/MD tables")
+    parser.add_argument(
+        "--published_dir",
+        default=str(PROJECT_ROOT / "published_results" / "runs"),
+        help="published_results/runs/ directory (scanned in addition to runs_dir)",
+    )
     args = parser.parse_args()
 
     runs_dir = Path(args.runs_dir)
     out_dir = Path(args.out_dir)
     paper_dir = Path(args.paper_assets_dir)
+    published_dir = Path(args.published_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     paper_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load freeze SHA
+    # Load freeze SHA (now also recompute via unified hashing module if available)
     freeze_sha = ""
-    run_sha_method_global = ""
+    recomputed_canonical_sha = ""
     if FREEZE_MANIFEST.exists():
         freeze_data = json.loads(FREEZE_MANIFEST.read_text())
         freeze_sha = freeze_data.get("global_sha256", "")
     if CANONICAL_SELECTOR.exists():
-        run_sha_method_global = compute_global_sha_run_method(CANONICAL_SELECTOR)
+        # Try unified hashing module first (now matches freeze formula)
+        try:
+            sys.path.insert(0, str(PROJECT_ROOT))
+            from chaosbench.data.hashing import dataset_global_sha256 as _unified_sha
+            recomputed_canonical_sha = _unified_sha(CANONICAL_SELECTOR, PROJECT_ROOT)
+        except Exception:
+            # Fall back to old run.py method for comparison only
+            recomputed_canonical_sha = compute_global_sha_run_method(CANONICAL_SELECTOR)
 
+    sha_match = freeze_sha == recomputed_canonical_sha
     print(f"Freeze SHA (official):  {freeze_sha}")
-    print(f"Run.py SHA (stored):    {run_sha_method_global}")
-    print(f"Match: {freeze_sha == run_sha_method_global}")
+    print(f"Recomputed SHA:         {recomputed_canonical_sha}")
+    print(f"Match: {sha_match} {'✅' if sha_match else '⚠️ (using legacy formula?)'}")
     print()
 
-    # Discover runs
+    # Discover runs from runs_dir and (optionally) published_results/runs/
     run_dirs = discover_runs(runs_dir)
-    if not run_dirs:
+    published_dirs: List[Path] = []
+    if published_dir.exists():
+        for d in discover_runs(published_dir):
+            # Skip if same run_id already found in runs_dir
+            if d.name not in {rd.name for rd in run_dirs}:
+                published_dirs.append(d)
+        if published_dirs:
+            print(f"Found {len(published_dirs)} additional run(s) in {published_dir}:")
+            for rd in published_dirs:
+                print(f"  {rd} (published)")
+            print()
+
+    all_dirs = run_dirs + published_dirs
+    if not all_dirs:
         print(f"No runs found under {runs_dir}", file=sys.stderr)
         return 1
 
-    print(f"Found {len(run_dirs)} run directories:")
+    print(f"Found {len(run_dirs)} run directories in {runs_dir}:")
     for rd in run_dirs:
         print(f"  {rd}")
     print()
 
     summaries: List[RunSummary] = []
-    for rd in run_dirs:
-        print(f"Analysing: {rd.name}…", end=" ", flush=True)
+    for rd in all_dirs:
+        src_label = "(published)" if rd in published_dirs else ""
+        print(f"Analysing: {rd.name} {src_label}…", end=" ", flush=True)
         s = analyze_run(rd, freeze_sha)
         summaries.append(s)
         bias_v = s.confusion.get("bias_verdict", "—") if s.confusion else "—"
@@ -1030,11 +1058,17 @@ def main() -> int:
     summary_dict = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "freeze_sha": freeze_sha,
-        "run_method_sha": run_sha_method_global,
+        "recomputed_sha": recomputed_canonical_sha,
+        "sha_match": sha_match,
         "sha_mismatch_explanation": (
-            "run.py omits ':count' in global hash formula vs freeze_v2_dataset.py. "
-            "All per-file SHAs match. Data is identical."
-        ) if freeze_sha != run_sha_method_global else "No mismatch.",
+            "Recomputed SHA matches freeze manifest. "
+            "Note: runs produced before the hashing fix (commit introducing chaosbench.data.hashing) "
+            "store the old formula SHA (without :count). Those runs are still OFFICIAL — the "
+            "per-file SHAs are identical. New runs will store the correct unified SHA."
+        ) if sha_match else (
+            "SHA mismatch between recomputed and freeze manifest. "
+            "This may indicate dataset files changed after the freeze. Investigate!"
+        ),
         "runs": [
             {
                 "run_id": s.run_id,
@@ -1068,7 +1102,7 @@ def main() -> int:
     print(f"Wrote: {summary_path}")
 
     # --- RUNS_AUDIT.md -------------------------------------------------------
-    md_report = generate_md_report(summaries, freeze_sha, run_sha_method_global, "")
+    md_report = generate_md_report(summaries, freeze_sha, "unified (chaosbench.data.hashing)", "")
     audit_path = out_dir / "RUNS_AUDIT.md"
     audit_path.write_text(md_report)
     print(f"Wrote: {audit_path}")
