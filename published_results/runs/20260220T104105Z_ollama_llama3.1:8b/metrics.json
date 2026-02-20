@@ -1,0 +1,98 @@
+{
+  "total": 40886,
+  "valid": 40882,
+  "invalid": 4,
+  "correct": 24598,
+  "coverage": 0.9999,
+  "invalid_rate": 0.0001,
+  "accuracy_valid": 0.6017,
+  "effective_accuracy": 0.6016,
+  "balanced_accuracy": 0.5988,
+  "mcc": 0.24,
+  "per_family": {
+    "adversarial_misleading": {
+      "total": 500,
+      "valid": 500,
+      "correct": 317,
+      "coverage": 1.0,
+      "accuracy_valid": 0.634
+    },
+    "adversarial_nearmiss": {
+      "total": 478,
+      "valid": 478,
+      "correct": 311,
+      "coverage": 1.0,
+      "accuracy_valid": 0.6506276150627615
+    },
+    "atomic": {
+      "total": 25307,
+      "valid": 25305,
+      "correct": 15213,
+      "coverage": 0.9999209704824752,
+      "accuracy_valid": 0.601185536455246
+    },
+    "consistency_paraphrase": {
+      "total": 4139,
+      "valid": 4139,
+      "correct": 2420,
+      "coverage": 1.0,
+      "accuracy_valid": 0.5846822904083112
+    },
+    "cross_indicator": {
+      "total": 67,
+      "valid": 67,
+      "correct": 29,
+      "coverage": 1.0,
+      "accuracy_valid": 0.43283582089552236
+    },
+    "extended_systems": {
+      "total": 45,
+      "valid": 45,
+      "correct": 45,
+      "coverage": 1.0,
+      "accuracy_valid": 1.0
+    },
+    "fol_inference": {
+      "total": 1758,
+      "valid": 1758,
+      "correct": 933,
+      "coverage": 1.0,
+      "accuracy_valid": 0.5307167235494881
+    },
+    "indicator_diagnostic": {
+      "total": 530,
+      "valid": 530,
+      "correct": 261,
+      "coverage": 1.0,
+      "accuracy_valid": 0.49245283018867925
+    },
+    "multi_hop": {
+      "total": 6000,
+      "valid": 6000,
+      "correct": 3787,
+      "coverage": 1.0,
+      "accuracy_valid": 0.6311666666666667
+    },
+    "perturbation": {
+      "total": 1994,
+      "valid": 1992,
+      "correct": 1245,
+      "coverage": 0.9989969909729187,
+      "accuracy_valid": 0.625
+    },
+    "regime_transition": {
+      "total": 68,
+      "valid": 68,
+      "correct": 37,
+      "coverage": 1.0,
+      "accuracy_valid": 0.5441176470588235
+    }
+  },
+  "per_split": {
+    "unknown": {
+      "total": 40886,
+      "valid": 40882,
+      "accuracy_valid": 0.6016828922264077
+    }
+  }
+}

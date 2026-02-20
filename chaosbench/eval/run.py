@@ -9,17 +9,18 @@ Usage (programmatic):
 
 Usage (CLI):
     python -m chaosbench eval --provider ollama --model qwen2.5:7b --dataset canonical
+    python -m chaosbench eval --provider ollama --model qwen2.5:7b --dataset canonical --resume runs/my_run_id
 """
 
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import platform
 import random
 import subprocess
 import sys
+import threading
 import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -28,6 +29,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from chaosbench.data.hashing import dataset_global_sha256 as _canonical_sha256
 from chaosbench.eval.parsing import ParseOutcome, ParsedLabel, parse_label
 from chaosbench.eval.prompts import (
     build_prompt,
@@ -39,6 +41,9 @@ from chaosbench.eval.providers.base import Provider
 from chaosbench.eval.providers.types import ProviderResponse
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
+
+# Flush a checkpoint every this many completed items
+_CHECKPOINT_INTERVAL = 200
 
 
 # ---------------------------------------------------------------------------
@@ -58,6 +63,7 @@ class RunConfig:
     retries: int = 1  # 0 or 1; 1 means one reprompt on INVALID
     strict_parsing: bool = True
     run_id: Optional[str] = None  # auto-generated if None
+    resume_run_id: Optional[str] = None  # if set, resume an interrupted run
 
 
 @dataclass
@@ -137,16 +143,15 @@ def _normalize_ground_truth(value: str) -> str:
 
 
 def _dataset_global_sha256(selector_path: str = "data/canonical_v2_files.json") -> str:
-    """Compute global SHA256 over canonical files (consistent with freeze script)."""
-    root = PROJECT_ROOT
-    sel = json.loads((root / selector_path).read_text())
-    h = hashlib.sha256()
-    for rel_path in sorted(sel["files"]):
-        fpath = root / rel_path
-        content = fpath.read_bytes()
-        file_hash = hashlib.sha256(content).hexdigest()
-        h.update(f"{rel_path}:{file_hash}\n".encode())
-    return h.hexdigest()
+    """Compute global SHA256 over canonical files.
+
+    Delegates to chaosbench.data.hashing.dataset_global_sha256 so the formula
+    is identical to freeze_v2_dataset.py (includes :count per file).
+    """
+    return _canonical_sha256(
+        selector_path=PROJECT_ROOT / selector_path,
+        project_root=PROJECT_ROOT,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -300,6 +305,12 @@ def compute_metrics(records: List[PredictionRecord]) -> Dict[str, Any]:
 class EvalRunner:
     """Evaluation runner using a Provider instance.
 
+    Features:
+    - ETA progress bar (items/sec + rolling estimate)
+    - Resume interrupted runs (--resume) via checkpoint file
+    - Safe parallel execution with periodic checkpoint flushing
+    - Consistent SHA256 with freeze manifest (via chaosbench.data.hashing)
+
     Args:
         config: RunConfig specifying provider, output dir, etc.
         canonical_selector: Path to canonical_v2_files.json.
@@ -313,8 +324,45 @@ class EvalRunner:
         self.config = config
         self.canonical_selector = canonical_selector
 
+    # ------------------------------------------------------------------
+    # Checkpoint helpers
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _checkpoint_path(out_dir: Path) -> Path:
+        return out_dir / ".eval_checkpoint.jsonl"
+
+    @staticmethod
+    def _load_checkpoint(out_dir: Path) -> Dict[str, PredictionRecord]:
+        """Load already-completed predictions from checkpoint file."""
+        cp_path = EvalRunner._checkpoint_path(out_dir)
+        done: Dict[str, PredictionRecord] = {}
+        if not cp_path.exists():
+            return done
+        with open(cp_path, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if line:
+                    try:
+                        d = json.loads(line)
+                        rec = PredictionRecord(**{k: d[k] for k in PredictionRecord.__dataclass_fields__})
+                        done[rec.id] = rec
+                    except Exception:
+                        pass
+        return done
+
+    @staticmethod
+    def _append_checkpoint(out_dir: Path, rec: PredictionRecord) -> None:
+        cp_path = EvalRunner._checkpoint_path(out_dir)
+        with open(cp_path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(asdict(rec)) + "\n")
+
+    # ------------------------------------------------------------------
+    # Main run method
+    # ------------------------------------------------------------------
+
     def run(self, items: Optional[List[Dict]] = None, dataset: str = "canonical") -> Dict[str, Any]:
-        """Run evaluation.
+        """Run evaluation, with optional resume.
 
         Args:
             items: Pre-loaded items list (skips loading if provided).
@@ -324,91 +372,145 @@ class EvalRunner:
             dict with keys: run_id, output_dir, metrics, predictions_path, manifest_path.
         """
         cfg = self.config
-        run_id = cfg.run_id or _make_run_id(cfg.provider.name)
-        out_dir = Path(cfg.output_dir) / run_id
-        out_dir.mkdir(parents=True, exist_ok=True)
 
-        # Load items
+        # --- Resolve run_id and output directory -------------------------
+        if cfg.resume_run_id:
+            # Resuming an existing run
+            run_id = cfg.resume_run_id
+            out_dir = Path(cfg.output_dir) / run_id
+            if not out_dir.exists():
+                raise FileNotFoundError(
+                    f"Cannot resume: run directory not found: {out_dir}"
+                )
+        else:
+            run_id = cfg.run_id or _make_run_id(cfg.provider.name)
+            out_dir = Path(cfg.output_dir) / run_id
+            out_dir.mkdir(parents=True, exist_ok=True)
+
+        # --- Load items --------------------------------------------------
         if items is None:
             if dataset == "canonical":
                 items = _load_canonical_items(self.canonical_selector)
             else:
                 items = _load_subset_items(dataset)
 
-        # Optional sampling
+        # Optional sampling (applied before resume filtering)
         if cfg.max_items and cfg.max_items < len(items):
             rng = random.Random(cfg.seed)
             items = rng.sample(items, cfg.max_items)
 
-        total_in_dataset = len(items)
+        total_planned = len(items)
 
-        # Run evaluation (sequential or parallel)
-        records: List[PredictionRecord] = []
+        # --- Resume: skip already-completed items ------------------------
+        already_done: Dict[str, PredictionRecord] = {}
+        if cfg.resume_run_id:
+            already_done = self._load_checkpoint(out_dir)
+            if already_done:
+                print(
+                    f"[resume] Found {len(already_done)} completed items in checkpoint; "
+                    f"skipping them.",
+                    file=sys.stderr,
+                )
+        done_ids = set(already_done.keys())
+        remaining = [it for it in items if it.get("id", it.get("item_id", "")) not in done_ids]
+
+        # --- Run evaluation (sequential or parallel) --------------------
+        new_records: List[PredictionRecord] = []
+        _lock = threading.Lock()
+
         try:
-            from tqdm import tqdm
-            _tqdm = tqdm
+            from tqdm import tqdm as _tqdm_cls
         except ImportError:
-            _tqdm = None
+            _tqdm_cls = None
 
-        def _make_bar(total: int):
-            if _tqdm is None:
+        n_already = len(already_done)
+        n_todo = len(remaining)
+
+        _bar_valid = [n_already]
+        _bar_invalid = [0]
+
+        def _make_bar(total: int, initial: int = 0):
+            if _tqdm_cls is None:
                 return None
-            return _tqdm(
+            bar = _tqdm_cls(
                 total=total,
+                initial=initial,
                 desc=f"eval [{cfg.provider.name}]",
                 unit="q",
                 dynamic_ncols=True,
-                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]",
             )
+            bar.set_postfix(valid=_bar_valid[0], invalid=_bar_invalid[0])
+            return bar
+
+        flush_counter = [0]  # mutable counter for checkpoint flushing
+
+        def _on_record(rec: PredictionRecord, bar) -> None:
+            """Callback after each item completes; updates bar and checkpoint."""
+            with _lock:
+                new_records.append(rec)
+                # Append to checkpoint for resume capability
+                self._append_checkpoint(out_dir, rec)
+                flush_counter[0] += 1
+                if bar is not None:
+                    all_so_far = list(already_done.values()) + new_records
+                    _bar_valid[0] = sum(1 for r in all_so_far if r.outcome != "INVALID")
+                    _bar_invalid[0] = sum(1 for r in all_so_far if r.outcome == "INVALID")
+                    bar.set_postfix(valid=_bar_valid[0], invalid=_bar_invalid[0])
+                    bar.update(1)
+
+        bar = _make_bar(total_planned, initial=n_already)
 
         if cfg.workers <= 1:
-            bar = _make_bar(total_in_dataset)
-            for item in items:
+            for item in remaining:
                 rec = _evaluate_item(item, cfg.provider, cfg.retries, cfg.strict_parsing)
-                records.append(rec)
-                if bar is not None:
-                    n_valid = sum(1 for r in records if r.outcome != "INVALID")
-                    n_invalid = sum(1 for r in records if r.outcome == "INVALID")
-                    bar.set_postfix(valid=n_valid, invalid=n_invalid, refresh=False)
-                    bar.update(1)
-            if bar is not None:
-                bar.close()
+                _on_record(rec, bar)
         else:
             with ThreadPoolExecutor(max_workers=cfg.workers) as pool:
                 futures = {
-                    pool.submit(_evaluate_item, item, cfg.provider, cfg.retries, cfg.strict_parsing): item
-                    for item in items
+                    pool.submit(
+                        _evaluate_item, item, cfg.provider, cfg.retries, cfg.strict_parsing
+                    ): item
+                    for item in remaining
                 }
-                bar = _make_bar(total_in_dataset)
                 for future in as_completed(futures):
                     rec = future.result()
-                    records.append(rec)
-                    if bar is not None:
-                        n_valid = sum(1 for r in records if r.outcome != "INVALID")
-                        n_invalid = sum(1 for r in records if r.outcome == "INVALID")
-                        bar.set_postfix(valid=n_valid, invalid=n_invalid, refresh=False)
-                        bar.update(1)
-                if bar is not None:
-                    bar.close()
+                    _on_record(rec, bar)
 
-        # Compute metrics
+        if bar is not None:
+            bar.close()
+
+        # Combine resumed + new records (preserve original item order)
+        id_to_record: Dict[str, PredictionRecord] = {**already_done}
+        for rec in new_records:
+            id_to_record[rec.id] = rec
+        records = [id_to_record.get(
+            it.get("id", it.get("item_id", "")), None
+        ) for it in items]
+        records = [r for r in records if r is not None]
+
+        # --- Compute metrics ---------------------------------------------
         metrics = compute_metrics(records)
 
-        # Write predictions.jsonl
+        # --- Write predictions.jsonl (final, complete) -------------------
         preds_path = out_dir / "predictions.jsonl"
         with open(preds_path, "w", encoding="utf-8") as fh:
             for rec in records:
                 fh.write(json.dumps(asdict(rec)) + "\n")
 
-        # Write metrics.json
+        # Remove checkpoint once predictions are safely written
+        cp = self._checkpoint_path(out_dir)
+        if cp.exists():
+            cp.unlink(missing_ok=True)
+
+        # --- Write metrics.json ------------------------------------------
         metrics_path = out_dir / "metrics.json"
         metrics_path.write_text(json.dumps(metrics, indent=2))
 
-        # Write summary.md
+        # --- Write summary.md --------------------------------------------
         summary_path = out_dir / "summary.md"
         _write_summary_md(summary_path, run_id, metrics, cfg)
 
-        # Write run_manifest.json
+        # --- Write run_manifest.json -------------------------------------
         try:
             global_sha = _dataset_global_sha256(self.canonical_selector)
         except Exception:
@@ -422,7 +524,7 @@ class EvalRunner:
             "prompt_hash": get_prompt_hash(),
             "dataset_global_sha256": global_sha,
             "canonical_selector": self.canonical_selector,
-            "total_items_evaluated": total_in_dataset,
+            "total_items_evaluated": total_planned,
             "max_items": cfg.max_items,
             "seed": cfg.seed,
             "retries": cfg.retries,
@@ -435,6 +537,7 @@ class EvalRunner:
                 for k in ["coverage", "accuracy_valid", "effective_accuracy", "balanced_accuracy", "mcc"]
                 if k in metrics
             },
+            "resumed_from": cfg.resume_run_id,
         }
         manifest_path = out_dir / "run_manifest.json"
         manifest_path.write_text(json.dumps(manifest, indent=2))

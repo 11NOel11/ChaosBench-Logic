@@ -33,6 +33,9 @@ from typing import Any, Dict, List, Optional
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+# Use unified hashing module so per-file SHA is identical to eval runner.
+from chaosbench.data.hashing import sha256_file as _sha256_file_canonical  # noqa: E402
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -69,11 +72,8 @@ def _pkg_version() -> str:
 
 
 def _sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(65536), b""):
-            h.update(chunk)
-    return h.hexdigest()
+    """Delegate to canonical hashing module for consistency with eval runner."""
+    return _sha256_file_canonical(path)
 
 
 def _normalize_label(value: str) -> Optional[str]:

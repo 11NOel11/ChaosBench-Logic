@@ -1,8 +1,27 @@
 # Published Results
 
-**Note:** These results are from the **v1 dataset** (621 questions, now archived in `data/archive/v1/`). Full evaluation on the v2 dataset (40,886 questions) is pending.
+This directory contains the **minimal, verifiable artifacts** used to generate
+the results tables reported in the main README and documentation.
 
-This directory contains the **minimal, verifiable artifacts** used to generate the results tables reported in the main README and documentation.
+## v2 Runs (ChaosBench-Logic v2, 40,886 questions)
+
+Published v2 evaluation runs are under **`runs/`** (see `runs/README.md` for index).
+
+| Run | Provider | N | Bal_acc | MCC | Notes |
+|-----|----------|---|---------|-----|-------|
+| [20260220T104105Z_ollama_llama3.1:8b](runs/20260220T104105Z_ollama_llama3.1:8b/) | ollama/llama3.1:8b | 40,886 | 0.5988 | 0.2400 | Full canonical run |
+| [20260219T193425Z_ollama_qwen2.5:14b](runs/20260219T193425Z_ollama_qwen2.5:14b/) | ollama/qwen2.5:14b | 1,000 | 0.6977 | 0.4016 | 1k subset |
+| [20260219T193151Z_ollama_qwen2.5:7b](runs/20260219T193151Z_ollama_qwen2.5:7b/) | ollama/qwen2.5:7b | 1,000 | 0.6243 | 0.2680 | 1k subset |
+| [20260219T193320Z_ollama_llama3.1:8b](runs/20260219T193320Z_ollama_llama3.1:8b/) | ollama/llama3.1:8b | 1,000 | 0.5978 | 0.2497 | 1k subset |
+
+> **Honest score note**: Use `balanced_accuracy` and `MCC` as primary metrics.
+> `accuracy_valid` is inflated when a model has strong label-defaulting bias.
+> See `docs/RUNS_POLICY.md` and `artifacts/runs_audit/RUNS_AUDIT.md` for full analysis.
+
+## v1 Runs (legacy, 621 questions)
+
+**Note:** The v1 runs below are from the **archived v1 dataset** (`data/archive/v1/`).
+They are retained for historical reference only.
 
 ## Contents
 

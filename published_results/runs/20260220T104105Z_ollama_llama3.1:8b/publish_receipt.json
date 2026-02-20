@@ -1,0 +1,12 @@
+{
+  "published_utc": "2026-02-20T13:05:35.179220+00:00",
+  "source_run_dir": "/Users/noel.thomas/chaos-logic-bench/runs/llama31_8b_full/20260220T104105Z_ollama_llama3.1:8b",
+  "run_id": "20260220T104105Z_ollama_llama3.1:8b",
+  "artifacts_copied": [
+    "run_manifest.json",
+    "metrics.json",
+    "summary.md"
+  ],
+  "artifacts_skipped": [],
+  "compress_predictions": false
+}

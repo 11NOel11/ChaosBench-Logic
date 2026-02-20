@@ -8,6 +8,9 @@ Usage:
     chaosbench eval --provider mock --dataset canonical --max-items 50
     chaosbench eval --provider ollama --model qwen2.5:7b --dataset canonical
     chaosbench eval --provider ollama --model qwen2.5:7b --subset data/subsets/api_balanced_1k.jsonl
+    chaosbench eval --provider ollama --model qwen2.5:7b --resume runs/20260220T104105Z_ollama_llama3.1:8b
+    chaosbench publish-run --run runs/20260220T104105Z_ollama_llama3.1:8b
+    chaosbench analyze-runs --runs-dir runs --out-dir artifacts/runs_audit
 """
 
 import argparse
@@ -109,14 +112,24 @@ def cmd_eval(args):
         sys.exit(1)
 
     output_dir = args.output_dir or "runs"
+    # Auto-default workers by model size if not explicitly set
+    workers = args.workers
+    if workers == 1 and provider_name == "ollama" and args.model:
+        model_lower = args.model.lower()
+        if any(x in model_lower for x in ["14b", "30b", "34b", "70b", "72b"]):
+            workers = 2
+        elif any(x in model_lower for x in ["7b", "8b", "13b"]):
+            workers = 4
+
     cfg = RunConfig(
         provider=provider,
         output_dir=output_dir,
         max_items=args.max_items,
         seed=args.seed,
-        workers=args.workers,
+        workers=workers,
         retries=args.retries,
         strict_parsing=not args.lenient,
+        resume_run_id=getattr(args, "resume", None),
     )
 
     runner = EvalRunner(cfg)
@@ -140,6 +153,44 @@ def cmd_eval(args):
     print(f"  Eff. accuracy: {m.get('effective_accuracy', 0):.4f}")
     print(f"  Predictions  : {result['predictions_path']}")
     print(f"  Manifest     : {result['manifest_path']}")
+
+
+def cmd_publish_run(args):
+    """Publish a run's lightweight artifacts to published_results/."""
+    sys.path.insert(0, PROJECT_ROOT)
+    os.chdir(PROJECT_ROOT)
+    from chaosbench.eval.publish import publish_run, update_published_readme
+    from pathlib import Path
+
+    run_dir = Path(args.run)
+    out_dir = Path(args.out) if args.out else None
+
+    published = publish_run(
+        run_dir=run_dir,
+        out_dir=out_dir,
+        compress_predictions=args.compress_predictions,
+        force=args.force,
+    )
+    print(f"Published to: {published}")
+
+    # Regenerate the runs index README
+    update_published_readme(published.parent)
+    print(f"Updated README: {published.parent / 'README.md'}")
+
+
+def cmd_analyze_runs(args):
+    """Run the audit analysis over runs/ and published_results/runs/."""
+    sys.path.insert(0, PROJECT_ROOT)
+    os.chdir(PROJECT_ROOT)
+    import subprocess
+    cmd = [
+        sys.executable,
+        "scripts/analyze_runs.py",
+        "--runs_dir", args.runs_dir,
+        "--out_dir", args.out_dir,
+    ]
+    result = subprocess.run(cmd, cwd=PROJECT_ROOT)
+    sys.exit(result.returncode)
 
 
 def main():
@@ -201,6 +252,42 @@ def main():
     eval_parser.add_argument(
         "--lenient", action="store_true", help="Use lenient parsing (pattern-first)"
     )
+    eval_parser.add_argument(
+        "--resume",
+        type=str,
+        default=None,
+        metavar="RUN_ID",
+        help="Resume an interrupted run by its run_id (must match an existing runs/<run_id>/ dir)",
+    )
+
+    # Publish-run command
+    pub_parser = subparsers.add_parser("publish-run", help="Publish run artifacts to published_results/")
+    pub_parser.add_argument(
+        "--run",
+        required=True,
+        help="Path to the run directory (e.g. runs/20260220T104105Z_ollama_llama3.1:8b)",
+    )
+    pub_parser.add_argument(
+        "--out",
+        type=str,
+        default=None,
+        help="Destination directory (default: published_results/runs/<run_id>)",
+    )
+    pub_parser.add_argument(
+        "--compress-predictions",
+        action="store_true",
+        help="Gzip-compress predictions.jsonl for subset runs (max_items <= 5000)",
+    )
+    pub_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite destination if it already exists",
+    )
+
+    # Analyze-runs command
+    ar_parser = subparsers.add_parser("analyze-runs", help="Run audit analysis over runs/")
+    ar_parser.add_argument("--runs-dir", default="runs", help="Runs directory")
+    ar_parser.add_argument("--out-dir", default="artifacts/runs_audit", help="Audit output directory")
 
     args = parser.parse_args()
 
@@ -214,6 +301,8 @@ def main():
         "analyze": cmd_analyze,
         "freeze": cmd_freeze,
         "eval": cmd_eval,
+        "publish-run": cmd_publish_run,
+        "analyze-runs": cmd_analyze_runs,
     }
     commands[args.command](args)
 

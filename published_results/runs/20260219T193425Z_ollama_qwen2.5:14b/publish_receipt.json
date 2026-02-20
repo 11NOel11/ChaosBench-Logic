@@ -1,0 +1,14 @@
+{
+  "published_utc": "2026-02-20T13:05:30.477400+00:00",
+  "source_run_dir": "/Users/noel.thomas/chaos-logic-bench/runs/20260219T193425Z_ollama_qwen2.5:14b",
+  "run_id": "20260219T193425Z_ollama_qwen2.5:14b",
+  "artifacts_copied": [
+    "run_manifest.json",
+    "metrics.json",
+    "summary.md"
+  ],
+  "artifacts_skipped": [
+    "predictions.jsonl.gz (skipped: not a subset run)"
+  ],
+  "compress_predictions": true
+}
