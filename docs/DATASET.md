@@ -30,7 +30,7 @@ The v2 dataset uses 10 canonical files:
 | v22_multi_hop.jsonl | 6,000 | multi_hop |
 | v22_consistency_paraphrase.jsonl | 4,139 | consistency_paraphrase |
 | v22_perturbation_robustness.jsonl | 1,994 | perturbation |
-| v22_adversarial.jsonl | 1,285 | adversarial_misleading, adversarial_nearmiss |
+| v22_adversarial.jsonl | 1,285 | adversarial_misleading, adversarial_nearmiss | <!-- adversarial_misleading: all FALSE by design (tests LLM resistance to misleading phrasing) -->
 | v22_fol_inference.jsonl | 1,758 | fol_inference |
 | v22_indicator_diagnostics.jsonl | 530 | indicator_diagnostics |
 | v22_regime_transition.jsonl | 68 | regime_transition |

@@ -526,6 +526,109 @@ class PerFamilyBalanceCheck(QualityCheck):
         return self.passed
 
 
+class FamilyDegeneracyHardCheck(QualityCheck):
+    """HARD FAIL if any non-exempt family has >98% single label (degenerate)."""
+
+    name = "Family Degeneracy (Hard)"
+    severity = "HARD"
+
+    # These families are intentionally label-skewed by design
+    EXEMPT = {"adversarial_misleading", "adversarial_nearmiss", "indicator_diagnostic"}
+
+    def run(self) -> bool:
+        questions = []
+        for fpath in _load_canonical_files(self.data_dir):
+            if fpath.exists():
+                with open(fpath) as f:
+                    for line in f:
+                        if line.strip():
+                            questions.append(json.loads(line))
+
+        family_stats: dict = defaultdict(lambda: {"TRUE": 0, "FALSE": 0})
+        for q in questions:
+            family_stats[q["type"]][q["ground_truth"]] += 1
+
+        degenerate = []
+        for family, stats in family_stats.items():
+            # Skip exempt families
+            if any(family.startswith(ex) or ex in family for ex in self.EXEMPT):
+                continue
+            total = stats["TRUE"] + stats["FALSE"]
+            if total == 0:
+                continue
+            true_pct = stats["TRUE"] / total
+            false_pct = stats["FALSE"] / total
+            if true_pct > 0.98 or false_pct > 0.98:
+                degenerate.append({
+                    "family": family,
+                    "true_pct": round(true_pct * 100, 1),
+                    "false_pct": round(false_pct * 100, 1),
+                    "count": total,
+                })
+
+        self.passed = len(degenerate) == 0
+        self.message = (
+            "No degenerate families" if self.passed
+            else f"{len(degenerate)} degenerate families (>98% single label)"
+        )
+        self.details = {
+            "degenerate_families": degenerate,
+            "threshold": ">98% single label triggers HARD FAIL",
+            "exempt_families": list(self.EXEMPT),
+        }
+        return self.passed
+
+
+class FamilyDegeneracyHardCheck(QualityCheck):
+    """HARD FAIL if any non-exempt family has >98% single label (degenerate)."""
+
+    name = "Family Degeneracy (Hard)"
+    severity = "HARD"
+
+    # These families are intentionally label-skewed by design
+    EXEMPT = {"adversarial_misleading", "adversarial_nearmiss", "indicator_diagnostic"}
+
+    def run(self) -> bool:
+        questions = []
+        for fpath in _load_canonical_files(self.data_dir):
+            if fpath.exists():
+                with open(fpath) as f:
+                    for line in f:
+                        if line.strip():
+                            questions.append(json.loads(line))
+
+        family_stats: Dict[str, Dict[str, int]] = defaultdict(lambda: {"TRUE": 0, "FALSE": 0})
+        for q in questions:
+            family = q.get("type") or q.get("task_family") or q.get("family") or "unknown"
+            label = q.get("ground_truth", "").strip().upper()
+            if label in {"TRUE", "FALSE"}:
+                family_stats[family][label] += 1
+
+        degenerate = []
+        for family, stats in family_stats.items():
+            if family in self.EXEMPT:
+                continue
+            total = stats["TRUE"] + stats["FALSE"]
+            if total == 0:
+                continue
+            true_pct = stats["TRUE"] / total * 100
+            # >98% means minority class < 2%
+            if true_pct > 98 or true_pct < 2:
+                degenerate.append({
+                    "family": family,
+                    "true_pct": round(true_pct, 1),
+                    "total": total,
+                })
+
+        self.passed = len(degenerate) == 0
+        if degenerate:
+            self.message = f"Degenerate families (>98% single label): {[d['family'] for d in degenerate]}"
+        else:
+            self.message = "No degenerate families found"
+        self.details = {"degenerate_families": degenerate, "exempt": sorted(self.EXEMPT)}
+        return self.passed
+
+
 def run_all_checks(data_dir: str = "data", smoke: bool = False) -> Tuple[List[Dict], bool]:
     """Run all quality checks.
 
@@ -543,6 +646,7 @@ def run_all_checks(data_dir: str = "data", smoke: bool = False) -> Tuple[List[Di
         DeterminismCheck(data_dir),
         SplitIntegrityCheck(data_dir),
         NonDegeneracyCheck(data_dir),
+        FamilyDegeneracyHardCheck(data_dir),
         PerFamilyBalanceCheck(data_dir),
         PerturbationIntegrityCheck(data_dir),
     ]
