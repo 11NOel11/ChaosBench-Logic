@@ -1,0 +1,66 @@
+{
+  "created_utc": "2026-02-20T14:30:45.874813+00:00",
+  "subset_name": "adversarial",
+  "size": 454,
+  "target_size": 456,
+  "seed": 42,
+  "source": "data/v22_adversarial.jsonl",
+  "selection_method": "proportional",
+  "balance_labels": true,
+  "balance_families": false,
+  "family_weights": {},
+  "min_per_family": 1,
+  "sha256": "bf2db5a4e0c6937c",
+  "dataset_global_sha256": "cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279",
+  "label_balance": {
+    "true_count": 226,
+    "false_count": 228,
+    "true_ratio": 0.4978
+  },
+  "per_family_counts": {
+    "adversarial_misleading": {
+      "total": 177,
+      "TRUE": 88,
+      "FALSE": 89
+    },
+    "atomic": {
+      "total": 108,
+      "TRUE": 54,
+      "FALSE": 54
+    },
+    "adversarial_nearmiss": {
+      "total": 169,
+      "TRUE": 84,
+      "FALSE": 85
+    }
+  },
+  "per_family_sampling_log": {
+    "adversarial_misleading": {
+      "available": 500,
+      "requested": 177,
+      "achieved": 177,
+      "label_balance": "50% TRUE (88T/89F)",
+      "true_available": 252,
+      "false_available": 248,
+      "quota_note": "quota=177 of available=500"
+    },
+    "adversarial_nearmiss": {
+      "available": 478,
+      "requested": 169,
+      "achieved": 169,
+      "label_balance": "50% TRUE (84T/85F)",
+      "true_available": 229,
+      "false_available": 249,
+      "quota_note": "quota=169 of available=478"
+    },
+    "atomic": {
+      "available": 307,
+      "requested": 108,
+      "achieved": 108,
+      "label_balance": "50% TRUE (54T/54F)",
+      "true_available": 175,
+      "false_available": 132,
+      "quota_note": "quota=108 of available=307"
+    }
+  }
+}

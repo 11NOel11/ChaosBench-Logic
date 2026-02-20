@@ -1,0 +1,38 @@
+{
+  "created_utc": "2026-02-20T14:30:51.049155+00:00",
+  "subset_name": "perturbation_robustness",
+  "size": 456,
+  "target_size": 456,
+  "seed": 42,
+  "source": "data/v22_perturbation_robustness.jsonl",
+  "selection_method": "proportional",
+  "balance_labels": true,
+  "balance_families": false,
+  "family_weights": {},
+  "min_per_family": 1,
+  "sha256": "2a275464693ee983",
+  "dataset_global_sha256": "cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279",
+  "label_balance": {
+    "true_count": 228,
+    "false_count": 228,
+    "true_ratio": 0.5
+  },
+  "per_family_counts": {
+    "perturbation": {
+      "total": 456,
+      "TRUE": 228,
+      "FALSE": 228
+    }
+  },
+  "per_family_sampling_log": {
+    "perturbation": {
+      "available": 1994,
+      "requested": 456,
+      "achieved": 456,
+      "label_balance": "50% TRUE (228T/228F)",
+      "true_available": 997,
+      "false_available": 997,
+      "quota_note": "quota=456 of available=1994"
+    }
+  }
+}
