@@ -1,5 +1,0 @@
-model,provider,n_total,n_valid,coverage,accuracy_valid,effective_accuracy,balanced_accuracy,mcc,tpr,tnr,bias_score,bias_verdict,invalid_rate,is_full_run,run_id
-qwen2.5:14b,ollama,1000,1000,1.0000,0.6980,0.6980,0.6977,0.4016,0.6104,0.7849,0.086,OK,0.0000,yes,20260219T193425Z_ollama_qwen2.5:14b
-qwen2.5:7b,ollama,1000,1000,1.0000,0.6250,0.6250,0.6243,0.2680,0.4378,0.8108,0.185,LABEL-BIASED,0.0000,yes,20260219T193151Z_ollama_qwen2.5:7b
-llama3.1:8b,ollama,40886,40882,0.9999,0.6017,0.6016,0.5988,0.2400,0.3157,0.8818,0.2789,LABEL-BIASED,0.0001,yes,20260220T104105Z_ollama_llama3.1:8b
-llama3.1:8b,ollama,1000,1000,1.0000,0.5990,0.5990,0.5978,0.2497,0.2871,0.9084,0.309,LABEL-BIASED,0.0000,yes,20260219T193320Z_ollama_llama3.1:8b
