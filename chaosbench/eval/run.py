@@ -344,18 +344,52 @@ class EvalRunner:
 
         # Run evaluation (sequential or parallel)
         records: List[PredictionRecord] = []
+        try:
+            from tqdm import tqdm
+            _tqdm = tqdm
+        except ImportError:
+            _tqdm = None
+
+        def _make_bar(total: int):
+            if _tqdm is None:
+                return None
+            return _tqdm(
+                total=total,
+                desc=f"eval [{cfg.provider.name}]",
+                unit="q",
+                dynamic_ncols=True,
+                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]",
+            )
+
         if cfg.workers <= 1:
+            bar = _make_bar(total_in_dataset)
             for item in items:
                 rec = _evaluate_item(item, cfg.provider, cfg.retries, cfg.strict_parsing)
                 records.append(rec)
+                if bar is not None:
+                    n_valid = sum(1 for r in records if r.outcome != "INVALID")
+                    n_invalid = sum(1 for r in records if r.outcome == "INVALID")
+                    bar.set_postfix(valid=n_valid, invalid=n_invalid, refresh=False)
+                    bar.update(1)
+            if bar is not None:
+                bar.close()
         else:
             with ThreadPoolExecutor(max_workers=cfg.workers) as pool:
                 futures = {
                     pool.submit(_evaluate_item, item, cfg.provider, cfg.retries, cfg.strict_parsing): item
                     for item in items
                 }
+                bar = _make_bar(total_in_dataset)
                 for future in as_completed(futures):
-                    records.append(future.result())
+                    rec = future.result()
+                    records.append(rec)
+                    if bar is not None:
+                        n_valid = sum(1 for r in records if r.outcome != "INVALID")
+                        n_invalid = sum(1 for r in records if r.outcome == "INVALID")
+                        bar.set_postfix(valid=n_valid, invalid=n_invalid, refresh=False)
+                        bar.update(1)
+                if bar is not None:
+                    bar.close()
 
         # Compute metrics
         metrics = compute_metrics(records)
