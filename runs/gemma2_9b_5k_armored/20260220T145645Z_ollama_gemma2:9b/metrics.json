@@ -1,0 +1,98 @@
+{
+  "total": 5000,
+  "valid": 5000,
+  "invalid": 0,
+  "correct": 3192,
+  "coverage": 1.0,
+  "invalid_rate": 0.0,
+  "accuracy_valid": 0.6384,
+  "effective_accuracy": 0.6384,
+  "balanced_accuracy": 0.6385,
+  "mcc": 0.2796,
+  "per_family": {
+    "consistency_paraphrase": {
+      "total": 506,
+      "valid": 506,
+      "correct": 310,
+      "coverage": 1.0,
+      "accuracy_valid": 0.6126482213438735
+    },
+    "atomic": {
+      "total": 3100,
+      "valid": 3100,
+      "correct": 1894,
+      "coverage": 1.0,
+      "accuracy_valid": 0.6109677419354839
+    },
+    "indicator_diagnostic": {
+      "total": 64,
+      "valid": 64,
+      "correct": 56,
+      "coverage": 1.0,
+      "accuracy_valid": 0.875
+    },
+    "multi_hop": {
+      "total": 733,
+      "valid": 733,
+      "correct": 532,
+      "coverage": 1.0,
+      "accuracy_valid": 0.7257844474761255
+    },
+    "perturbation": {
+      "total": 243,
+      "valid": 243,
+      "correct": 128,
+      "coverage": 1.0,
+      "accuracy_valid": 0.5267489711934157
+    },
+    "regime_transition": {
+      "total": 8,
+      "valid": 8,
+      "correct": 6,
+      "coverage": 1.0,
+      "accuracy_valid": 0.75
+    },
+    "fol_inference": {
+      "total": 214,
+      "valid": 214,
+      "correct": 176,
+      "coverage": 1.0,
+      "accuracy_valid": 0.822429906542056
+    },
+    "adversarial_nearmiss": {
+      "total": 58,
+      "valid": 58,
+      "correct": 32,
+      "coverage": 1.0,
+      "accuracy_valid": 0.5517241379310345
+    },
+    "adversarial_misleading": {
+      "total": 61,
+      "valid": 61,
+      "correct": 49,
+      "coverage": 1.0,
+      "accuracy_valid": 0.8032786885245902
+    },
+    "extended_systems": {
+      "total": 5,
+      "valid": 5,
+      "correct": 4,
+      "coverage": 1.0,
+      "accuracy_valid": 0.8
+    },
+    "cross_indicator": {
+      "total": 8,
+      "valid": 8,
+      "correct": 5,
+      "coverage": 1.0,
+      "accuracy_valid": 0.625
+    }
+  },
+  "per_split": {
+    "unknown": {
+      "total": 5000,
+      "valid": 5000,
+      "accuracy_valid": 0.6384
+    }
+  }
+}
