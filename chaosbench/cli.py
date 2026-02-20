@@ -275,13 +275,6 @@ def main():
         dest="shuffle_seed",
         help="Shuffle items with this seed before eval (deterministic ordering guard)",
     )
-    eval_parser.add_argument(
-        "--shuffle-seed",
-        type=int,
-        default=None,
-        dest="shuffle_seed",
-        help="Shuffle items with this seed before eval (deterministic ordering guard)",
-    )
 
     # Publish-run command
     pub_parser = subparsers.add_parser("publish-run", help="Publish run artifacts to published_results/")
