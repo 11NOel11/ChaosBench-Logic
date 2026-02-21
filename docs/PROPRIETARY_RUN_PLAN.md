@@ -53,13 +53,14 @@ Use `data/subsets/armored_5k.jsonl` (or equivalent canonical-armored subset, N�
 
 - Budget indicator: ~$25–75 per model
 - Decision gate: if MCC_micro ≥ 0.60, consider full canonical run
+- **Calibration note:** 5k_armored ↔ full_canonical MCC delta < 0.01 for all three OSS models tested (Qwen2.5-32B, Qwen2.5-14B, Mistral-7B). A Phase 2 result is a reliable proxy for the full-canonical rank.
 
 ### Phase 3: Full Canonical (Only if competitive with strong OSS)
 
 Use `data/canonical_v2_files.json` (N=40,886).
 
 - Budget indicator: ~$200–600 per model at gpt-4o pricing
-- Only proceed if model's Phase 2 MCC significantly exceeds Qwen2.5-14B (0.503)
+- Only proceed if model's Phase 2 MCC significantly exceeds **Qwen2.5-32B (MCC=0.478, the current OSS leader)**
 
 ---
 
@@ -195,7 +196,7 @@ In paper tables, always specify:
 
 ## 7. If a Proprietary Model is Below OSS Baselines
 
-If a proprietary model (e.g., Gemini Flash) underperforms Qwen2.5-14B (MCC=0.503) on the 5k subset:
+If a proprietary model (e.g., Gemini Flash) underperforms **Qwen2.5-32B (MCC=0.483)** or even Qwen2.5-14B (MCC=0.417) on the 5k subset:
 
 1. Verify the run is not anomalous (check per-family breakdown, invalid rate)
 2. Check if the model requires a different output format (some models add preamble)
@@ -205,7 +206,25 @@ If a proprietary model (e.g., Gemini Flash) underperforms Qwen2.5-14B (MCC=0.503
 
 ---
 
-## 8. Checklist Before Publishing Proprietary Results
+## 8. OSS Baseline Reference (Wave 1, 2026-02-20)
+
+Current OSS leaderboard (full canonical, N=40,886) for comparison when proprietary results arrive:
+
+| Model | MCC | Bal. Acc | Notes |
+|-------|-----|----------|-------|
+| **Qwen2.5-32B** | **0.478** | 0.738 | OSS leader |
+| Qwen2.5-14B | 0.426 | 0.711 | |
+| Mistral-7B | 0.228 ⚠️ | 0.613 | 1.09% INVALIDs in multi_hop |
+| Llama3.1-8B | 0.240 | 0.599 | Severe FALSE bias (pred_TRUE%=21.6%) |
+
+Key failure modes to watch for in proprietary models:
+- **BIAS**: pred_TRUE% should be close to ground truth (49.5%); large deviations indicate calibration issues
+- **ONTO_VOCAB**: Check for non-TRUE/FALSE responses (especially in multi_hop family)
+- **regime_transition**: Near-random for all OSS models (mean MCC=0.055) — a good discriminator for strong proprietary models
+
+---
+
+## 9. Checklist Before Publishing Proprietary Results
 
 - [ ] Run manifest SHA matches freeze: `cfcfcc739988…`
 - [ ] Coverage ≥ 0.99
