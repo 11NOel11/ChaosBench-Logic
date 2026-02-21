@@ -165,8 +165,8 @@ def cmd_eval(args):
         resume_run_id=getattr(args, "resume", None),
         shuffle_seed=getattr(args, "shuffle_seed", None),
         phase=getattr(args, "phase", None),
-        truncate_pred_text=getattr(args, "truncate_pred_text", None),
-        budget_cost_usd=getattr(args, "max_usd", None),
+        truncate_pred_text=getattr(args, "truncate_pred_text", 0),
+        max_usd=getattr(args, "max_usd", None),
     )
 
     runner = EvalRunner(cfg)
