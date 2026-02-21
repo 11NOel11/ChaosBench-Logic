@@ -1,0 +1,63 @@
+{
+  "total": 100,
+  "valid": 100,
+  "invalid": 0,
+  "correct": 59,
+  "coverage": 1.0,
+  "invalid_rate": 0.0,
+  "accuracy_valid": 0.59,
+  "effective_accuracy": 0.59,
+  "balanced_accuracy": 0.6072,
+  "mcc": 0.2583,
+  "per_family": {
+    "atomic": {
+      "total": 73,
+      "valid": 73,
+      "correct": 42,
+      "coverage": 1.0,
+      "accuracy_valid": 0.5753424657534246
+    },
+    "multi_hop": {
+      "total": 12,
+      "valid": 12,
+      "correct": 9,
+      "coverage": 1.0,
+      "accuracy_valid": 0.75
+    },
+    "consistency_paraphrase": {
+      "total": 9,
+      "valid": 9,
+      "correct": 6,
+      "coverage": 1.0,
+      "accuracy_valid": 0.6666666666666666
+    },
+    "perturbation": {
+      "total": 4,
+      "valid": 4,
+      "correct": 2,
+      "coverage": 1.0,
+      "accuracy_valid": 0.5
+    },
+    "adversarial_misleading": {
+      "total": 1,
+      "valid": 1,
+      "correct": 0,
+      "coverage": 1.0,
+      "accuracy_valid": 0.0
+    },
+    "indicator_diagnostic": {
+      "total": 1,
+      "valid": 1,
+      "correct": 0,
+      "coverage": 1.0,
+      "accuracy_valid": 0.0
+    }
+  },
+  "per_split": {
+    "unknown": {
+      "total": 100,
+      "valid": 100,
+      "accuracy_valid": 0.59
+    }
+  }
+}
