@@ -11,6 +11,13 @@ Auto-generated index. Edit via `chaosbench publish-run`.
 | `20260220T132350Z_ollama_qwen2.5:14b` | ollama/qwen2.5:14b | 3,828 | 0.7471 | 0.7472 | 0.5036 | 2026-02-20 |
 | `20260220T132439Z_ollama_gemma2:9b` | ollama/gemma2:9b | 3,828 | 0.6750 | 0.6750 | 0.3504 | 2026-02-20 |
 | `20260220T132658Z_ollama_mistral:7b` | ollama/mistral:7b | 3,828 | 0.6382 | 0.6385 | 0.2778 | 2026-02-20 |
+| `20260220T145642Z_ollama_qwen2.5:14b` | ollama/qwen2.5:14b | 5,000 | 0.7062 | 0.7061 | 0.4174 | 2026-02-20 |
+| `20260220T145645Z_ollama_gemma2:9b` | ollama/gemma2:9b | 5,000 | 0.6384 | 0.6385 | 0.2796 | 2026-02-20 |
+| `20260220T145806Z_ollama_mistral:7b` | ollama/mistral:7b | 5,000 | 0.6142 | 0.6134 | 0.2289 | 2026-02-20 |
+| `20260220T150008Z_ollama_qwen2.5:32b` | ollama/qwen2.5:32b | 5,000 | 0.7404 | 0.7404 | 0.4834 | 2026-02-20 |
+| `20260220T163529Z_ollama_mistral:7b` | ollama/mistral:7b | 40,886 | 0.6130 | 0.6130 | 0.2277 | 2026-02-20 |
+| `20260220T173411Z_ollama_qwen2.5:32b` | ollama/qwen2.5:32b | 40,886 | 0.7382 | 0.7376 | 0.4783 | 2026-02-20 |
+| `20260220T175426Z_ollama_qwen2.5:14b` | ollama/qwen2.5:14b | 40,886 | 0.7114 | 0.7107 | 0.4258 | 2026-02-20 |
 
 ## Artifact Contents
 
