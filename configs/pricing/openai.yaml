@@ -1,0 +1,21 @@
+# WARNING: Update with current official pricing before use.
+_pricing_warning: "PLACEHOLDER PRICES — verify at provider pricing page before use"
+provider: openai
+updated: "2026-02"
+
+models:
+  gpt-4o:
+    input_per_1m_tokens: 2.50    # USD
+    output_per_1m_tokens: 10.00
+  gpt-4o-mini:
+    input_per_1m_tokens: 0.15
+    output_per_1m_tokens: 0.60
+  o1:
+    input_per_1m_tokens: 15.00
+    output_per_1m_tokens: 60.00
+  o1-mini:
+    input_per_1m_tokens: 3.00
+    output_per_1m_tokens: 12.00
+  o3-mini:
+    input_per_1m_tokens: 1.10
+    output_per_1m_tokens: 4.40

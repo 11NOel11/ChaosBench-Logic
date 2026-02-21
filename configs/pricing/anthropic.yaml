@@ -1,0 +1,15 @@
+# WARNING: Update with current official pricing before use.
+_pricing_warning: "PLACEHOLDER PRICES — verify at provider pricing page before use"
+provider: anthropic
+updated: "2026-02"
+
+models:
+  claude-sonnet-4-6:
+    input_per_1m_tokens: 3.00    # USD
+    output_per_1m_tokens: 15.00
+  claude-haiku-4-5:
+    input_per_1m_tokens: 0.25
+    output_per_1m_tokens: 1.25
+  claude-opus-4-6:
+    input_per_1m_tokens: 15.00
+    output_per_1m_tokens: 75.00

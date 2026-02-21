@@ -15,6 +15,7 @@ Usage (CLI):
 from __future__ import annotations
 
 import json
+import math
 import os
 import platform
 import random
@@ -24,7 +25,7 @@ import threading
 import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -68,6 +69,15 @@ class RunConfig:
     order_mode: str = "canonical"  # "canonical" | "shuffled"; recorded in manifest
     shuffle_seed: Optional[int] = None   # if set, shuffle items after loading
     order_mode: str = "canonical"        # "canonical" | "shuffled"; recorded in manifest
+
+    # Budget guardrails (all default to no-op; backwards compatible)
+    max_usd: Optional[float] = None          # soft stop when estimated cost exceeds this
+    dry_run_cost: bool = False               # print cost estimate and exit without running
+    phase: Optional[str] = None             # P0/P1/P2/P3 preset (informational)
+    truncate_pred_text: int = 0             # truncate stored pred_text to N chars (0=disabled)
+    cost_per_input_token: float = 0.0       # USD per input token (for runtime tracking)
+    cost_per_output_token: float = 0.0      # USD per output token
+    assumed_output_tokens: int = 2          # assumed output tokens/item for budget estimation
 
 
 @dataclass
@@ -144,6 +154,11 @@ def _normalize_ground_truth(value: str) -> str:
     if v in {"NO", "N", "FALSE", "F"}:
         return "FALSE"
     return v
+
+
+def _estimate_tokens_chars(text: str) -> int:
+    """Estimate token count from character length (4 chars ≈ 1 token)."""
+    return max(1, math.ceil(len(text) / 4))
 
 
 def _dataset_global_sha256(selector_path: str = "data/canonical_v2_files.json") -> str:
@@ -422,6 +437,37 @@ class EvalRunner:
         else:
             order_mode = getattr(cfg, "order_mode", "canonical")
 
+        # --- Dry-run cost estimation (returns early without calling provider) ---
+        if cfg.dry_run_cost:
+            all_prompts = [
+                build_prompt(it.get("question", it.get("prompt", ""))) for it in items
+            ]
+            est_input_toks = sum(_estimate_tokens_chars(p) for p in all_prompts)
+            est_output_toks = total_planned * cfg.assumed_output_tokens
+            est_cost = (
+                est_input_toks * cfg.cost_per_input_token
+                + est_output_toks * cfg.cost_per_output_token
+            )
+            budget_status = "OK"
+            if cfg.max_usd is not None and est_cost > cfg.max_usd:
+                budget_status = "OVER"
+            result = {
+                "dry_run": True,
+                "estimated_cost_usd": round(est_cost, 6),
+                "n_items": total_planned,
+                "estimated_input_tokens": est_input_toks,
+                "estimated_output_tokens": est_output_toks,
+                "budget_status": budget_status,
+            }
+            print(
+                f"[dry_run_cost] {total_planned} items | "
+                f"~{est_input_toks} input tokens | "
+                f"estimated cost: ${est_cost:.4f} | "
+                f"budget status: {budget_status}",
+                file=sys.stderr,
+            )
+            return result
+
         # --- Resume: skip already-completed items ------------------------
         already_done: Dict[str, PredictionRecord] = {}
         if cfg.resume_run_id:
@@ -464,14 +510,29 @@ class EvalRunner:
             return bar
 
         flush_counter = [0]  # mutable counter for checkpoint flushing
+        _budget_spent = [0.0]
+        _budget_exceeded = [False]
 
         def _on_record(rec: PredictionRecord, bar) -> None:
             """Callback after each item completes; updates bar and checkpoint."""
             with _lock:
+                # Truncate pred_text if configured
+                if cfg.truncate_pred_text > 0:
+                    rec = replace(rec, pred_text=rec.pred_text[:cfg.truncate_pred_text])
                 new_records.append(rec)
                 # Append to checkpoint for resume capability
                 self._append_checkpoint(out_dir, rec)
                 flush_counter[0] += 1
+                # Budget tracking
+                if cfg.cost_per_input_token > 0 or cfg.cost_per_output_token > 0:
+                    input_toks = _estimate_tokens_chars(rec.question)
+                    item_cost = (
+                        input_toks * cfg.cost_per_input_token
+                        + cfg.assumed_output_tokens * cfg.cost_per_output_token
+                    )
+                    _budget_spent[0] += item_cost
+                    if cfg.max_usd is not None and _budget_spent[0] > cfg.max_usd:
+                        _budget_exceeded[0] = True
                 if bar is not None:
                     all_so_far = list(already_done.values()) + new_records
                     _bar_valid[0] = sum(1 for r in all_so_far if r.outcome != "INVALID")
@@ -485,6 +546,13 @@ class EvalRunner:
             for item in remaining:
                 rec = _evaluate_item(item, cfg.provider, cfg.retries, cfg.strict_parsing)
                 _on_record(rec, bar)
+                if _budget_exceeded[0]:
+                    print(
+                        f"[budget] Soft stop: accumulated ${_budget_spent[0]:.4f} exceeds "
+                        f"max_usd=${cfg.max_usd:.2f} — flushing checkpoint and stopping.",
+                        file=sys.stderr,
+                    )
+                    break
         else:
             with ThreadPoolExecutor(max_workers=cfg.workers) as pool:
                 futures = {
@@ -563,6 +631,12 @@ class EvalRunner:
             "resumed_from": cfg.resume_run_id,
             "order_mode": order_mode,
             "shuffle_seed": cfg.shuffle_seed,
+            "budget": {
+                "max_usd": cfg.max_usd,
+                "truncate_pred_text": cfg.truncate_pred_text,
+                "phase": cfg.phase,
+                "dry_run_cost": cfg.dry_run_cost,
+            },
         }
         manifest_path = out_dir / "run_manifest.json"
         manifest_path.write_text(json.dumps(manifest, indent=2))
