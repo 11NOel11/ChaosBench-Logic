@@ -1,0 +1,12 @@
+{
+  "published_utc": "2026-02-21T07:46:26.167754+00:00",
+  "source_run_dir": "/Users/noel.thomas/chaos-logic-bench/runs/mistral7b_5k_armored/20260220T145806Z_ollama_mistral:7b",
+  "run_id": "20260220T145806Z_ollama_mistral:7b",
+  "artifacts_copied": [
+    "run_manifest.json",
+    "metrics.json",
+    "summary.md"
+  ],
+  "artifacts_skipped": [],
+  "compress_predictions": false
+}
