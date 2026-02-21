@@ -21,11 +21,13 @@ PROJECT_ROOT = Path(__file__).parent.parent
 FIGURES_DIR = PROJECT_ROOT / "artifacts" / "results_pack" / "figures"
 
 EXPECTED_FIGURES = [
-    "mcc_bar",
+    "mcc_overview_bar",
     "family_heatmap",
+    "family_bar_full",
+    "family_bar_5k",
     "bias_plot",
     "latency_plot",
-    "family_grouped_bar",
+    "subset_crosscheck",
 ]
 
 MIN_PNG_BYTES = 5_000   # 5 KB
@@ -67,11 +69,18 @@ def check_pdf(path: Path) -> tuple[bool, str]:
 
 
 def main() -> None:
-    print("[verify_figures] Checking figures in:", FIGURES_DIR)
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--dir", default=None, help="Override figures directory")
+    args = ap.parse_args()
+
+    figures_dir = Path(args.dir).resolve() if args.dir else FIGURES_DIR
+
+    print("[verify_figures] Checking figures in:", figures_dir)
     print()
 
-    if not FIGURES_DIR.exists():
-        print(f"ERROR: Figures directory does not exist: {FIGURES_DIR}")
+    if not figures_dir.exists():
+        print(f"ERROR: Figures directory does not exist: {figures_dir}")
         print("  Run: python scripts/generate_results_figures.py")
         sys.exit(1)
 
@@ -80,7 +89,7 @@ def main() -> None:
 
     for stem in EXPECTED_FIGURES:
         for ext, checker in [(".png", check_png), (".pdf", check_pdf)]:
-            fpath = FIGURES_DIR / f"{stem}{ext}"
+            fpath = figures_dir / f"{stem}{ext}"
             if not fpath.exists():
                 msg = f"MISSING: {fpath.name}"
                 print(f"  ❌ {msg}")
@@ -95,7 +104,7 @@ def main() -> None:
                     failures.append(msg)
 
     # Check FIGURE_INDEX.md
-    idx = FIGURES_DIR / "FIGURE_INDEX.md"
+    idx = figures_dir / "FIGURE_INDEX.md"
     if not idx.exists():
         warnings.append("FIGURE_INDEX.md missing")
         print(f"  ⚠️  FIGURE_INDEX.md missing")

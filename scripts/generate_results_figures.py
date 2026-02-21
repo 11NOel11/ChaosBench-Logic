@@ -1,71 +1,59 @@
 #!/usr/bin/env python3
 """scripts/generate_results_figures.py — Publication-ready figures for ChaosBench-Logic v2.
 
-Reads from artifacts/results_pack/tables/ and runs/ predictions directly.
-Writes to artifacts/results_pack/figures/ as both .pdf and .png.
+Usage:
+  python scripts/generate_results_figures.py \
+      --tables_dir artifacts/results_pack_v2/<ts>/tables \
+      --out_dir    artifacts/results_pack_v2/<ts>/figures
 
-Required figures:
-  1. mcc_macro_family_bar.{pdf,png}   — Bar chart: MCC (micro + macro_family) by model
-  2. family_heatmap.{pdf,png}         — Heatmap: model × family MCC, sorted by hardness
-  3. bias_plot.{pdf,png}              — Bias: pred_TRUE% vs gt_TRUE% with TPR/TNR annotated
-  4. latency_plot.{pdf,png}           — Latency mean/p95 by model
-  5. family_acc_grouped_bar.{pdf,png} — Grouped bar per family, models compared
+Figures produced (each as .pdf and .png):
+  1. mcc_overview_bar       — grouped bar: MCC_micro by model+subset, color by model
+  2. family_heatmap         — heatmap: model×family MCC (full_canonical runs), sorted hardest→easiest
+  3. bias_plot              — scatter pred_TRUE% vs gt_TRUE%, annotated TPR/TNR
+  4. latency_plot           — mean/p95 latency by model (5k_armored and full_canonical)
+  5. family_grouped_bar     — per-family grouped bar, models on same subset compared
+  6. subset_crosscheck_bar  — 5k_armored vs full_canonical MCC comparison (models with both runs)
 
-Quality constraints enforced:
-  - constrained_layout / tight_layout to prevent overlap
-  - legends outside plot when >3 entries
-  - minimum font sizes: title=14, axis=12, ticks=10, legend=9
-  - axis labels always present
+Quality constraints: constrained_layout, min font sizes, legends outside when >3 entries.
 """
 from __future__ import annotations
 
-import json
-import math
-import os
+import argparse
 import sys
 from pathlib import Path
 
 import matplotlib
-matplotlib.use("Agg")  # non-interactive backend
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).parent.parent
-RESULTS_PACK = PROJECT_ROOT / "artifacts" / "results_pack"
-TABLES_DIR = RESULTS_PACK / "tables"
-FIGURES_DIR = RESULTS_PACK / "figures"
-RUNS_DIR = PROJECT_ROOT / "runs"
 
-# ---------------------------------------------------------------------------
-# Consistent style
-# ---------------------------------------------------------------------------
-FONT_TITLE = 14
-FONT_AXIS = 12
-FONT_TICK = 10
-FONT_LEGEND = 9
-FONT_ANNOT = 8
-DPI_PNG = 200
-FIGSIZE_BAR = (9, 5)
-FIGSIZE_HEAT = (12, 6)
-FIGSIZE_BIAS = (7, 6)
-FIGSIZE_LAT = (8, 5)
-FIGSIZE_GROUPED = (13, 5)
+FONT_TITLE  = 13
+FONT_AXIS   = 11
+FONT_TICK   = 9
+FONT_LEGEND = 8
+FONT_ANNOT  = 7
+DPI_PNG     = 200
 
-# Color palette — consistent per model across all figures
 MODEL_COLORS = {
-    "Qwen2.5-14B": "#2196F3",   # blue
-    "Qwen2.5-7B":  "#64B5F6",   # light blue
+    "Qwen2.5-32B": "#1565C0",   # dark blue
+    "Qwen2.5-14B": "#42A5F5",   # light blue
+    "Qwen2.5-7B":  "#90CAF9",   # very light blue
     "Llama3.1-8B": "#FF7043",   # orange-red
     "Gemma2-9B":   "#66BB6A",   # green
     "Mistral-7B":  "#AB47BC",   # purple
 }
+MODEL_ORDER = ["Qwen2.5-32B","Qwen2.5-14B","Gemma2-9B","Mistral-7B","Qwen2.5-7B","Llama3.1-8B"]
+
+SUBSET_MARKERS = {"full_canonical": "●", "5k_armored": "▲", "1k_subset": "◆"}
 
 FAMILY_DISPLAY = {
     "atomic":                  "Atomic",
     "multi_hop":               "Multi-Hop",
-    "fol_inference":           "FOL Inference",
+    "fol_inference":           "FOL\nInference",
     "consistency_paraphrase":  "Consistency\nParaphrase",
     "perturbation":            "Perturbation",
     "adversarial_misleading":  "Adv.\nMisleading",
@@ -76,380 +64,414 @@ FAMILY_DISPLAY = {
     "regime_transition":       "Regime\nTransition",
 }
 
-# Family order: hardest first (lowest mean MCC from data)
-FAMILY_HARDNESS_ORDER = [
-    "regime_transition",
-    "consistency_paraphrase",
-    "perturbation",
-    "cross_indicator",
-    "adversarial_misleading",
-    "adversarial_nearmiss",
-    "atomic",
-    "multi_hop",
-    "extended_systems",
-    "fol_inference",
-    "indicator_diagnostic",
-]
 
+def _color(model: str) -> str:
+    return MODEL_COLORS.get(model, "#9E9E9E")
 
-def _save(fig: plt.Figure, stem: str) -> None:
-    """Save figure as both PDF and PNG."""
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-    pdf_path = FIGURES_DIR / f"{stem}.pdf"
-    png_path = FIGURES_DIR / f"{stem}.png"
-    fig.savefig(pdf_path, bbox_inches="tight", dpi=DPI_PNG)
-    fig.savefig(png_path, bbox_inches="tight", dpi=DPI_PNG)
-    print(f"  Saved: {pdf_path.name}, {png_path.name}")
+def _save(fig: plt.Figure, out_dir: Path, stem: str) -> None:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for ext in (".pdf", ".png"):
+        fig.savefig(out_dir / f"{stem}{ext}", bbox_inches="tight", dpi=DPI_PNG)
+    print(f"  Saved: {stem}.pdf + {stem}.png")
     plt.close(fig)
 
 
-def _color(model: str) -> str:
-    return MODEL_COLORS.get(model, "#999999")
+# ── Figure 1: MCC overview bar (grouped by subset) ───────────────────────────
+def fig_mcc_overview(df: pd.DataFrame, out_dir: Path) -> None:
+    """Grouped bar: model×subset, y=MCC_micro. Three groups: 1k, 5k, full."""
+    subsets = ["1k_subset", "5k_armored", "full_canonical"]
+    subset_labels = {"1k_subset": "1k subset", "5k_armored": "5k armored", "full_canonical": "Full canonical (40k)"}
+    fig, ax = plt.subplots(figsize=(11, 5), constrained_layout=True)
+
+    group_w = 0.9
+    n_subsets = len(subsets)
+    bar_w = group_w / n_subsets
+    x_base = np.arange(len(MODEL_ORDER))
+
+    for si, subset in enumerate(subsets):
+        sub = df[df["subset"] == subset]
+        mccs, models_present = [], []
+        for m in MODEL_ORDER:
+            row = sub[sub["model"] == m]
+            mccs.append(float(row["mcc_micro"].iloc[0]) if not row.empty else np.nan)
+            models_present.append(m)
+
+        xs = x_base + (si - n_subsets/2 + 0.5) * bar_w
+        colors = [_color(m) if not np.isnan(v) else "#EEEEEE" for m, v in zip(MODEL_ORDER, mccs)]
+        alphas = [0.95 if subset == "full_canonical" else (0.75 if subset == "5k_armored" else 0.5)]
+
+        bars = ax.bar(xs, mccs, bar_w * 0.92,
+                      label=subset_labels[subset],
+                      color=colors,
+                      alpha=0.95 if subset == "full_canonical" else (0.80 if subset == "5k_armored" else 0.55),
+                      edgecolor="white", linewidth=0.5,
+                      hatch=("" if subset == "full_canonical" else ("" if subset == "5k_armored" else "//")))
+        for bar, v in zip(bars, mccs):
+            if not np.isnan(v) and v > 0.01:
+                ax.text(bar.get_x() + bar.get_width()/2, v + 0.007, f"{v:.3f}",
+                        ha="center", va="bottom", fontsize=6, color="#333")
+
+    # Cosmetics
+    ax.axhline(0, color="black", linewidth=0.7, linestyle="--", alpha=0.3)
+    ax.set_xticks(x_base)
+    ax.set_xticklabels(MODEL_ORDER, fontsize=FONT_TICK)
+    ax.set_ylabel("MCC (micro)", fontsize=FONT_AXIS)
+    ax.set_title("ChaosBench-Logic v2 — Model MCC by Evaluation Subset", fontsize=FONT_TITLE)
+    ax.set_ylim(-0.05, 0.60)
+    ax.yaxis.grid(True, alpha=0.25); ax.set_axisbelow(True)
+
+    # Legend for subsets
+    legend_patches = [
+        mpatches.Patch(facecolor="#CCCCCC", alpha=0.55, hatch="//", label="1k subset"),
+        mpatches.Patch(facecolor="#CCCCCC", alpha=0.80, label="5k armored"),
+        mpatches.Patch(facecolor="#CCCCCC", alpha=0.95, label="Full canonical (40k)"),
+    ]
+    ax.legend(handles=legend_patches, fontsize=FONT_LEGEND, loc="upper right")
+
+    # Color legend for models
+    model_patches = [mpatches.Patch(facecolor=_color(m), label=m) for m in MODEL_ORDER if m in MODEL_COLORS]
+    leg2 = ax.legend(handles=model_patches, fontsize=FONT_LEGEND,
+                     loc="upper left", bbox_to_anchor=(0, 1), ncol=3,
+                     title="Model", title_fontsize=FONT_LEGEND)
+    ax.add_artist(leg2)
+    # Re-add subset legend
+    ax.legend(handles=legend_patches, fontsize=FONT_LEGEND, loc="upper right")
+
+    _save(fig, out_dir, "mcc_overview_bar")
 
 
-# ---------------------------------------------------------------------------
-# Figure 1: MCC bar chart (micro + macro_family)
-# ---------------------------------------------------------------------------
-def fig_mcc_bar(baselines_df: pd.DataFrame) -> None:
-    df = baselines_df.copy()
-    # Filter out mock/debug
-    df = df[df["model"].isin(MODEL_COLORS)].copy()
-    df = df.sort_values("mcc_micro", ascending=False)
+# ── Figure 2: Family heatmap (full_canonical only) ───────────────────────────
+def fig_family_heatmap(by_family_df: pd.DataFrame, hardness_df: pd.DataFrame, out_dir: Path) -> None:
+    df = by_family_df[by_family_df["subset"] == "full_canonical"].copy()
+    if df.empty:
+        df = by_family_df.copy()
 
-    models = df["model"].tolist()
-    x = np.arange(len(models))
-    width = 0.35
-
-    fig, ax = plt.subplots(figsize=FIGSIZE_BAR, constrained_layout=True)
-    colors = [_color(m) for m in models]
-
-    bars1 = ax.bar(x - width / 2, df["mcc_micro"], width, label="MCC (micro)",
-                   color=colors, alpha=0.9, edgecolor="white", linewidth=0.5)
-    # macro_family may be None for some runs
-    macro_vals = df["mcc_macro_family"].fillna(0).tolist()
-    bars2 = ax.bar(x + width / 2, macro_vals, width, label="MCC (macro-family)",
-                   color=colors, alpha=0.55, edgecolor="white", linewidth=0.5, hatch="//")
-
-    # Annotate values
-    for bar in bars1:
-        h = bar.get_height()
-        if h > 0.01:
-            ax.text(bar.get_x() + bar.get_width() / 2, h + 0.008, f"{h:.3f}",
-                    ha="center", va="bottom", fontsize=FONT_ANNOT)
-    for bar in bars2:
-        h = bar.get_height()
-        if h > 0.01:
-            ax.text(bar.get_x() + bar.get_width() / 2, h + 0.008, f"{h:.3f}",
-                    ha="center", va="bottom", fontsize=FONT_ANNOT)
-
-    ax.axhline(0, color="black", linewidth=0.7, linestyle="--", alpha=0.4)
-    ax.set_xticks(x)
-    xticklabels = []
-    for m, row in zip(models, df.itertuples()):
-        n_k = f"{row.N:,}"
-        xticklabels.append(f"{m}\n(N={n_k})")
-    ax.set_xticklabels(xticklabels, fontsize=FONT_TICK)
-    ax.set_ylabel("Matthews Correlation Coefficient (MCC)", fontsize=FONT_AXIS)
-    ax.set_title("ChaosBench-Logic v2 — Model MCC (micro and macro-family)", fontsize=FONT_TITLE)
-    ax.set_ylim(bottom=-0.05)
-    ax.legend(fontsize=FONT_LEGEND, loc="upper right")
-    ax.yaxis.grid(True, alpha=0.3)
-    ax.set_axisbelow(True)
-
-    _save(fig, "mcc_bar")
-
-
-# ---------------------------------------------------------------------------
-# Figure 2: Heatmap — model × family MCC, sorted by hardness
-# ---------------------------------------------------------------------------
-def fig_family_heatmap(by_family_df: pd.DataFrame) -> None:
-    df = by_family_df.copy()
-    df = df[df["model"].isin(MODEL_COLORS)]
-
-    # Pivot: rows = family (hardness order), cols = model
     piv = df.pivot_table(index="family", columns="model", values="MCC", aggfunc="mean")
 
-    # Sort families by hardness order, keep only known ones
-    families = [f for f in FAMILY_HARDNESS_ORDER if f in piv.index]
-    extra = [f for f in piv.index if f not in families]
-    families = families + extra
+    # Sort families by hardness (from hardness_df)
+    hardness_order = list(hardness_df["family"]) if not hardness_df.empty else list(piv.index)
+    families = [f for f in hardness_order if f in piv.index] + [f for f in piv.index if f not in hardness_order]
     piv = piv.reindex(families)
 
-    # Sort models by overall MCC descending
-    model_order = sorted(piv.columns, key=lambda c: piv[c].mean(), reverse=True)
-    piv = piv[model_order]
+    # Sort models by mean MCC desc
+    model_ord = sorted([m for m in piv.columns if m in MODEL_ORDER],
+                        key=lambda m: MODEL_ORDER.index(m))
+    piv = piv.reindex(columns=[m for m in model_ord if m in piv.columns])
 
-    fig, ax = plt.subplots(figsize=FIGSIZE_HEAT, constrained_layout=True)
-    cmap = plt.cm.RdYlGn
+    fig, ax = plt.subplots(figsize=(max(8, len(piv.columns)*1.8), max(6, len(families)*0.55)),
+                           constrained_layout=True)
     vals = piv.values.astype(float)
-    vmin, vmax = -0.1, 0.7
+    im = ax.imshow(vals, aspect="auto", cmap="RdYlGn", vmin=-0.2, vmax=0.8)
 
-    im = ax.imshow(vals, aspect="auto", cmap=cmap, vmin=vmin, vmax=vmax)
-
-    # Axis labels
     ax.set_xticks(range(len(piv.columns)))
     ax.set_xticklabels(piv.columns, fontsize=FONT_TICK, rotation=15, ha="right")
     ax.set_yticks(range(len(families)))
-    fam_labels = [FAMILY_DISPLAY.get(f, f) for f in families]
+    fam_labels = []
+    for f in families:
+        lbl = FAMILY_DISPLAY.get(f, f).replace("\n", " ")
+        # Add ⚠️ for small-N in full canonical
+        n_row = by_family_df[(by_family_df["family"]==f) & (by_family_df["subset"]=="full_canonical")]["N_family"]
+        small = any(n_row < 100)
+        fam_labels.append(f"{'⚠️ ' if small else ''}{lbl}")
     ax.set_yticklabels(fam_labels, fontsize=FONT_TICK)
+    ax.set_xlabel("Model", fontsize=FONT_AXIS)
+    ax.set_ylabel("Task Family (hardest → easiest)", fontsize=FONT_AXIS)
+    ax.set_title("ChaosBench-Logic v2 — Per-Family MCC (full canonical, N=40,886)", fontsize=FONT_TITLE)
 
-    # Annotate cells
     for i in range(len(families)):
         for j in range(len(piv.columns)):
             v = vals[i, j]
             if not np.isnan(v):
-                text_color = "black" if 0.1 < v < 0.6 else "white"
+                tc = "black" if 0.0 < v < 0.65 else "white"
                 ax.text(j, i, f"{v:.2f}", ha="center", va="center",
-                        fontsize=FONT_ANNOT, color=text_color, fontweight="bold")
+                        fontsize=FONT_ANNOT+1, color=tc, fontweight="bold")
 
-    cbar = fig.colorbar(im, ax=ax, shrink=0.85)
+    cbar = fig.colorbar(im, ax=ax, shrink=0.8, pad=0.02)
     cbar.set_label("MCC", fontsize=FONT_AXIS)
     cbar.ax.tick_params(labelsize=FONT_TICK)
 
-    ax.set_xlabel("Model", fontsize=FONT_AXIS)
-    ax.set_ylabel("Task Family (hardest → easiest, top → bottom)", fontsize=FONT_AXIS)
-    ax.set_title("ChaosBench-Logic v2 — Per-Family MCC Heatmap", fontsize=FONT_TITLE)
-
-    _save(fig, "family_heatmap")
+    _save(fig, out_dir, "family_heatmap")
 
 
-# ---------------------------------------------------------------------------
-# Figure 3: Bias plot — pred_TRUE% vs gt_TRUE% with TPR/TNR
-# ---------------------------------------------------------------------------
-def fig_bias_plot(baselines_df: pd.DataFrame) -> None:
-    df = baselines_df.copy()
-    df = df[df["model"].isin(MODEL_COLORS) & df["gt_TRUE_pct"].notna()].copy()
+# ── Figure 3: Bias plot ───────────────────────────────────────────────────────
+def fig_bias_plot(df: pd.DataFrame, out_dir: Path) -> None:
+    # Use full_canonical; fall back to 5k_armored if not available
+    prio = ["full_canonical", "5k_armored", "1k_subset"]
+    rows = []
+    for model in df["model"].unique():
+        for subset in prio:
+            sub = df[(df["model"]==model) & (df["subset"]==subset)]
+            if not sub.empty and pd.notna(sub["gt_TRUE_pct"].iloc[0]):
+                rows.append(sub.iloc[0].to_dict())
+                break
+    if not rows: return
+    plot_df = pd.DataFrame(rows)
 
-    fig, ax = plt.subplots(figsize=FIGSIZE_BIAS, constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(7.5, 6.5), constrained_layout=True)
+    ax.plot([0.3,0.75],[0.3,0.75], "k--", alpha=0.25, lw=1, label="Ideal (pred=gt)")
+    ax.axhline(0.5, color="gray", lw=0.5, alpha=0.4, ls=":")
+    ax.axvline(0.5, color="gray", lw=0.5, alpha=0.4, ls=":")
 
-    # Diagonal reference: pred = gt
-    ax.plot([0, 1], [0, 1], "k--", alpha=0.3, linewidth=1, label="Ideal (pred = gt)")
-    ax.axhline(0.5, color="gray", linewidth=0.5, alpha=0.4, linestyle=":")
-    ax.axvline(0.5, color="gray", linewidth=0.5, alpha=0.4, linestyle=":")
-
-    jitter_x = np.linspace(-0.01, 0.01, len(df))
-    for idx, (_, row) in enumerate(df.iterrows()):
+    used_ys = []
+    for _, row in plot_df.iterrows():
         color = _color(row["model"])
-        x = float(row["gt_TRUE_pct"]) + jitter_x[idx]
+        x = float(row["gt_TRUE_pct"])
         y = float(row["pred_TRUE_pct"])
-        ax.scatter(x, y, color=color, s=120, zorder=5, edgecolors="white", linewidths=1)
-        # Annotation: model name + TPR/TNR
-        tpr = row.get("TPR")
-        tnr = row.get("TNR")
-        label = f"{row['model']}\nTPR={tpr:.2f}, TNR={tnr:.2f}" if pd.notna(tpr) and pd.notna(tnr) else row["model"]
-        offset_x = 0.02 if x < 0.5 else -0.02
-        offset_y = 0.025 * (1 if idx % 2 == 0 else -1)
-        ax.annotate(
-            label,
-            (x, y),
-            xytext=(x + offset_x, y + offset_y + 0.04),
-            fontsize=7,
-            color=color,
-            arrowprops=dict(arrowstyle="-", color=color, lw=0.5),
-        )
+        subset = row["subset"]
+        marker = {"full_canonical":"o","5k_armored":"^","1k_subset":"D"}.get(subset,"o")
+        ax.scatter(x, y, color=color, s=110, zorder=5,
+                   edgecolors="white", linewidths=1, marker=marker)
 
-    ax.set_xlim(0.3, 0.7)
-    ax.set_ylim(0.05, 0.85)
-    ax.set_xlabel("Ground-truth TRUE rate (gt_TRUE%)", fontsize=FONT_AXIS)
-    ax.set_ylabel("Predicted TRUE rate (pred_TRUE%)", fontsize=FONT_AXIS)
-    ax.set_title("ChaosBench-Logic v2 — Label Bias Analysis", fontsize=FONT_TITLE)
+        tpr = row.get("TPR"); tnr = row.get("TNR")
+        lbl = f"{row['model']}"
+        if pd.notna(tpr) and pd.notna(tnr):
+            lbl += f"\nTPR={tpr:.2f} TNR={tnr:.2f}"
+        # Avoid overlap
+        offset_y = 0.04
+        while any(abs(y + offset_y - uy) < 0.03 for uy in used_ys):
+            offset_y += 0.03
+        used_ys.append(y + offset_y)
+        ax.annotate(lbl, (x, y),
+                    xytext=(x + 0.02, y + offset_y),
+                    fontsize=7, color=color,
+                    arrowprops=dict(arrowstyle="-", color=color, lw=0.5))
 
-    # Shade danger zone: |pred - gt| > 0.15
-    ax.fill_between([0, 1], [0.15, 1.15], [0, 1], alpha=0.05, color="red", label="|bias| > 0.15")
-    ax.fill_between([0, 1], [-0.15, 0.85], [0, 1], alpha=0.05, color="red")
+    ax.fill_between([0,1],[0.15,1.15],[0,1], alpha=0.04, color="red")
+    ax.fill_between([0,1],[-0.15,0.85],[0,1], alpha=0.04, color="red")
+    ax.set_xlim(0.35, 0.70); ax.set_ylim(0.10, 0.85)
+    ax.set_xlabel("Ground-truth TRUE rate", fontsize=FONT_AXIS)
+    ax.set_ylabel("Predicted TRUE rate", fontsize=FONT_AXIS)
+    ax.set_title("ChaosBench-Logic v2 — Label Bias (pred TRUE% vs gt TRUE%)", fontsize=FONT_TITLE)
 
-    ax.legend(fontsize=FONT_LEGEND, loc="lower right")
+    # Legend for subsets
+    handles = [mpatches.Patch(facecolor="#999", alpha=0.7, label="Full canonical"),
+               plt.scatter([], [], marker="^", color="#999", s=80, label="5k armored"),
+               plt.scatter([], [], marker="D", color="#999", s=80, label="1k subset")]
+    ax.legend(handles=handles, fontsize=FONT_LEGEND, loc="lower right")
     ax.tick_params(labelsize=FONT_TICK)
+    _save(fig, out_dir, "bias_plot")
 
-    _save(fig, "bias_plot")
 
+# ── Figure 4: Latency ─────────────────────────────────────────────────────────
+def fig_latency(df: pd.DataFrame, out_dir: Path) -> None:
+    sub = df[df["latency_mean_s"].notna() & df["model"].isin(MODEL_COLORS)].copy()
+    if sub.empty: return
 
-# ---------------------------------------------------------------------------
-# Figure 4: Latency plot — mean/p95 by model
-# ---------------------------------------------------------------------------
-def fig_latency_plot(baselines_df: pd.DataFrame) -> None:
-    df = baselines_df.copy()
-    df = df[df["model"].isin(MODEL_COLORS) & df["latency_mean_s"].notna()].copy()
+    # Prefer full_canonical, else 5k_armored
+    best = {}
+    for _, row in sub.iterrows():
+        m = row["model"]; s = row["subset"]
+        if m not in best or (s == "full_canonical" and best[m]["subset"] != "full_canonical"):
+            best[m] = row.to_dict()
+    plot_df = pd.DataFrame(list(best.values()))
+    plot_df = plot_df.sort_values("latency_mean_s")
 
-    if df.empty:
-        print("  [latency_plot] No latency data — skipping.")
-        return
-
-    df = df.sort_values("latency_mean_s")
-    models = df["model"].tolist()
-    means = df["latency_mean_s"].tolist()
-    p95s = df["latency_p95_s"].tolist()
+    models = plot_df["model"].tolist()
+    means  = plot_df["latency_mean_s"].tolist()
+    p95s   = plot_df["latency_p95_s"].tolist()
     x = np.arange(len(models))
 
-    fig, ax = plt.subplots(figsize=FIGSIZE_LAT, constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(9, 5), constrained_layout=True)
     colors = [_color(m) for m in models]
-
-    bars = ax.bar(x, means, 0.5, label="Mean latency", color=colors, alpha=0.85,
-                  edgecolor="white")
-    ax.scatter(x, p95s, marker="D", s=60, color=colors, zorder=5, label="p95 latency",
+    ax.bar(x, means, 0.55, color=colors, alpha=0.85, edgecolor="white")
+    ax.scatter(x, p95s, marker="D", s=65, color=colors, zorder=5,
                edgecolors="black", linewidths=0.5)
 
     for i, (m, p) in enumerate(zip(means, p95s)):
-        ax.text(i, m + 0.005, f"{m:.2f}s", ha="center", va="bottom", fontsize=FONT_ANNOT)
-        ax.text(i, p + 0.005, f"p95={p:.2f}s", ha="center", va="bottom",
-                fontsize=FONT_ANNOT - 1, style="italic", color="gray")
+        ax.text(i, m + 0.005, f"{m:.2f}s", ha="center", va="bottom", fontsize=FONT_ANNOT+1)
+        if p: ax.text(i, p + 0.005, f"p95={p:.2f}s", ha="center", va="bottom",
+                      fontsize=FONT_ANNOT, style="italic", color="#555")
 
     ax.set_xticks(x)
-    xticklabels = []
-    for m, row in zip(models, df.itertuples()):
-        n_k = f"{row.N:,}"
-        xticklabels.append(f"{m}\n(N={n_k})")
-    ax.set_xticklabels(xticklabels, fontsize=FONT_TICK)
+    xlbls = []
+    for m, row in zip(models, [best[m] for m in models]):
+        xlbls.append(f"{m}\n({row['subset']})")
+    ax.set_xticklabels(xlbls, fontsize=FONT_TICK)
     ax.set_ylabel("Latency per question (seconds)", fontsize=FONT_AXIS)
-    ax.set_title("ChaosBench-Logic v2 — Inference Latency (Ollama, local GPU)", fontsize=FONT_TITLE)
-    ax.legend(fontsize=FONT_LEGEND, loc="upper left")
-    ax.yaxis.grid(True, alpha=0.3)
-    ax.set_axisbelow(True)
+    ax.set_title("ChaosBench-Logic v2 — Inference Latency (Ollama, local)", fontsize=FONT_TITLE)
 
-    _save(fig, "latency_plot")
-
-
-# ---------------------------------------------------------------------------
-# Figure 5: Per-family grouped bar (5k runs)
-# ---------------------------------------------------------------------------
-def fig_family_grouped_bar(by_family_df: pd.DataFrame) -> None:
-    df = by_family_df.copy()
-    df = df[df["model"].isin(MODEL_COLORS)]
-    # 5k subset only for comparable N
-    df = df[df["subset"] == "5k_subset"] if "5k_subset" in df["subset"].values else df
-
-    models = [m for m in MODEL_COLORS if m in df["model"].unique()]
-    families = [f for f in FAMILY_HARDNESS_ORDER if f in df["family"].unique()]
-
-    if not families or not models:
-        print("  [family_grouped_bar] No data — skipping.")
-        return
-
-    n_groups = len(families)
-    n_models = len(models)
-    width = 0.8 / n_models
-    x = np.arange(n_groups)
-
-    fig, ax = plt.subplots(figsize=FIGSIZE_GROUPED, constrained_layout=True)
-
-    for i, model in enumerate(models):
-        mccs = []
-        for fam in families:
-            row = df[(df["model"] == model) & (df["family"] == fam)]
-            mccs.append(float(row["MCC"].iloc[0]) if not row.empty else 0.0)
-        offset = (i - n_models / 2 + 0.5) * width
-        bars = ax.bar(x + offset, mccs, width, label=model,
-                      color=_color(model), alpha=0.85, edgecolor="white")
-
-    ax.axhline(0, color="black", linewidth=0.8, linestyle="--", alpha=0.4)
-    ax.set_xticks(x)
-    fam_labels = [FAMILY_DISPLAY.get(f, f) for f in families]
-    ax.set_xticklabels(fam_labels, fontsize=FONT_TICK - 1, rotation=0)
-    ax.set_ylabel("MCC", fontsize=FONT_AXIS)
-    ax.set_title("ChaosBench-Logic v2 — Per-Family MCC by Model (5k-subset runs)", fontsize=FONT_TITLE)
-    ax.legend(fontsize=FONT_LEGEND, loc="upper left", bbox_to_anchor=(1.01, 1), borderaxespad=0)
-    ax.yaxis.grid(True, alpha=0.3)
-    ax.set_axisbelow(True)
-    ax.set_ylim(-0.15, 0.85)
-
-    _save(fig, "family_grouped_bar")
+    bar_patch = mpatches.Patch(facecolor="#AAAAAA", label="Mean latency")
+    dot_patch = plt.scatter([], [], marker="D", color="#AAAAAA", s=50, label="p95 latency")
+    ax.legend(handles=[bar_patch, dot_patch], fontsize=FONT_LEGEND)
+    ax.yaxis.grid(True, alpha=0.25); ax.set_axisbelow(True)
+    _save(fig, out_dir, "latency_plot")
 
 
-# ---------------------------------------------------------------------------
-# Model alias mapping table (saved as FIGURE_INDEX.md)
-# ---------------------------------------------------------------------------
-def write_figure_index(baselines_df: pd.DataFrame) -> None:
-    aliases = sorted(MODEL_COLORS.items())
+# ── Figure 5: Per-family grouped bar ─────────────────────────────────────────
+def fig_family_bar(by_family_df: pd.DataFrame, out_dir: Path) -> None:
+    """One panel per subset tier (5k_armored, full_canonical)."""
+    for subset, title_sfx in [("full_canonical", "Full canonical (N=40,886)"),
+                               ("5k_armored", "5k armored (N=5,000)")]:
+        df = by_family_df[by_family_df["subset"] == subset].copy()
+        if df.empty: continue
+
+        models_in = [m for m in MODEL_ORDER if m in df["model"].unique()]
+        families = [f for f in [
+            "regime_transition","cross_indicator","consistency_paraphrase","perturbation",
+            "atomic","adversarial_nearmiss","adversarial_misleading","multi_hop",
+            "fol_inference","indicator_diagnostic","extended_systems"
+        ] if f in df["family"].unique()]
+
+        n_m = len(models_in); n_f = len(families)
+        width = 0.75 / n_m
+        x = np.arange(n_f)
+
+        fig, ax = plt.subplots(figsize=(max(12, n_f*1.1), 5), constrained_layout=True)
+        for i, model in enumerate(models_in):
+            mccs = []
+            for fam in families:
+                row = df[(df["model"]==model) & (df["family"]==fam)]
+                mccs.append(float(row["MCC"].iloc[0]) if not row.empty else np.nan)
+            offset = (i - n_m/2 + 0.5) * width
+            ax.bar(x + offset, mccs, width*0.9, label=model,
+                   color=_color(model), alpha=0.88, edgecolor="white")
+
+        ax.axhline(0, color="black", lw=0.8, ls="--", alpha=0.35)
+        ax.set_xticks(x)
+        ax.set_xticklabels([FAMILY_DISPLAY.get(f,f).replace("\n"," ") for f in families],
+                           fontsize=FONT_TICK-1, rotation=15, ha="right")
+        ax.set_ylabel("MCC", fontsize=FONT_AXIS)
+        ax.set_title(f"ChaosBench-Logic v2 — Per-Family MCC ({title_sfx})", fontsize=FONT_TITLE)
+        ax.legend(fontsize=FONT_LEGEND, loc="upper left",
+                  bbox_to_anchor=(1.01, 1), borderaxespad=0, title="Model")
+        ax.yaxis.grid(True, alpha=0.25); ax.set_axisbelow(True)
+        ax.set_ylim(-0.35, 0.85)
+
+        stem = f"family_bar_{'full' if 'full' in subset else '5k'}"
+        _save(fig, out_dir, stem)
+
+
+# ── Figure 6: 5k vs full cross-check ─────────────────────────────────────────
+def fig_crosscheck(crosscheck_df: pd.DataFrame, out_dir: Path) -> None:
+    if crosscheck_df.empty: return
+    cols = [c for c in ("5k_armored", "full_canonical") if c in crosscheck_df.columns]
+    if len(cols) < 2: return
+
+    models = crosscheck_df["model"].unique()
+    n_m = len(models)
+
+    fig, axes = plt.subplots(1, n_m, figsize=(4*n_m+1, 5), constrained_layout=True,
+                             sharey=True)
+    if n_m == 1: axes = [axes]
+
+    all_families = crosscheck_df["family"].unique()
+    family_labels = [FAMILY_DISPLAY.get(f,f).replace("\n"," ") for f in all_families]
+
+    for ax, model in zip(axes, models):
+        sub = crosscheck_df[crosscheck_df["model"]==model]
+        families = sub["family"].tolist()
+        v5k   = sub["5k_armored"].fillna(0).tolist() if "5k_armored" in sub else [0]*len(families)
+        vfull = sub["full_canonical"].fillna(0).tolist() if "full_canonical" in sub else [0]*len(families)
+
+        x = np.arange(len(families))
+        ax.barh(x - 0.2, v5k,   0.35, label="5k armored",       color=_color(model), alpha=0.55)
+        ax.barh(x + 0.2, vfull, 0.35, label="Full canonical",    color=_color(model), alpha=0.90)
+        ax.axvline(0, color="black", lw=0.7, ls="--", alpha=0.3)
+        ax.set_yticks(x)
+        ax.set_yticklabels([FAMILY_DISPLAY.get(f,f).replace("\n"," ") for f in families],
+                           fontsize=FONT_TICK-1)
+        ax.set_title(model, fontsize=FONT_AXIS, color=_color(model))
+        ax.set_xlabel("MCC", fontsize=FONT_AXIS-1)
+        ax.xaxis.grid(True, alpha=0.25)
+        if ax == axes[0]:
+            ax.legend(fontsize=FONT_LEGEND)
+
+    fig.suptitle("ChaosBench-Logic v2 — 5k Armored vs Full Canonical MCC per Family",
+                 fontsize=FONT_TITLE)
+    _save(fig, out_dir, "subset_crosscheck")
+
+
+# ── Figure index ─────────────────────────────────────────────────────────────
+def write_figure_index(out_dir: Path) -> None:
     lines = [
-        "# Figure Index — ChaosBench-Logic v2 Results Pack",
+        "# Figure Index — ChaosBench-Logic v2 Results Pack (v2)",
         "",
-        "## Model Alias Mapping",
+        "## Model Alias → Provider Mapping",
         "",
-        "| Alias (used in figures) | Full provider string |",
-        "|-------------------------|----------------------|",
-    ]
-    provider_map = {
-        "Qwen2.5-14B": "ollama/qwen2.5:14b",
-        "Qwen2.5-7B":  "ollama/qwen2.5:7b",
-        "Llama3.1-8B": "ollama/llama3.1:8b",
-        "Gemma2-9B":   "ollama/gemma2:9b",
-        "Mistral-7B":  "ollama/mistral:7b",
-    }
-    for alias, _ in aliases:
-        lines.append(f"| {alias} | {provider_map.get(alias, '—')} |")
-
-    lines += [
+        "| Alias | Full provider | Color |",
+        "|-------|--------------|-------|",
+        "| Qwen2.5-32B | ollama/qwen2.5:32b | dark blue |",
+        "| Qwen2.5-14B | ollama/qwen2.5:14b | light blue |",
+        "| Qwen2.5-7B  | ollama/qwen2.5:7b  | very light blue |",
+        "| Llama3.1-8B | ollama/llama3.1:8b | orange-red |",
+        "| Gemma2-9B   | ollama/gemma2:9b   | green |",
+        "| Mistral-7B  | ollama/mistral:7b  | purple |",
         "",
         "## Figures",
         "",
         "| File | Caption |",
         "|------|---------|",
-        "| `mcc_bar.{pdf,png}` | Bar chart of MCC (micro + macro-family) per model. Primary headline figure. |",
-        "| `family_heatmap.{pdf,png}` | Heatmap of per-family MCC by model, sorted hardest→easiest. Shows which families are universally difficult. |",
-        "| `bias_plot.{pdf,png}` | Scatter of predicted TRUE% vs ground-truth TRUE% per model. Shows label-defaulting behavior (FALSE-lean vs TRUE-lean). TPR/TNR annotated per point. |",
-        "| `latency_plot.{pdf,png}` | Bar chart of mean inference latency (s/question) with p95 markers. All runs on local Ollama. |",
-        "| `family_grouped_bar.{pdf,png}` | Grouped bar chart comparing MCC per task family across models (5k-subset runs only). |",
+        "| `mcc_overview_bar.{pdf,png}` | Primary headline figure. MCC_micro grouped by model and evaluation subset (1k / 5k / full). Bar shade = subset tier; bar color = model. |",
+        "| `family_heatmap.{pdf,png}` | Heatmap: model × task family MCC, full-canonical runs only (N=40,886). Sorted hardest→easiest. ⚠️ marks families with N<100. |",
+        "| `bias_plot.{pdf,png}` | Scatter of pred_TRUE% vs gt_TRUE%. Each point = one run (best available subset per model). Annotated with TPR and TNR. Shaded zone = |bias| > 0.15. |",
+        "| `latency_plot.{pdf,png}` | Bar chart of mean inference latency (s/q) with p95 markers, Ollama local. |",
+        "| `family_bar_full.{pdf,png}` | Grouped bar: per-family MCC for all models on full_canonical (N=40,886). |",
+        "| `family_bar_5k.{pdf,png}` | Grouped bar: per-family MCC for all models on 5k_armored (N=5,000). |",
+        "| `subset_crosscheck.{pdf,png}` | Side-by-side comparison: 5k_armored vs full_canonical MCC per family for models with both runs (Qwen2.5-14B, Qwen2.5-32B, Mistral-7B). |",
         "",
-        "## Notes",
+        "## Subset Notes",
         "",
-        "- All figures use `constrained_layout` to prevent text overlap.",
-        "- Legends with >3 entries are placed outside the plot axes.",
-        "- PDFs are vector (suitable for paper submission); PNGs are raster at 200 DPI.",
-        "- 5k-subset runs: N=3,828 (sampler drew 3,828 items from 40,886 canonical).",
-        "- Full-canonical run (Llama3.1-8B): N=40,886.",
-        "- 1k-subset runs excluded from per-family figures (too few items per family).",
+        "- **5k armored** (N=5,000): proportionally stratified from 40,886 canonical (~62% atomic).",
+        "  Models: Gemma2-9B, Mistral-7B, Qwen2.5-14B, Qwen2.5-32B.",
+        "- **Full canonical** (N=40,886): complete frozen dataset.",
+        "  Models: Llama3.1-8B, Mistral-7B, Qwen2.5-14B, Qwen2.5-32B.",
+        "- **1k subset** (N=1,000): balanced 1k sample (56 items per major family).",
+        "  Models: Qwen2.5-14B, Qwen2.5-7B, Llama3.1-8B (early runs, kept for historical comparison).",
+        "- Cross-validate: Mistral, Qwen14B, Qwen32B appear in both 5k and full. MCC delta < 0.01.",
     ]
-    (FIGURES_DIR / "FIGURE_INDEX.md").write_text("\n".join(lines) + "\n")
+    (out_dir / "FIGURE_INDEX.md").write_text("\n".join(lines) + "\n")
     print("  Saved: FIGURE_INDEX.md")
 
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-def main() -> None:
-    print("[generate_results_figures] Loading tables...")
-    baselines_path = TABLES_DIR / "baselines_table.csv"
-    by_family_path = TABLES_DIR / "by_family.csv"
+# ── Main ──────────────────────────────────────────────────────────────────────
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--tables_dir", required=True)
+    parser.add_argument("--out_dir",    required=True)
+    args = parser.parse_args()
+
+    tables_dir = Path(args.tables_dir)
+    out_dir    = Path(args.out_dir)
+
+    baselines_path   = tables_dir / "baselines_table.csv"
+    by_family_path   = tables_dir / "by_family.csv"
+    hardness_path    = tables_dir / "hardness.csv"
+    crosscheck_path  = tables_dir / "full_vs_5k_crosscheck.csv"
 
     if not baselines_path.exists():
         print("ERROR: baselines_table.csv not found. Run build_results_pack.py first.")
         sys.exit(1)
 
-    baselines_df = pd.read_csv(baselines_path)
-    by_family_df = pd.read_csv(by_family_path) if by_family_path.exists() else pd.DataFrame()
-
-    # Load hardness order from data to dynamically update
-    if not by_family_df.empty:
-        hardness = (
-            by_family_df[by_family_df["model"].isin(MODEL_COLORS)]
-            .groupby("family")["MCC"].mean()
-            .sort_values()
-        )
-        # Update global with data-driven order
-        global FAMILY_HARDNESS_ORDER
-        FAMILY_HARDNESS_ORDER = list(hardness.index)
+    baselines_df  = pd.read_csv(baselines_path)
+    by_family_df  = pd.read_csv(by_family_path)  if by_family_path.exists()  else pd.DataFrame()
+    hardness_df   = pd.read_csv(hardness_path)   if hardness_path.exists()   else pd.DataFrame()
+    crosscheck_df = pd.read_csv(crosscheck_path) if crosscheck_path.exists() else pd.DataFrame()
 
     print("[generate_results_figures] Generating figures...")
-    print("  Figure 1: MCC bar chart")
-    fig_mcc_bar(baselines_df)
+    print("  Figure 1: MCC overview bar")
+    fig_mcc_overview(baselines_df, out_dir)
 
     if not by_family_df.empty:
         print("  Figure 2: Family heatmap")
-        fig_family_heatmap(by_family_df)
+        fig_family_heatmap(by_family_df, hardness_df, out_dir)
 
-        print("  Figure 3: Family grouped bar")
-        fig_family_grouped_bar(by_family_df)
+        print("  Figures 3a/3b: Per-family grouped bars")
+        fig_family_bar(by_family_df, out_dir)
 
     print("  Figure 4: Bias plot")
-    fig_bias_plot(baselines_df)
+    fig_bias_plot(baselines_df, out_dir)
 
     print("  Figure 5: Latency plot")
-    fig_latency_plot(baselines_df)
+    fig_latency(baselines_df, out_dir)
+
+    if not crosscheck_df.empty:
+        print("  Figure 6: Subset crosscheck")
+        fig_crosscheck(crosscheck_df, out_dir)
 
     print("  Writing FIGURE_INDEX.md")
-    write_figure_index(baselines_df)
+    write_figure_index(out_dir)
 
-    print(f"[generate_results_figures] Done. Output: {FIGURES_DIR}")
+    print(f"[generate_results_figures] Done. Output: {out_dir}")
 
 
 if __name__ == "__main__":
