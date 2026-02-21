@@ -1,0 +1,12 @@
+{
+  "published_utc": "2026-02-21T07:46:25.578640+00:00",
+  "source_run_dir": "/Users/noel.thomas/chaos-logic-bench/runs/gemma2_9b_5k_armored/20260220T145645Z_ollama_gemma2:9b",
+  "run_id": "20260220T145645Z_ollama_gemma2:9b",
+  "artifacts_copied": [
+    "run_manifest.json",
+    "metrics.json",
+    "summary.md"
+  ],
+  "artifacts_skipped": [],
+  "compress_predictions": false
+}

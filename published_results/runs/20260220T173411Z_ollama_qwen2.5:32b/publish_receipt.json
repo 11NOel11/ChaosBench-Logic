@@ -1,0 +1,12 @@
+{
+  "published_utc": "2026-02-21T07:46:29.202505+00:00",
+  "source_run_dir": "/Users/noel.thomas/chaos-logic-bench/runs/qwen32b_full_canonical/20260220T173411Z_ollama_qwen2.5:32b",
+  "run_id": "20260220T173411Z_ollama_qwen2.5:32b",
+  "artifacts_copied": [
+    "run_manifest.json",
+    "metrics.json",
+    "summary.md"
+  ],
+  "artifacts_skipped": [],
+  "compress_predictions": false
+}
