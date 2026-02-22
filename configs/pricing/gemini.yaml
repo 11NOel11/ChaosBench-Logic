@@ -4,6 +4,12 @@ provider: gemini
 updated: "2026-02"
 
 models:
+  gemini-2.5-flash:
+    input_per_1m_tokens: 0.15    # USD (verify at ai.google.dev/pricing)
+    output_per_1m_tokens: 0.60
+  gemini-2.5-pro:
+    input_per_1m_tokens: 1.25
+    output_per_1m_tokens: 10.00
   gemini-2.0-flash:
     input_per_1m_tokens: 0.10    # USD
     output_per_1m_tokens: 0.40
