@@ -1,0 +1,14 @@
+# WARNING: Update with current official pricing before use.
+_pricing_warning: "PLACEHOLDER PRICES — verify at platform.deepseek.com/api-docs/pricing before use"
+provider: deepseek
+updated: "2026-02"
+
+models:
+  deepseek-chat:
+    # DeepSeek-V3 (cache miss pricing — conservative estimate)
+    input_per_1m_tokens: 0.27   # USD cache miss; $0.07 cache hit
+    output_per_1m_tokens: 1.10
+  deepseek-reasoner:
+    # DeepSeek-R1 (includes reasoning tokens in output)
+    input_per_1m_tokens: 0.55
+    output_per_1m_tokens: 2.19

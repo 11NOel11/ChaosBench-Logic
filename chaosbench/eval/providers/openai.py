@@ -2,6 +2,7 @@
 
 import json
 import os
+import ssl
 import time
 import urllib.error
 import urllib.request
@@ -12,6 +13,17 @@ from chaosbench.eval.providers.types import ProviderResponse
 
 _ENDPOINT = "https://api.openai.com/v1/chat/completions"
 _STRICT_SUFFIX = "\n\nReturn exactly one token: TRUE or FALSE. No explanation."
+
+# Build an SSL context that trusts certifi's CA bundle when available.
+# This is required on macOS Python installs that don't bundle their own certs
+# (e.g. python.org installer for Python 3.x without running Install Certificates.command).
+try:
+    import certifi as _certifi
+    _SSL_CTX: Optional[ssl.SSLContext] = ssl.create_default_context(
+        cafile=_certifi.where()
+    )
+except ImportError:
+    _SSL_CTX = None  # fall back to urllib's default SSL context
 
 
 class OpenAIProvider(Provider):
@@ -70,12 +82,20 @@ class OpenAIProvider(Provider):
         except RuntimeError as e:
             return ProviderResponse(text="", latency_s=0.0, error=str(e))
 
-        payload = {
+        # o-series and gpt-5.x models use max_completion_tokens (which includes
+        # reasoning tokens) and do not accept a temperature parameter.
+        # With max_tokens=16 the model exhausts the budget on reasoning, leaving
+        # no tokens for output — use 1024 minimum for these model families.
+        _is_reasoning = self._model.startswith(("o1", "o3", "gpt-5"))
+        payload: dict = {
             "model": self._model,
             "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": max_tokens,
-            "temperature": temperature,
         }
+        if _is_reasoning:
+            payload["max_completion_tokens"] = max(max_tokens, 1024)
+        else:
+            payload["max_tokens"] = max_tokens
+            payload["temperature"] = temperature
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
             _ENDPOINT,
@@ -92,10 +112,11 @@ class OpenAIProvider(Provider):
         for attempt in range(self._retries + 1):
             start = time.monotonic()
             try:
-                with urllib.request.urlopen(req, timeout=self._timeout) as resp:
+                kw = {"context": _SSL_CTX} if _SSL_CTX is not None else {}
+                with urllib.request.urlopen(req, timeout=self._timeout, **kw) as resp:
                     body = json.loads(resp.read().decode("utf-8"))
                 latency = time.monotonic() - start
-                text = body["choices"][0]["message"]["content"].strip()
+                text = (body["choices"][0]["message"]["content"] or "").strip()
                 raw = {
                     "prompt_tokens": body.get("usage", {}).get("prompt_tokens", 0),
                     "completion_tokens": body.get("usage", {}).get("completion_tokens", 0),
@@ -104,9 +125,13 @@ class OpenAIProvider(Provider):
             except urllib.error.HTTPError as e:
                 status = e.code
                 last_error = f"HTTPError {status}: {e.reason}"
-                if status < 500:
-                    break  # client-side error, don't retry
-                if attempt < self._retries:
+                if status == 429:
+                    # Rate limited — back off and retry
+                    if attempt < self._retries:
+                        time.sleep(2.0 * (attempt + 1))
+                elif status < 500:
+                    break  # other 4xx: non-retryable
+                elif attempt < self._retries:
                     time.sleep(1.0 * (attempt + 1))
             except urllib.error.URLError as e:
                 last_error = f"URLError: {e.reason}"

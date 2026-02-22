@@ -107,8 +107,68 @@ def cmd_eval(args):
             temperature=args.temperature,
             max_tokens=args.max_tokens,
         )
+    elif provider_name == "openai":
+        if not args.model:
+            print("ERROR: --model is required for --provider openai", file=sys.stderr)
+            sys.exit(1)
+        from chaosbench.eval.providers import OpenAIProvider
+        provider = OpenAIProvider(
+            model=args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
+    elif provider_name == "anthropic":
+        if not args.model:
+            print("ERROR: --model is required for --provider anthropic", file=sys.stderr)
+            sys.exit(1)
+        from chaosbench.eval.providers import AnthropicProvider
+        provider = AnthropicProvider(
+            model=args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
+    elif provider_name == "gemini":
+        if not args.model:
+            print("ERROR: --model is required for --provider gemini", file=sys.stderr)
+            sys.exit(1)
+        from chaosbench.eval.providers import GeminiProvider
+        provider = GeminiProvider(
+            model=args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
+    elif provider_name == "deepseek":
+        if not args.model:
+            print("ERROR: --model is required for --provider deepseek", file=sys.stderr)
+            sys.exit(1)
+        from chaosbench.eval.providers import DeepSeekProvider
+        provider = DeepSeekProvider(
+            model=args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
+    elif provider_name == "openrouter":
+        if not args.model:
+            print("ERROR: --model is required for --provider openrouter", file=sys.stderr)
+            sys.exit(1)
+        from chaosbench.eval.providers import OpenRouterProvider
+        provider = OpenRouterProvider(
+            model=args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
+    elif provider_name == "groq":
+        if not args.model:
+            print("ERROR: --model is required for --provider groq", file=sys.stderr)
+            sys.exit(1)
+        from chaosbench.eval.providers import GroqProvider
+        provider = GroqProvider(
+            model=args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
     else:
-        print(f"ERROR: unknown provider '{args.provider}'. Supported: mock, ollama", file=sys.stderr)
+        print(f"ERROR: unknown provider '{args.provider}'. Supported: mock, ollama, openai, anthropic, gemini, deepseek", file=sys.stderr)
         sys.exit(1)
 
     output_dir = args.output_dir or "runs"
@@ -121,6 +181,9 @@ def cmd_eval(args):
         elif any(x in model_lower for x in ["7b", "8b", "13b"]):
             workers = 4
 
+    # Determine strict parsing mode: --strict-parsing takes precedence over --lenient
+    strict_parsing = getattr(args, 'strict_parsing', False) or not args.lenient
+
     cfg = RunConfig(
         provider=provider,
         output_dir=output_dir,
@@ -128,9 +191,12 @@ def cmd_eval(args):
         seed=args.seed,
         workers=workers,
         retries=args.retries,
-        strict_parsing=not args.lenient,
+        strict_parsing=strict_parsing,
         resume_run_id=getattr(args, "resume", None),
         shuffle_seed=getattr(args, "shuffle_seed", None),
+        phase=getattr(args, "phase", None),
+        truncate_pred_text=getattr(args, "truncate_pred_text", 0),
+        max_usd=getattr(args, "max_usd", None),
     )
 
     runner = EvalRunner(cfg)
@@ -241,8 +307,8 @@ def main():
     eval_parser.add_argument(
         "--provider",
         required=True,
-        choices=["mock", "ollama"],
-        help="Provider: mock (no network) or ollama (local)",
+        choices=["mock", "ollama", "openai", "anthropic", "gemini", "deepseek", "openrouter", "groq"],
+        help="Provider: mock (no network), ollama (local), or openai/anthropic/gemini/deepseek/openrouter/groq (API-based)",
     )
     eval_parser.add_argument("--model", type=str, help="Model name (required for ollama)")
     eval_parser.add_argument(
@@ -274,6 +340,29 @@ def main():
         default=None,
         dest="shuffle_seed",
         help="Shuffle items with this seed before eval (deterministic ordering guard)",
+    )
+    eval_parser.add_argument(
+        "--phase",
+        type=str,
+        default=None,
+        help="Phase label (P0, P1, P2, P3) for tracking",
+    )
+    eval_parser.add_argument(
+        "--truncate-pred-text",
+        type=int,
+        default=None,
+        help="Truncate prediction text to N chars (for CoT suppression)",
+    )
+    eval_parser.add_argument(
+        "--strict-parsing",
+        action="store_true",
+        help="Use strict parsing mode (default: lenient)",
+    )
+    eval_parser.add_argument(
+        "--max-usd",
+        type=float,
+        default=None,
+        help="Maximum budget in USD for proprietary API calls",
     )
 
     # Publish-run command
