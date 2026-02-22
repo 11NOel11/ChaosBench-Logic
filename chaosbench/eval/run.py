@@ -473,9 +473,16 @@ class EvalRunner:
         if cfg.resume_run_id:
             already_done = self._load_checkpoint(out_dir)
             if already_done:
+                # Re-run items that previously returned empty pred_text (failed API calls).
+                invalid_ids = {
+                    k for k, v in already_done.items() if not (v.pred_text or "").strip()
+                }
+                for k in invalid_ids:
+                    del already_done[k]
                 print(
-                    f"[resume] Found {len(already_done)} completed items in checkpoint; "
-                    f"skipping them.",
+                    f"[resume] Found {len(already_done)} completed items in checkpoint "
+                    f"({len(invalid_ids)} empty-response items will be retried); "
+                    f"skipping the rest.",
                     file=sys.stderr,
                 )
         done_ids = set(already_done.keys())

@@ -7,6 +7,9 @@ from chaosbench.eval.providers.ollama import OllamaProvider
 from chaosbench.eval.providers.openai import OpenAIProvider
 from chaosbench.eval.providers.anthropic import AnthropicProvider
 from chaosbench.eval.providers.gemini import GeminiProvider
+from chaosbench.eval.providers.deepseek import DeepSeekProvider
+from chaosbench.eval.providers.openrouter import OpenRouterProvider
+from chaosbench.eval.providers.groq import GroqProvider
 
 __all__ = [
     "Provider",
@@ -16,4 +19,7 @@ __all__ = [
     "OpenAIProvider",
     "AnthropicProvider",
     "GeminiProvider",
+    "DeepSeekProvider",
+    "OpenRouterProvider",
+    "GroqProvider",
 ]

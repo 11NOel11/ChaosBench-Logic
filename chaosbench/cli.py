@@ -137,8 +137,38 @@ def cmd_eval(args):
             temperature=args.temperature,
             max_tokens=args.max_tokens,
         )
+    elif provider_name == "deepseek":
+        if not args.model:
+            print("ERROR: --model is required for --provider deepseek", file=sys.stderr)
+            sys.exit(1)
+        from chaosbench.eval.providers import DeepSeekProvider
+        provider = DeepSeekProvider(
+            model=args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
+    elif provider_name == "openrouter":
+        if not args.model:
+            print("ERROR: --model is required for --provider openrouter", file=sys.stderr)
+            sys.exit(1)
+        from chaosbench.eval.providers import OpenRouterProvider
+        provider = OpenRouterProvider(
+            model=args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
+    elif provider_name == "groq":
+        if not args.model:
+            print("ERROR: --model is required for --provider groq", file=sys.stderr)
+            sys.exit(1)
+        from chaosbench.eval.providers import GroqProvider
+        provider = GroqProvider(
+            model=args.model,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
     else:
-        print(f"ERROR: unknown provider '{args.provider}'. Supported: mock, ollama, openai, anthropic, gemini", file=sys.stderr)
+        print(f"ERROR: unknown provider '{args.provider}'. Supported: mock, ollama, openai, anthropic, gemini, deepseek", file=sys.stderr)
         sys.exit(1)
 
     output_dir = args.output_dir or "runs"
@@ -277,8 +307,8 @@ def main():
     eval_parser.add_argument(
         "--provider",
         required=True,
-        choices=["mock", "ollama", "openai", "anthropic", "gemini"],
-        help="Provider: mock (no network), ollama (local), or openai/anthropic/gemini (API-based)",
+        choices=["mock", "ollama", "openai", "anthropic", "gemini", "deepseek", "openrouter", "groq"],
+        help="Provider: mock (no network), ollama (local), or openai/anthropic/gemini/deepseek/openrouter/groq (API-based)",
     )
     eval_parser.add_argument("--model", type=str, help="Model name (required for ollama)")
     eval_parser.add_argument(

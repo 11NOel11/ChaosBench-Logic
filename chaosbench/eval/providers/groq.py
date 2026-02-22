@@ -1,4 +1,4 @@
-"""OpenAI provider (api.openai.com) — uses urllib.request only, no SDK."""
+"""Groq provider (api.groq.com) — OpenAI-compatible, uses urllib.request only."""
 
 import json
 import os
@@ -11,39 +11,37 @@ from typing import Optional
 from chaosbench.eval.providers.base import Provider
 from chaosbench.eval.providers.types import ProviderResponse
 
-_ENDPOINT = "https://api.openai.com/v1/chat/completions"
-_STRICT_SUFFIX = "\n\nReturn exactly one token: TRUE or FALSE. No explanation."
-
-# Build an SSL context that trusts certifi's CA bundle when available.
-# This is required on macOS Python installs that don't bundle their own certs
-# (e.g. python.org installer for Python 3.x without running Install Certificates.command).
 try:
     import certifi as _certifi
     _SSL_CTX: Optional[ssl.SSLContext] = ssl.create_default_context(
         cafile=_certifi.where()
     )
 except ImportError:
-    _SSL_CTX = None  # fall back to urllib's default SSL context
+    _SSL_CTX = None
+
+_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
+_STRICT_SUFFIX = "\n\nReturn exactly one token: TRUE or FALSE. No explanation."
 
 
-class OpenAIProvider(Provider):
-    """Provider that calls the OpenAI Chat Completions API.
+class GroqProvider(Provider):
+    """Provider for Groq inference (api.groq.com).
 
-    Reads the API key from the OPENAI_API_KEY environment variable.
-    Uses urllib.request only — no openai SDK dependency.
+    Supports fast inference for open models (e.g. llama-3.3-70b-versatile,
+    qwen-qwq-32b, mixtral-8x7b-32768).
+    Reads API key from GROQ_API_KEY environment variable.
 
     Args:
-        model: OpenAI model ID, e.g. "gpt-4o" or "gpt-4o-mini".
+        model: Groq model ID, e.g. "llama-3.3-70b-versatile".
         temperature: Sampling temperature (0.0 = greedy).
-        max_tokens: Maximum tokens to generate (default 16 suppresses CoT).
+        max_tokens: Maximum output tokens (16 suppresses CoT).
         timeout: HTTP timeout in seconds.
-        retries: Retry count on 5xx / connection errors.
+        retries: Retry count on 5xx / 429 errors.
         strict_suffix: If True, append strict TRUE/FALSE instruction to every prompt.
     """
 
     def __init__(
         self,
-        model: str = "gpt-4o",
+        model: str = "llama-3.3-70b-versatile",
         temperature: float = 0.0,
         max_tokens: int = 16,
         timeout: int = 60,
@@ -59,14 +57,14 @@ class OpenAIProvider(Provider):
 
     @property
     def name(self) -> str:
-        return f"openai/{self._model}"
+        return f"groq/{self._model}"
 
     def _get_api_key(self) -> str:
-        key = os.environ.get("OPENAI_API_KEY", "")
+        key = os.environ.get("GROQ_API_KEY", "")
         if not key:
             raise RuntimeError(
-                "OPENAI_API_KEY environment variable is not set. "
-                "Export it before running: export OPENAI_API_KEY=sk-..."
+                "GROQ_API_KEY environment variable is not set. "
+                "Export it before running: export GROQ_API_KEY=gsk_..."
             )
         return key
 
@@ -82,20 +80,12 @@ class OpenAIProvider(Provider):
         except RuntimeError as e:
             return ProviderResponse(text="", latency_s=0.0, error=str(e))
 
-        # o-series and gpt-5.x models use max_completion_tokens (which includes
-        # reasoning tokens) and do not accept a temperature parameter.
-        # With max_tokens=16 the model exhausts the budget on reasoning, leaving
-        # no tokens for output — use 1024 minimum for these model families.
-        _is_reasoning = self._model.startswith(("o1", "o3", "gpt-5"))
-        payload: dict = {
+        payload = {
             "model": self._model,
             "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": max_tokens,
+            "temperature": temperature,
         }
-        if _is_reasoning:
-            payload["max_completion_tokens"] = max(max_tokens, 1024)
-        else:
-            payload["max_tokens"] = max_tokens
-            payload["temperature"] = temperature
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
             _ENDPOINT,
@@ -117,20 +107,20 @@ class OpenAIProvider(Provider):
                     body = json.loads(resp.read().decode("utf-8"))
                 latency = time.monotonic() - start
                 text = (body["choices"][0]["message"]["content"] or "").strip()
+                usage = body.get("usage", {})
                 raw = {
-                    "prompt_tokens": body.get("usage", {}).get("prompt_tokens", 0),
-                    "completion_tokens": body.get("usage", {}).get("completion_tokens", 0),
+                    "prompt_tokens": usage.get("prompt_tokens", 0),
+                    "completion_tokens": usage.get("completion_tokens", 0),
                 }
                 return ProviderResponse(text=text[:200], raw=raw, latency_s=latency)
             except urllib.error.HTTPError as e:
                 status = e.code
                 last_error = f"HTTPError {status}: {e.reason}"
                 if status == 429:
-                    # Rate limited — back off and retry
                     if attempt < self._retries:
                         time.sleep(2.0 * (attempt + 1))
                 elif status < 500:
-                    break  # other 4xx: non-retryable
+                    break
                 elif attempt < self._retries:
                     time.sleep(1.0 * (attempt + 1))
             except urllib.error.URLError as e:

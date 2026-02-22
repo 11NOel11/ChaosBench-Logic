@@ -2,6 +2,7 @@
 
 import json
 import os
+import ssl
 import time
 import urllib.error
 import urllib.request
@@ -13,6 +14,15 @@ from chaosbench.eval.providers.types import ProviderResponse
 _ENDPOINT = "https://api.anthropic.com/v1/messages"
 _API_VERSION = "2023-06-01"
 _STRICT_SUFFIX = "\n\nReturn exactly one token: TRUE or FALSE. No explanation."
+
+# Build an SSL context that trusts certifi's CA bundle when available.
+try:
+    import certifi as _certifi
+    _SSL_CTX: Optional[ssl.SSLContext] = ssl.create_default_context(
+        cafile=_certifi.where()
+    )
+except ImportError:
+    _SSL_CTX = None
 
 
 class AnthropicProvider(Provider):
@@ -98,10 +108,11 @@ class AnthropicProvider(Provider):
         for attempt in range(self._retries + 1):
             start = time.monotonic()
             try:
-                with urllib.request.urlopen(req, timeout=self._timeout) as resp:
+                kw = {"context": _SSL_CTX} if _SSL_CTX is not None else {}
+                with urllib.request.urlopen(req, timeout=self._timeout, **kw) as resp:
                     body = json.loads(resp.read().decode("utf-8"))
                 latency = time.monotonic() - start
-                text = body["content"][0]["text"].strip()
+                text = (body["content"][0]["text"] or "").strip()
                 raw = {
                     "prompt_tokens": body.get("usage", {}).get("input_tokens", 0),
                     "completion_tokens": body.get("usage", {}).get("output_tokens", 0),
@@ -110,9 +121,13 @@ class AnthropicProvider(Provider):
             except urllib.error.HTTPError as e:
                 status = e.code
                 last_error = f"HTTPError {status}: {e.reason}"
-                if status < 500:
-                    break  # client-side error, don't retry
-                if attempt < self._retries:
+                if status == 429:
+                    # Rate limited — back off and retry
+                    if attempt < self._retries:
+                        time.sleep(2.0 * (attempt + 1))
+                elif status < 500:
+                    break  # other 4xx: non-retryable
+                elif attempt < self._retries:
                     time.sleep(1.0 * (attempt + 1))
             except urllib.error.URLError as e:
                 last_error = f"URLError: {e.reason}"

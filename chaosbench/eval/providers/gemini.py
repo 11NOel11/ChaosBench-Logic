@@ -2,6 +2,7 @@
 
 import json
 import os
+import ssl
 import time
 import urllib.error
 import urllib.request
@@ -9,6 +10,15 @@ from typing import Optional
 
 from chaosbench.eval.providers.base import Provider
 from chaosbench.eval.providers.types import ProviderResponse
+
+# Build an SSL context that trusts certifi's CA bundle when available.
+try:
+    import certifi as _certifi
+    _SSL_CTX: Optional[ssl.SSLContext] = ssl.create_default_context(
+        cafile=_certifi.where()
+    )
+except ImportError:
+    _SSL_CTX = None
 
 _ENDPOINT_TEMPLATE = (
     "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
@@ -26,7 +36,8 @@ class GeminiProvider(Provider):
     Args:
         model: Gemini model ID, e.g. "gemini-2.0-flash" or "gemini-1.5-pro".
         temperature: Sampling temperature (0.0 = greedy).
-        max_tokens: Maximum output tokens (default 16 suppresses CoT).
+        max_tokens: Maximum output tokens. Thinking models (gemini-2.5-*) consume
+            tokens for reasoning before answering, so 1024 is the safe default.
         timeout: HTTP timeout in seconds.
         retries: Retry count on 5xx / connection errors.
         strict_suffix: If True, append strict TRUE/FALSE instruction to every prompt.
@@ -36,7 +47,7 @@ class GeminiProvider(Provider):
         self,
         model: str = "gemini-2.0-flash",
         temperature: float = 0.0,
-        max_tokens: int = 16,
+        max_tokens: int = 1024,
         timeout: int = 60,
         retries: int = 2,
         strict_suffix: bool = True,
@@ -74,12 +85,19 @@ class GeminiProvider(Provider):
             return ProviderResponse(text="", latency_s=0.0, error=str(e))
 
         url = _ENDPOINT_TEMPLATE.format(model=self._model, key=api_key)
+        gen_config: dict = {
+            "maxOutputTokens": max_tokens,
+            "temperature": temperature,
+        }
+        # Note: thinkingConfig/thinkingBudget intentionally omitted.
+        # With max_tokens=512, thinking models have room for internal reasoning
+        # plus a short TRUE/FALSE answer. Disabling thinking (thinkingBudget=0)
+        # causes empty candidates for questions that require reasoning.
+        # Thought parts are filtered out in response parsing below.
+
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {
-                "maxOutputTokens": max_tokens,
-                "temperature": temperature,
-            },
+            "generationConfig": gen_config,
         }
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
@@ -94,10 +112,38 @@ class GeminiProvider(Provider):
         for attempt in range(self._retries + 1):
             start = time.monotonic()
             try:
-                with urllib.request.urlopen(req, timeout=self._timeout) as resp:
+                kw = {"context": _SSL_CTX} if _SSL_CTX is not None else {}
+                with urllib.request.urlopen(req, timeout=self._timeout, **kw) as resp:
                     body = json.loads(resp.read().decode("utf-8"))
                 latency = time.monotonic() - start
-                text = body["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+                candidates = body.get("candidates", [])
+                if not candidates:
+                    # No candidates — quota exhaustion or prompt blocked before generation.
+                    # Treat as retryable server-side failure.
+                    finish = body.get("promptFeedback", {}).get("blockReason", "NO_CANDIDATES")
+                    last_error = f"empty candidates: {finish}"
+                    if attempt < self._retries:
+                        time.sleep(2.0 * (attempt + 1))
+                    continue
+
+                candidate = candidates[0]
+                finish_reason = candidate.get("finishReason", "")
+                if finish_reason == "SAFETY":
+                    # Safety filter — non-retryable, return empty with reason recorded.
+                    return ProviderResponse(text="", latency_s=latency, error=f"SAFETY:{finish_reason}")
+
+                # Skip "thought" parts (thinking models); grab first non-thought text part.
+                parts = candidate.get("content", {}).get("parts", [])
+                text_parts = [p.get("text", "") for p in parts if not p.get("thought", False)]
+                text = (text_parts[0] if text_parts else "").strip()
+
+                if not text and attempt < self._retries:
+                    # Empty text but no explicit block reason — retry once.
+                    last_error = f"empty text (finishReason={finish_reason})"
+                    time.sleep(1.0 * (attempt + 1))
+                    continue
+
                 usage = body.get("usageMetadata", {})
                 raw = {
                     "prompt_tokens": usage.get("promptTokenCount", 0),
@@ -107,9 +153,13 @@ class GeminiProvider(Provider):
             except urllib.error.HTTPError as e:
                 status = e.code
                 last_error = f"HTTPError {status}: {e.reason}"
-                if status < 500:
-                    break  # client-side error, don't retry
-                if attempt < self._retries:
+                if status == 429:
+                    # Rate limited — back off and retry
+                    if attempt < self._retries:
+                        time.sleep(2.0 * (attempt + 1))
+                elif status < 500:
+                    break  # other 4xx: non-retryable
+                elif attempt < self._retries:
                     time.sleep(1.0 * (attempt + 1))
             except urllib.error.URLError as e:
                 last_error = f"URLError: {e.reason}"
