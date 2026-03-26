@@ -49,7 +49,7 @@
 ```bash
 uv sync --all-groups
 uv run pytest -q
-uv run chaosbench eval --provider mock --subset data/ci_smoke/smoke.jsonl
+uv run chaosbench eval --provider mock --dataset canonical --max-items 50
 ```
 
 ## Validate v2 and Runs
