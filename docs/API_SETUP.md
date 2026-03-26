@@ -117,16 +117,16 @@ Test that your API keys are working:
 
 ```bash
 # Test GPT-4
-python -c "import os; from clients import OpenAIClient; c=OpenAIClient('gpt4'); print(c.call('Hello'))"
+uv run python -c "from chaosbench.models.prompt import ModelConfig; from chaosbench.models.adapters.openai_adapter import OpenAIClient; c=OpenAIClient(ModelConfig(name='gpt4')); print(c.call('Hello'))"
 
 # Test Claude-3.5
-python -c "import os; from clients import ClaudeClient; c=ClaudeClient(); print(c.call('Hello'))"
+uv run python -c "from chaosbench.models.prompt import ModelConfig; from chaosbench.models.adapters.anthropic_adapter import ClaudeClient; c=ClaudeClient(ModelConfig(name='claude3')); print(c.call('Hello'))"
 
 # Test Gemini
-python -c "import os; from clients import GeminiClient; c=GeminiClient(); print(c.call('Hello'))"
+uv run python -c "from chaosbench.models.prompt import ModelConfig; from chaosbench.models.adapters.gemini_adapter import GeminiClient; c=GeminiClient(ModelConfig(name='gemini')); print(c.call('Hello'))"
 
 # Test LLaMA-3
-python -c "import os; from clients import HFaceClient; c=HFaceClient('llama3'); print(c.call('Hello'))"
+uv run python -c "from chaosbench.models.prompt import ModelConfig; from chaosbench.models.adapters.hf_local import HFaceClient; c=HFaceClient(ModelConfig(name='llama3')); print(c.call('Hello'))"
 ```
 
 If any test fails, check:
@@ -223,8 +223,8 @@ API costs for running the full benchmark vary significantly based on dataset siz
 
 Once your API keys are configured:
 
-1. **Run a test**: `python run_benchmark.py --model gpt4 --mode zeroshot`
+1. **Run a test**: `uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot`
 2. **Check results**: `cat results/gpt4_zeroshot/summary.json`
-3. **Run full benchmark**: `python run_benchmark.py --model all --mode both`
+3. **Run full benchmark**: `uv run python scripts/run_benchmark.py --model all --mode both`
 
 See [README.md](README.md) for usage instructions and [CONTRIBUTING.md](CONTRIBUTING.md) for development setup.

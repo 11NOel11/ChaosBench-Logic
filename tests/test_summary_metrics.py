@@ -14,14 +14,10 @@ Metrics tested:
 """
 
 import pytest
-import sys
-import os
 from dataclasses import dataclass
 from typing import Optional
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from eval_chaosbench import compute_summary, EvalResult
+from chaosbench.eval.metrics import compute_summary, EvalResult
 
 
 def make_result(
@@ -370,9 +366,7 @@ class TestBiasError:
     def test_bias_error_computed(self):
         """Should compute error rate for bias items."""
         results = [
-            make_result(
-                "q1", pred_norm="YES", gold="YES", bias_family="chaos_random"
-            ),
+            make_result("q1", pred_norm="YES", gold="YES", bias_family="chaos_random"),
             make_result(
                 "q2", pred_norm="NO", gold="YES", bias_family="chaos_random"
             ),  # Error
@@ -415,10 +409,7 @@ class TestEdgeCases:
         summary = compute_summary(results)
 
         # No valid results to compute accuracy
-        assert (
-            summary["overall_accuracy"] is None
-            or summary["overall_accuracy"] == 0.0
-        )
+        assert summary["overall_accuracy"] is None or summary["overall_accuracy"] == 0.0
 
     def test_mixed_valid_and_invalid(self):
         """Should compute metrics only on valid results."""

@@ -56,7 +56,7 @@ uv sync --all-groups
 uv add package-name
 
 # Run Python scripts with uv (without activating venv)
-uv run python run_benchmark.py --model gpt4 --mode zeroshot
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot
 
 # Update dependencies
 uv pip install --upgrade package-name
@@ -81,10 +81,10 @@ See [API_SETUP.md](API_SETUP.md) for detailed instructions on obtaining API keys
 
 ```bash
 # Test with a single model
-python run_benchmark.py --model gpt4 --mode zeroshot
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot
 
 # Or run all models
-python run_benchmark.py --model all --mode zeroshot
+uv run python scripts/run_benchmark.py --model all --mode zeroshot
 ```
 
 ---
@@ -152,26 +152,26 @@ cp .env.example .env
 
 ```bash
 # Single model, single mode
-python run_benchmark.py --model gpt4 --mode zeroshot
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot
 
 # Single model, both modes (zeroshot + chain-of-thought)
-python run_benchmark.py --model claude3 --mode both
+uv run python scripts/run_benchmark.py --model claude3 --mode both
 
 # All models, single mode
-python run_benchmark.py --model all --mode zeroshot
+uv run python scripts/run_benchmark.py --model all --mode zeroshot
 ```
 
 ### Advanced Options
 
 ```bash
 # Control parallelism (useful for rate limits)
-python run_benchmark.py --model llama3 --mode zeroshot --workers 2
+uv run python scripts/run_benchmark.py --model llama3 --mode zeroshot --workers 2
 
 # Clear checkpoints and restart from scratch
-python run_benchmark.py --model gemini --mode cot --clear-checkpoints
+uv run python scripts/run_benchmark.py --model gemini --mode cot --clear-checkpoints
 
 # Enable detailed debug output
-python run_benchmark.py --model mixtral --mode zeroshot --debug
+uv run python scripts/run_benchmark.py --model mixtral --mode zeroshot --debug
 ```
 
 ### Supported Models
@@ -241,7 +241,7 @@ python run_benchmark.py --model mixtral --mode zeroshot --debug
 
 ```bash
 # Run a quick test with a single model
-python run_benchmark.py --model gpt4 --mode zeroshot
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot
 
 # Check results are generated correctly
 cat results/gpt4_zeroshot/summary.json
@@ -253,7 +253,7 @@ cat results/gpt4_zeroshot/summary.json
 
 To add support for a new LLM:
 
-1. **Add client class** in [clients.py](clients.py):
+1. **Add adapter class** in `chaosbench/models/adapters/`:
    ```python
    class YourModelClient(Client):
        def __init__(self):
@@ -264,7 +264,7 @@ To add support for a new LLM:
            # Return model response as string
    ```
 
-2. **Register in ModelConfig** in [eval_chaosbench.py](eval_chaosbench.py):
+2. **Register in adapter factory** in `chaosbench/models/adapters/__init__.py`:
    ```python
    def make_model_client(config: ModelConfig) -> Client:
        if config.name == "yourmodel":
@@ -272,7 +272,7 @@ To add support for a new LLM:
        # ... existing models
    ```
 
-3. **Add to supported models** in [run_benchmark.py](run_benchmark.py):
+3. **Add to legacy runner aliases** in `scripts/run_benchmark.py` (if needed):
    ```python
    SUPPORTED_MODELS = ["gpt4", "claude3", "gemini", "llama3", 
                        "mixtral", "openhermes", "yourmodel"]
@@ -280,7 +280,7 @@ To add support for a new LLM:
 
 4. **Test your model**:
    ```bash
-   python run_benchmark.py --model yourmodel --mode zeroshot
+   uv run python scripts/run_benchmark.py --model yourmodel --mode zeroshot
    ```
 
 5. **Submit a pull request** with:
@@ -308,15 +308,15 @@ Found a bug? Have a feature request?
 
 ```
 ChaosBench-Logic/
-├── clients.py              # LLM API client implementations
-├── eval_chaosbench.py      # Core evaluation framework
-├── run_benchmark.py        # Main runner script
-├── data/                   # Benchmark dataset (7 batches)
-├── systems/                # Dynamical system definitions (30 systems)
-├── results/                # Evaluation outputs (generated)
+├── chaosbench/             # Core package (eval, logic, tasks, repair)
+├── scripts/                # Build/eval/audit operational scripts
+├── data/                   # Canonical dataset and manifests
+├── systems/                # Dynamical system definitions
+├── published_results/      # Published run artifacts
+├── docs/                   # Canonical documentation
 ├── .env.example            # API key template
 ├── pyproject.toml          # uv/pip package config
-├── requirements.txt        # pip dependencies
+├── requirements.txt        # pip compatibility dependencies
 └── README.md               # Main documentation
 ```
 

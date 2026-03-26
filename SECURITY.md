@@ -31,7 +31,7 @@ We take security seriously. If you discover a security vulnerability in ChaosBen
 ### Scope
 
 This security policy applies to:
-- Core evaluation logic (`eval_chaosbench.py`, `clients.py`)
+- Core evaluation logic (`chaosbench/eval/`, `chaosbench/models/adapters/`)
 - Dataset processing and validation scripts
 - CI/CD workflows
 

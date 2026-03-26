@@ -1,1 +1,1 @@
-"""Scripts for ChaosBench-Logic analysis and figure generation."""
+"""Script utilities package for test imports and tooling."""

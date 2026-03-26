@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from run_benchmark import discover_batch_files, slice_items_for_shard
+from scripts.run_benchmark import discover_batch_files, slice_items_for_shard
 
 
 def test_discover_batch_files_sorts_by_numeric_index(tmp_path: Path):

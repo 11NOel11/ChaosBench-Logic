@@ -223,16 +223,16 @@ Manifest SHA256 (`api_balanced_5k`): `de9b10fca80b6dae`
 
 ```bash
 # Chain-of-thought reasoning
-python run_benchmark.py --model gpt4 --mode cot
+uv run python scripts/run_benchmark.py --model gpt4 --mode cot
 
 # Limit number of workers (for rate limiting)
-python run_benchmark.py --model llama3 --mode zeroshot --workers 2
+uv run python scripts/run_benchmark.py --model llama3 --mode zeroshot --workers 2
 
 # Limit number of questions (for testing)
-python run_benchmark.py --model gpt4 --mode zeroshot --max-items 100
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --max-items 100
 
 # Custom output directory
-python run_benchmark.py --model gpt4 --mode zeroshot --out-dir results_custom
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --out-dir results_custom
 ```
 
 ### Sharded Execution
@@ -241,10 +241,10 @@ For large-scale runs, shard the dataset across multiple workers:
 
 ```bash
 # Run shard 0 of 4
-python run_benchmark.py --model gpt4 --mode zeroshot --num-shards 4 --shard-index 0
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --num-shards 4 --shard-index 0
 
 # Run shard 1 of 4
-python run_benchmark.py --model gpt4 --mode zeroshot --num-shards 4 --shard-index 1
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --num-shards 4 --shard-index 1
 
 # ... repeat for shards 2 and 3
 
@@ -378,7 +378,7 @@ Before running evaluation:
 
 3. Test with small sample:
    ```bash
-   python run_benchmark.py --model gpt4 --mode zeroshot --max-items 10
+   uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --max-items 10
    ```
 
 ### Post-Evaluation Validation
@@ -410,7 +410,7 @@ Evaluations save checkpoints every 50 questions:
 
 ```bash
 # Resume from checkpoint
-python run_benchmark.py --model gpt4 --mode zeroshot --resume
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --resume
 ```
 
 Checkpoints are saved to: `results/<model>_<mode>/checkpoints/`
@@ -448,5 +448,5 @@ To ensure reproducible results:
 ## References
 
 - Dataset specification: `docs/V2_SPEC.md`
-- Metric definitions: `eval_chaosbench.py`
+- Metric definitions: `chaosbench/eval/metrics.py`
 - Result aggregation: `scripts/aggregate_results.py`

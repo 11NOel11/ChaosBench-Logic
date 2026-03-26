@@ -359,7 +359,7 @@ The axioms specify **necessary conditions** and **exclusions** but do not fully 
 
 ### Logical Consistency Checks
 
-The evaluation pipeline (`eval_chaosbench.py`) checks model predictions against these axioms to detect **FOL violations**.
+The evaluation pipeline (`chaosbench.eval.runner` + `chaosbench.eval.metrics`) checks model predictions against these axioms to detect **FOL violations**.
 
 Example violation:
 ```

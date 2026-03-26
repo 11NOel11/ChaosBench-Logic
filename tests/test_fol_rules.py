@@ -12,19 +12,15 @@ Functions tested:
 """
 
 import pytest
-import sys
-import os
 import json
 from collections import defaultdict
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from eval_chaosbench import (
+from chaosbench.logic.axioms import (
     get_fol_rules,
     load_system_ontology,
-    extract_predicate_from_question,
     check_fol_violations,
 )
+from chaosbench.logic.extract import extract_predicate_from_question
 
 
 class TestGetFOLRules:

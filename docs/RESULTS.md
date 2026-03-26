@@ -207,7 +207,7 @@ avg_fol_violations = total_violations / total_items
 
 ### How Metrics Are Computed
 
-All metrics are computed by `eval_chaosbench.py` and stored in `published_results/*/summary.json`:
+All metrics are computed by `chaosbench.eval.runner` / `chaosbench.eval.metrics` and stored in `published_results/*/summary.json`:
 
 1. **Answer normalization:** `normalize_label()` extracts YES/NO from model responses using an 8-step cascade (handles various formats)
 2. **Comparison:** Normalized prediction vs ground truth label
@@ -215,7 +215,7 @@ All metrics are computed by `eval_chaosbench.py` and stored in `published_result
 4. **FOL checking:** Extract predicates from questions, check against axioms
 5. **Output:** JSON files with all metrics
 
-See `eval_chaosbench.py` for implementation details.
+See `chaosbench/eval/runner.py` and `chaosbench/eval/metrics.py` for implementation details.
 
 ---
 
@@ -265,7 +265,7 @@ GPT-4 CoT:          53.1% ███████████
 - HuggingFace Inference API for provider "novita" requires `chat_completion` (conversational) API
 
 **Solution:**
-- Modified `clients.py` to use `chat_completion` with proper message formatting
+- Modified Hugging Face adapter in `chaosbench/models/adapters/hf_local.py` to use `chat_completion` with proper message formatting
 - Added robust error handling for None responses
 - Implemented retry logic with exponential backoff
 
@@ -367,8 +367,8 @@ Each model directory contains:
 
 ### Key Scripts
 
-1. `eval_chaosbench.py` - Main evaluation framework
-2. `clients.py` - Model API clients (GPT-4, Claude, Gemini, LLaMA-3)
+1. `chaosbench/eval/runner.py` - Main evaluation framework
+2. `chaosbench/models/adapters/` - Model API adapters (OpenAI, Anthropic, Gemini, HF)
 3. `run_single_model.py` - Run one model
 4. `run_all_models_fast.py` - Run all models with parallelization
 5. `run_llama.py` - Dedicated LLaMA-3 runner
@@ -383,7 +383,7 @@ To add evaluation results for a new model or configuration:
 
 ```bash
 # Run your model evaluation (outputs to results/ locally)
-python run_benchmark.py --model yourmodel --mode zeroshot
+uv run python scripts/run_benchmark.py --model yourmodel --mode zeroshot
 
 # Copy minimal artifacts to published_results for tracking (with validation)
 required_files="summary.json run_meta.json accuracy_by_task.csv metrics_overview.csv"

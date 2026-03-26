@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from scripts.build_v2_dataset import load_generation_config
-from run_benchmark import write_run_manifest
+from scripts.run_benchmark import write_run_manifest
 
 
 def test_load_generation_config_defaults():
