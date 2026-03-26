@@ -13,8 +13,8 @@ The `heldout_templates` split is currently empty (HELDOUT_TEMPLATE_HASHES = empt
 ### Extended Systems Expansion
 Currently only 15 underrepresented systems are targeted for extended_systems questions (45 total). Future work should expand to all 30 core systems and potentially dysts systems.
 
-### 15-Predicate Atomic Coverage
-The v2 dataset was generated before the 4 new predicates (Dissipative, Bounded, Mixing, Ergodic) were added to PREDICATES. A full regeneration would produce atomic questions covering all 15 predicates rather than the original 11.
+### 27-Predicate Atomic Coverage
+Current atomic generation remains concentrated on the core predicate subset. A full regeneration should extend atomic coverage across the complete 27-predicate ontology, including structural predicates.
 
 ### v2 Model Evaluation Campaign
 Published results are from v1 (621 questions). A full evaluation campaign on the v2 dataset (40,886 questions) across GPT-4, Claude, Gemini, and open-source models is needed.

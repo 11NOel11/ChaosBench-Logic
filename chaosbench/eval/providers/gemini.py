@@ -14,15 +14,14 @@ from chaosbench.eval.providers.types import ProviderResponse
 # Build an SSL context that trusts certifi's CA bundle when available.
 try:
     import certifi as _certifi
+
     _SSL_CTX: Optional[ssl.SSLContext] = ssl.create_default_context(
         cafile=_certifi.where()
     )
 except ImportError:
     _SSL_CTX = None
 
-_ENDPOINT_TEMPLATE = (
-    "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
-)
+_ENDPOINT_TEMPLATE = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
 _STRICT_SUFFIX = "\n\nReturn exactly one token: TRUE or FALSE. No explanation."
 
 
@@ -66,8 +65,10 @@ class GeminiProvider(Provider):
     def _get_api_key(self) -> str:
         key = os.environ.get("GEMINI_API_KEY", "")
         if not key:
+            key = os.environ.get("GOOGLE_API_KEY", "")
+        if not key:
             raise RuntimeError(
-                "GEMINI_API_KEY environment variable is not set. "
+                "GEMINI_API_KEY (or GOOGLE_API_KEY) environment variable is not set. "
                 "Export it before running: export GEMINI_API_KEY=AIza..."
             )
         return key
@@ -121,7 +122,9 @@ class GeminiProvider(Provider):
                 if not candidates:
                     # No candidates — quota exhaustion or prompt blocked before generation.
                     # Treat as retryable server-side failure.
-                    finish = body.get("promptFeedback", {}).get("blockReason", "NO_CANDIDATES")
+                    finish = body.get("promptFeedback", {}).get(
+                        "blockReason", "NO_CANDIDATES"
+                    )
                     last_error = f"empty candidates: {finish}"
                     if attempt < self._retries:
                         time.sleep(2.0 * (attempt + 1))
@@ -131,11 +134,15 @@ class GeminiProvider(Provider):
                 finish_reason = candidate.get("finishReason", "")
                 if finish_reason == "SAFETY":
                     # Safety filter — non-retryable, return empty with reason recorded.
-                    return ProviderResponse(text="", latency_s=latency, error=f"SAFETY:{finish_reason}")
+                    return ProviderResponse(
+                        text="", latency_s=latency, error=f"SAFETY:{finish_reason}"
+                    )
 
                 # Skip "thought" parts (thinking models); grab first non-thought text part.
                 parts = candidate.get("content", {}).get("parts", [])
-                text_parts = [p.get("text", "") for p in parts if not p.get("thought", False)]
+                text_parts = [
+                    p.get("text", "") for p in parts if not p.get("thought", False)
+                ]
                 text = (text_parts[0] if text_parts else "").strip()
 
                 if not text and attempt < self._retries:

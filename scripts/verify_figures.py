@@ -11,6 +11,7 @@ Checks:
 
 Exit code: 0 if all pass, 1 if any failure.
 """
+
 from __future__ import annotations
 
 import struct
@@ -30,8 +31,8 @@ EXPECTED_FIGURES = [
     "subset_crosscheck",
 ]
 
-MIN_PNG_BYTES = 5_000   # 5 KB
-MIN_PDF_BYTES = 2_000   # 2 KB
+MIN_PNG_BYTES = 5_000  # 5 KB
+MIN_PDF_BYTES = 2_000  # 2 KB
 
 
 def check_png(path: Path) -> tuple[bool, str]:
@@ -40,7 +41,7 @@ def check_png(path: Path) -> tuple[bool, str]:
         data = path.read_bytes()
         if len(data) < 8:
             return False, f"file too small ({len(data)} bytes)"
-        if data[:8] != b'\x89PNG\r\n\x1a\n':
+        if data[:8] != b"\x89PNG\r\n\x1a\n":
             return False, "invalid PNG header"
         if len(data) < MIN_PNG_BYTES:
             return False, f"suspiciously small ({len(data)} bytes < {MIN_PNG_BYTES})"
@@ -55,13 +56,13 @@ def check_pdf(path: Path) -> tuple[bool, str]:
         data = path.read_bytes()
         if len(data) < 8:
             return False, f"file too small ({len(data)} bytes)"
-        if not data[:4] == b'%PDF':
+        if not data[:4] == b"%PDF":
             return False, "missing %PDF header"
         if len(data) < MIN_PDF_BYTES:
             return False, f"suspiciously small ({len(data)} bytes < {MIN_PDF_BYTES})"
         # Check for %%EOF near end
         tail = data[-512:] if len(data) > 512 else data
-        if b'%%EOF' not in tail:
+        if b"%%EOF" not in tail:
             return False, "missing %%EOF marker"
         return True, f"OK ({len(data):,} bytes)"
     except Exception as e:
@@ -70,6 +71,7 @@ def check_pdf(path: Path) -> tuple[bool, str]:
 
 def main() -> None:
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", default=None, help="Override figures directory")
     args = ap.parse_args()
@@ -112,8 +114,10 @@ def main() -> None:
         print(f"  ✅ FIGURE_INDEX.md present")
 
     print()
-    print(f"Summary: {len(EXPECTED_FIGURES)*2} expected files | "
-          f"{len(failures)} failures | {len(warnings)} warnings")
+    print(
+        f"Summary: {len(EXPECTED_FIGURES) * 2} expected files | "
+        f"{len(failures)} failures | {len(warnings)} warnings"
+    )
 
     if failures:
         print("\nFailed checks:")

@@ -78,10 +78,7 @@ jobs:
 
       - name: Check for placeholder URLs
         run: |
-          # Check for placeholder URLs in key files (exclude RELEASE_CHECKLIST.md which
-          # legitimately references the term as a meta-instruction, not a real placeholder)
-          if grep -r "yourusername" --include="*.md" --include="*.toml" --include="*.cff" \
-              --exclude="RELEASE_CHECKLIST.md" .; then
+          if grep -r "yourusername" --include="*.md" --include="*.toml" --include="*.cff" .; then
             echo "Error: Found placeholder URLs (yourusername)"
             exit 1
           fi
@@ -112,7 +109,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Check v2.2 canonical dataset files exist
+      - name: Check canonical v2 dataset files exist
         run: |
           for family in adversarial atomic consistency_paraphrase cross_indicator extended_systems fol_inference indicator_diagnostics multi_hop perturbation_robustness regime_transition; do
             if [ ! -f "data/v22_${family}.jsonl" ]; then
@@ -120,7 +117,7 @@ jobs:
               exit 1
             fi
           done
-          echo "[OK] All 10 v2.2 canonical files found"
+          echo "[OK] All 10 canonical v2 files found"
 
       - name: Validate JSON format
         run: |
@@ -150,7 +147,7 @@ jobs:
                   print(f'  {error}')
               sys.exit(1)
           else:
-              print('[OK] All v2.2 JSONL files are valid')
+              print('[OK] All canonical v2 JSONL files are valid')
           VALIDATE_JSON_EOF
 
       - name: Check systems directory

@@ -27,7 +27,10 @@ class PerturbationRecord:
 
 SYNONYM_MAP = {
     "chaotic": ["exhibits chaos", "displays chaotic behavior", "behaves chaotically"],
-    "deterministic": ["governed by deterministic rules", "follows deterministic dynamics"],
+    "deterministic": [
+        "governed by deterministic rules",
+        "follows deterministic dynamics",
+    ],
     "sensitive": [
         "exhibits sensitive dependence on initial conditions",
         "shows sensitivity to initial conditions",
@@ -50,8 +53,10 @@ SYNONYM_MAP = {
 }
 
 
-def _apply_structural_transformation(text: str, transform_type: str, rng: random.Random) -> str:
-    """Apply structural transformation to question text (v2.2 dedupe fix).
+def _apply_structural_transformation(
+    text: str, transform_type: str, rng: random.Random
+) -> str:
+    """Apply structural transformation to question text (canonical v2 dedupe fix).
 
     Transforms sentence structure rather than just substituting synonyms,
     creating variants with lower normalized text similarity.
@@ -70,8 +75,14 @@ def _apply_structural_transformation(text: str, transform_type: str, rng: random
     # Strategy: match greedily up to the last word (predicate) before "?"
     # "Is the Lorenz system chaotic?" → system="Lorenz system", predicate="chaotic"
     match_is = re.match(r"Is (?:the )?(.+)\s+(\S+)\?$", text, re.IGNORECASE)
-    match_does = re.match(r"Does (?:the )?(.+?)\s+(exhibit|display|have|possess)\s+(.+)\?", text, re.IGNORECASE)
-    match_would = re.match(r"Would you classify (?:the )?(.+?)\s+as\s+(.+)\?", text, re.IGNORECASE)
+    match_does = re.match(
+        r"Does (?:the )?(.+?)\s+(exhibit|display|have|possess)\s+(.+)\?",
+        text,
+        re.IGNORECASE,
+    )
+    match_would = re.match(
+        r"Would you classify (?:the )?(.+?)\s+as\s+(.+)\?", text, re.IGNORECASE
+    )
 
     if transform_type == "voice":
         # Active ↔ Passive voice transformation
@@ -83,7 +94,11 @@ def _apply_structural_transformation(text: str, transform_type: str, rng: random
             return f"Can {system} be characterized as {predicate}?"
         elif "characterized" in text.lower():
             # Reverse transformation
-            match_char = re.match(r"Can (?:the )?(.+?)\s+be characterized as\s+(.+)\?", text, re.IGNORECASE)
+            match_char = re.match(
+                r"Can (?:the )?(.+?)\s+be characterized as\s+(.+)\?",
+                text,
+                re.IGNORECASE,
+            )
             if match_char:
                 system = match_char.group(1)
                 predicate = match_char.group(2)
@@ -99,7 +114,11 @@ def _apply_structural_transformation(text: str, transform_type: str, rng: random
             return f"Would it be incorrect to say {system} is not {predicate}?"
         elif "incorrect" in text.lower() and "not" in text.lower():
             # Reverse transformation (double negative → positive)
-            match_neg = re.match(r"Would it be incorrect to say (?:the )?(.+?)\s+is not\s+(.+)\?", text, re.IGNORECASE)
+            match_neg = re.match(
+                r"Would it be incorrect to say (?:the )?(.+?)\s+is not\s+(.+)\?",
+                text,
+                re.IGNORECASE,
+            )
             if match_neg:
                 system = match_neg.group(1)
                 predicate = match_neg.group(2)
@@ -112,10 +131,16 @@ def _apply_structural_transformation(text: str, transform_type: str, rng: random
             predicate = match_is.group(2)
             # Question: "Is the Lorenz system chaotic?"
             # Statement: "Consider the claim: the Lorenz system is chaotic. Is this claim accurate?"
-            return f"Consider the claim: {system} is {predicate}. Is this claim accurate?"
+            return (
+                f"Consider the claim: {system} is {predicate}. Is this claim accurate?"
+            )
         elif "consider the claim" in text.lower():
             # Reverse transformation
-            match_claim = re.match(r"Consider the claim:\s*(?:the )?(.+?)\s+is\s+(.+)\.\s*Is this claim accurate\?", text, re.IGNORECASE)
+            match_claim = re.match(
+                r"Consider the claim:\s*(?:the )?(.+?)\s+is\s+(.+)\.\s*Is this claim accurate\?",
+                text,
+                re.IGNORECASE,
+            )
             if match_claim:
                 system = match_claim.group(1)
                 predicate = match_claim.group(2)
@@ -129,9 +154,9 @@ def paraphrase(
     question: Question,
     seed: int = 42,
 ) -> tuple:
-    """Paraphrase a question using structural transformation (v2.2 improved).
+    """Paraphrase a question using structural transformation (canonical v2).
 
-    v2.2 Change: Replaced synonym substitution with structural transformations
+    Canonical v2 change: replaced synonym substitution with structural transformations
     (voice, framing, structure) to reduce normalized text similarity and
     lower dedupe rate from 31.7% to ≤30%.
 
@@ -158,6 +183,7 @@ def paraphrase(
             if keyword in new_text.lower():
                 replacement = rng.choice(synonyms)
                 import re
+
                 new_text = re.sub(
                     re.escape(keyword),
                     replacement,
@@ -170,7 +196,9 @@ def paraphrase(
     modified = copy.deepcopy(question)
     modified.question_text = new_text
     modified.metadata["perturbation"] = "paraphrase"
-    modified.metadata["paraphrase_type"] = transform_type if new_text != original_text else "synonym"
+    modified.metadata["paraphrase_type"] = (
+        transform_type if new_text != original_text else "synonym"
+    )
 
     record = PerturbationRecord(
         perturbation_type="paraphrase",

@@ -73,8 +73,8 @@ NEVER_TRACK_PATTERNS = [
 CANONICAL_DOCS = [
     "README.md",
     "DATASET_CARD.md",
-    "CHANGELOG.md",
     "CITATION.cff",
+    "SECURITY.md",
     "LICENSE",
     "docs/README.md",
     "docs/DATASET.md",
@@ -97,7 +97,7 @@ Source: docs/REPO_POLICY.md
    - CI smoke data: data/ci_smoke/
    - Configs: configs/**/*.yaml, pyproject.toml, uv.lock
    - System definitions: systems/**/*.json
-   - Canonical docs: docs/*.md, README.md, DATASET_CARD.md, etc.
+   - Canonical docs: docs/*.md, README.md, DATASET_CARD.md, SECURITY.md, etc.
    - Published results: published_results/
 
 2. NEVER TRACKED (gitignored)
@@ -132,6 +132,7 @@ Source: docs/REPO_POLICY.md
 # Violation dataclass
 # ---------------------------------------------------------------------------
 
+
 class Violation:
     def __init__(self, severity: str, path: str, rule: str, suggestion: str = ""):
         self.severity = severity  # ERROR or WARN
@@ -149,6 +150,7 @@ class Violation:
 # ---------------------------------------------------------------------------
 # Check functions
 # ---------------------------------------------------------------------------
+
 
 def _read_gitignore_patterns(root: Path) -> List[str]:
     gi_path = root / ".gitignore"
@@ -179,12 +181,14 @@ def check_root_banned_files(root: Path) -> List[Violation]:
         name = item.name
         for pat in ROOT_BANNED_PATTERNS:
             if fnmatch.fnmatch(name, pat):
-                violations.append(Violation(
-                    "ERROR",
-                    str(item.relative_to(root)),
-                    f"Banned pattern '{pat}' at repo root",
-                    "Move to docs/archive/ or artifacts/repo_cleanup/",
-                ))
+                violations.append(
+                    Violation(
+                        "ERROR",
+                        str(item.relative_to(root)),
+                        f"Banned pattern '{pat}' at repo root",
+                        "Move to docs/archive/ or artifacts/repo_cleanup/",
+                    )
+                )
                 break
     return violations
 
@@ -195,12 +199,14 @@ def check_gitignored_dirs(root: Path) -> List[Violation]:
     patterns = _read_gitignore_patterns(root)
     for dirname in MUST_BE_GITIGNORED:
         if not _is_in_gitignore(dirname, patterns):
-            violations.append(Violation(
-                "ERROR",
-                dirname + "/",
-                f"Directory '{dirname}' is not gitignored",
-                f"Add '{dirname}/' to .gitignore",
-            ))
+            violations.append(
+                Violation(
+                    "ERROR",
+                    dirname + "/",
+                    f"Directory '{dirname}' is not gitignored",
+                    f"Add '{dirname}/' to .gitignore",
+                )
+            )
     return violations
 
 
@@ -209,6 +215,7 @@ def check_tracked_reports_or_runs(root: Path) -> List[Violation]:
     violations = []
     try:
         import subprocess
+
         result = subprocess.run(
             ["git", "ls-files", "--", "reports/", "runs/", "artifacts/"],
             capture_output=True,
@@ -217,12 +224,14 @@ def check_tracked_reports_or_runs(root: Path) -> List[Violation]:
         )
         tracked = [l.strip() for l in result.stdout.splitlines() if l.strip()]
         for f in tracked:
-            violations.append(Violation(
-                "ERROR",
-                f,
-                "File in reports/, runs/, or artifacts/ is tracked in git",
-                "Run: git rm --cached " + f,
-            ))
+            violations.append(
+                Violation(
+                    "ERROR",
+                    f,
+                    "File in reports/, runs/, or artifacts/ is tracked in git",
+                    "Run: git rm --cached " + f,
+                )
+            )
     except Exception as e:
         violations.append(Violation("WARN", "git", f"Could not check git index: {e}"))
     return violations
@@ -236,12 +245,14 @@ def check_summary_files_at_root(root: Path) -> List[Violation]:
             continue
         name = item.name.upper()
         if "SUMMARY" in name and name.endswith(".MD"):
-            violations.append(Violation(
-                "ERROR",
-                item.name,
-                "AI-generated SUMMARY markdown at repo root",
-                "Move to docs/archive/ or delete if obsolete",
-            ))
+            violations.append(
+                Violation(
+                    "ERROR",
+                    item.name,
+                    "AI-generated SUMMARY markdown at repo root",
+                    "Move to docs/archive/ or delete if obsolete",
+                )
+            )
     return violations
 
 
@@ -261,12 +272,27 @@ def check_tmp_paths_in_docs(root: Path) -> List[Violation]:
             # Skip non-doc dirs at root level
             if doc_dir == ".":
                 dirnames[:] = [
-                    d for d in dirnames
-                    if d not in {
-                        ".git", ".venv", ".pytest_cache", "__pycache__",
-                        "artifacts", "reports", "runs", "workspace",
-                        "chaosbench", "scripts", "tests", "data", "systems",
-                        "configs", "infra", "published_results", "figures",
+                    d
+                    for d in dirnames
+                    if d
+                    not in {
+                        ".git",
+                        ".venv",
+                        ".pytest_cache",
+                        "__pycache__",
+                        "artifacts",
+                        "reports",
+                        "runs",
+                        "workspace",
+                        "chaosbench",
+                        "scripts",
+                        "tests",
+                        "data",
+                        "systems",
+                        "configs",
+                        "infra",
+                        "published_results",
+                        "figures",
                     }
                 ]
             fpath = Path(dirpath)
@@ -279,12 +305,14 @@ def check_tmp_paths_in_docs(root: Path) -> List[Violation]:
                     matches = tmp_pattern.findall(text)
                     if matches:
                         rel = str(full.relative_to(root))
-                        violations.append(Violation(
-                            "WARN",
-                            rel,
-                            f"/tmp path(s) found in document: {matches[:3]}",
-                            "Replace with relative paths or remove",
-                        ))
+                        violations.append(
+                            Violation(
+                                "WARN",
+                                rel,
+                                f"/tmp path(s) found in document: {matches[:3]}",
+                                "Replace with relative paths or remove",
+                            )
+                        )
                 except Exception:
                     pass
 
@@ -296,18 +324,23 @@ def check_results_zip_tracked(root: Path) -> List[Violation]:
     violations = []
     try:
         import subprocess
+
         result = subprocess.run(
             ["git", "ls-files", "--", "*.zip", "*.tar.gz", "*.tar", "*.rar"],
-            capture_output=True, text=True, cwd=str(root),
+            capture_output=True,
+            text=True,
+            cwd=str(root),
         )
         tracked = [l.strip() for l in result.stdout.splitlines() if l.strip()]
         for f in tracked:
-            violations.append(Violation(
-                "WARN",
-                f,
-                "Archive file is tracked in git",
-                "Add to .gitignore and run: git rm --cached " + f,
-            ))
+            violations.append(
+                Violation(
+                    "WARN",
+                    f,
+                    "Archive file is tracked in git",
+                    "Add to .gitignore and run: git rm --cached " + f,
+                )
+            )
     except Exception:
         pass
     return violations
@@ -316,6 +349,7 @@ def check_results_zip_tracked(root: Path) -> List[Violation]:
 # ---------------------------------------------------------------------------
 # Main runner
 # ---------------------------------------------------------------------------
+
 
 def run_checks(root: Path) -> List[Violation]:
     all_violations: List[Violation] = []

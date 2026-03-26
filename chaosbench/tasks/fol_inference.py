@@ -78,12 +78,12 @@ PREDICATE_DISPLAY = {
     "Random": "random",
     "FixedPointAttr": "having a fixed point attractor",
     "Periodic": "periodic",
-    # v2.2 Extension: New predicates for 4-5 hop chains
+    # Canonical v2 extension: predicates for longer reasoning chains
     "Dissipative": "dissipative (volume-contracting)",
     "Bounded": "bounded",
     "Mixing": "mixing",
     "Ergodic": "ergodic",
-    # v2.3 Extension: 12 new predicates from metadata dimensions
+    # Canonical v2 structural extension predicates
     "HyperChaotic": "hyperchaotic",
     "Conservative": "conservative (Hamiltonian)",
     "HighDimensional": "high-dimensional (high Kaplan-Yorke dimension)",
@@ -145,22 +145,23 @@ def _generate_implication_questions(
                 counter[0] += 1
                 pred_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
                 req_disp = PREDICATE_DISPLAY.get(req, req.lower())
-                questions.append(Question(
-                    item_id=f"fol_impl_{counter[0]:04d}",
-                    question_text=(
-                        f"Given {name} is {pred_disp}, must it be "
-                        f"{req_disp}?"
-                    ),
-                    system_id=sid,
-                    task_family="fol_inference",
-                    ground_truth="YES",
-                    predicates=[pred, req],
-                    metadata={
-                        "question_type": "implication",
-                        "antecedent": pred,
-                        "consequent": req,
-                    },
-                ))
+                questions.append(
+                    Question(
+                        item_id=f"fol_impl_{counter[0]:04d}",
+                        question_text=(
+                            f"Given {name} is {pred_disp}, must it be {req_disp}?"
+                        ),
+                        system_id=sid,
+                        task_family="fol_inference",
+                        ground_truth="YES",
+                        predicates=[pred, req],
+                        metadata={
+                            "question_type": "implication",
+                            "antecedent": pred,
+                            "consequent": req,
+                        },
+                    )
+                )
 
     rng.shuffle(questions)
     return questions[:cap]
@@ -190,20 +191,22 @@ def _generate_exclusion_questions(
             counter[0] += 1
             p_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
             e_disp = PREDICATE_DISPLAY.get(excl, excl.lower())
-            questions.append(Question(
-                item_id=f"fol_excl_{counter[0]:04d}",
-                question_text=f"Can a system be both {p_disp} and {e_disp}?",
-                system_id="generic",
-                task_family="fol_inference",
-                ground_truth="NO",
-                predicates=[pred, excl],
-                metadata={
-                    "question_type": "exclusion",
-                    "predicate_a": pred,
-                    "predicate_b": excl,
-                    "variant": "generic",
-                },
-            ))
+            questions.append(
+                Question(
+                    item_id=f"fol_excl_{counter[0]:04d}",
+                    question_text=f"Can a system be both {p_disp} and {e_disp}?",
+                    system_id="generic",
+                    task_family="fol_inference",
+                    ground_truth="NO",
+                    predicates=[pred, excl],
+                    metadata={
+                        "question_type": "exclusion",
+                        "predicate_a": pred,
+                        "predicate_b": excl,
+                        "variant": "generic",
+                    },
+                )
+            )
 
     # System-specific: "Given [name] is P, can it also be Q?"
     system_ids = sorted(systems.keys())
@@ -217,22 +220,24 @@ def _generate_exclusion_questions(
                 counter[0] += 1
                 p_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
                 e_disp = PREDICATE_DISPLAY.get(excl, excl.lower())
-                questions.append(Question(
-                    item_id=f"fol_excl_{counter[0]:04d}",
-                    question_text=(
-                        f"Given {name} is {p_disp}, can it also be {e_disp}?"
-                    ),
-                    system_id=sid,
-                    task_family="fol_inference",
-                    ground_truth="NO",
-                    predicates=[pred, excl],
-                    metadata={
-                        "question_type": "exclusion",
-                        "predicate_a": pred,
-                        "predicate_b": excl,
-                        "variant": "system_specific",
-                    },
-                ))
+                questions.append(
+                    Question(
+                        item_id=f"fol_excl_{counter[0]:04d}",
+                        question_text=(
+                            f"Given {name} is {p_disp}, can it also be {e_disp}?"
+                        ),
+                        system_id=sid,
+                        task_family="fol_inference",
+                        ground_truth="NO",
+                        predicates=[pred, excl],
+                        metadata={
+                            "question_type": "exclusion",
+                            "predicate_a": pred,
+                            "predicate_b": excl,
+                            "variant": "system_specific",
+                        },
+                    )
+                )
 
     rng.shuffle(questions)
     return questions[:cap]
@@ -260,22 +265,24 @@ def _generate_contrapositive_questions(
             counter[0] += 1
             pred_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
             req_disp = PREDICATE_DISPLAY.get(req, req.lower())
-            questions.append(Question(
-                item_id=f"fol_contra_{counter[0]:04d}",
-                question_text=(
-                    f"If a system is not {req_disp}, can it be {pred_disp}?"
-                ),
-                system_id="generic",
-                task_family="fol_inference",
-                ground_truth="NO",
-                predicates=[pred, req],
-                metadata={
-                    "question_type": "contrapositive",
-                    "predicate": pred,
-                    "required": req,
-                    "variant": "generic",
-                },
-            ))
+            questions.append(
+                Question(
+                    item_id=f"fol_contra_{counter[0]:04d}",
+                    question_text=(
+                        f"If a system is not {req_disp}, can it be {pred_disp}?"
+                    ),
+                    system_id="generic",
+                    task_family="fol_inference",
+                    ground_truth="NO",
+                    predicates=[pred, req],
+                    metadata={
+                        "question_type": "contrapositive",
+                        "predicate": pred,
+                        "required": req,
+                        "variant": "generic",
+                    },
+                )
+            )
 
     # System-specific modus tollens: find systems where req=False but
     # some other predicate P requires req — "Given [name] lacks Q, can it be P?"
@@ -290,22 +297,24 @@ def _generate_contrapositive_questions(
                 counter[0] += 1
                 pred_disp = PREDICATE_DISPLAY.get(pred, pred.lower())
                 req_disp = PREDICATE_DISPLAY.get(req, req.lower())
-                questions.append(Question(
-                    item_id=f"fol_contra_{counter[0]:04d}",
-                    question_text=(
-                        f"Given {name} is not {req_disp}, can it be {pred_disp}?"
-                    ),
-                    system_id=sid,
-                    task_family="fol_inference",
-                    ground_truth="NO",
-                    predicates=[pred, req],
-                    metadata={
-                        "question_type": "contrapositive",
-                        "predicate": pred,
-                        "required": req,
-                        "variant": "system_specific",
-                    },
-                ))
+                questions.append(
+                    Question(
+                        item_id=f"fol_contra_{counter[0]:04d}",
+                        question_text=(
+                            f"Given {name} is not {req_disp}, can it be {pred_disp}?"
+                        ),
+                        system_id=sid,
+                        task_family="fol_inference",
+                        ground_truth="NO",
+                        predicates=[pred, req],
+                        metadata={
+                            "question_type": "contrapositive",
+                            "predicate": pred,
+                            "required": req,
+                            "variant": "system_specific",
+                        },
+                    )
+                )
 
     rng.shuffle(questions)
     return questions[:cap]
@@ -345,24 +354,26 @@ def _generate_chain_questions(
                 for r in rules[q].get("requires", []):
                     counter[0] += 1
                     r_disp = PREDICATE_DISPLAY.get(r, r.lower())
-                    questions.append(Question(
-                        item_id=f"fol_chain_{counter[0]:04d}",
-                        question_text=(
-                            f"If {name} is {pred_disp}, and systems that are "
-                            f"{pred_disp} must be {q_disp}, and systems that "
-                            f"are {q_disp} must be {r_disp}, does {name} "
-                            f"exhibit {r_disp}?"
-                        ),
-                        system_id=sid,
-                        task_family="fol_inference",
-                        ground_truth="YES",
-                        predicates=[pred, q, r],
-                        metadata={
-                            "question_type": "chain",
-                            "chain": [pred, q, r],
-                            "hop_count": 2,
-                        },
-                    ))
+                    questions.append(
+                        Question(
+                            item_id=f"fol_chain_{counter[0]:04d}",
+                            question_text=(
+                                f"If {name} is {pred_disp}, and systems that are "
+                                f"{pred_disp} must be {q_disp}, and systems that "
+                                f"are {q_disp} must be {r_disp}, does {name} "
+                                f"exhibit {r_disp}?"
+                            ),
+                            system_id=sid,
+                            task_family="fol_inference",
+                            ground_truth="YES",
+                            predicates=[pred, q, r],
+                            metadata={
+                                "question_type": "chain",
+                                "chain": [pred, q, r],
+                                "hop_count": 2,
+                            },
+                        )
+                    )
 
             # 2-step requires-to-excludes chains: P → Q → ¬R (answer: NO)
             for q in rule.get("requires", []):
@@ -372,25 +383,27 @@ def _generate_chain_questions(
                 for r in rules[q].get("excludes", []):
                     counter[0] += 1
                     r_disp = PREDICATE_DISPLAY.get(r, r.lower())
-                    questions.append(Question(
-                        item_id=f"fol_chain_{counter[0]:04d}",
-                        question_text=(
-                            f"If {name} is {pred_disp}, and systems that are "
-                            f"{pred_disp} must be {q_disp}, and systems that "
-                            f"are {q_disp} cannot be {r_disp}, can {name} "
-                            f"be {r_disp}?"
-                        ),
-                        system_id=sid,
-                        task_family="fol_inference",
-                        ground_truth="NO",
-                        predicates=[pred, q, r],
-                        metadata={
-                            "question_type": "chain",
-                            "chain": [pred, q, r],
-                            "hop_count": 2,
-                            "chain_type": "requires_to_excludes",
-                        },
-                    ))
+                    questions.append(
+                        Question(
+                            item_id=f"fol_chain_{counter[0]:04d}",
+                            question_text=(
+                                f"If {name} is {pred_disp}, and systems that are "
+                                f"{pred_disp} must be {q_disp}, and systems that "
+                                f"are {q_disp} cannot be {r_disp}, can {name} "
+                                f"be {r_disp}?"
+                            ),
+                            system_id=sid,
+                            task_family="fol_inference",
+                            ground_truth="NO",
+                            predicates=[pred, q, r],
+                            metadata={
+                                "question_type": "chain",
+                                "chain": [pred, q, r],
+                                "hop_count": 2,
+                                "chain_type": "requires_to_excludes",
+                            },
+                        )
+                    )
 
     rng.shuffle(questions)
     return questions[:cap]
@@ -406,136 +419,204 @@ def _generate_consistency_questions(
     questions: List[Question] = []
 
     inconsistent_sets = [
-        # v2.0 / v2.2 core inconsistencies
-        ({"Chaotic": True, "Periodic": True, "Deterministic": True},
-         "Chaotic, Periodic, and Deterministic"),
-        ({"Chaotic": True, "Random": True},
-         "Chaotic and Random"),
-        ({"Chaotic": True, "Deterministic": False},
-         "Chaotic but not Deterministic"),
-        ({"QuasiPeriodic": True, "Periodic": True},
-         "Quasi-Periodic and Periodic"),
-        ({"Random": True, "Deterministic": True},
-         "Random and Deterministic"),
-        ({"Chaotic": True, "FixedPointAttr": True},
-         "Chaotic and Fixed Point Attractor"),
-        ({"Chaotic": True, "QuasiPeriodic": True},
-         "Chaotic and Quasi-Periodic"),
-        ({"FixedPointAttr": True, "Periodic": True},
-         "Fixed Point Attractor and Periodic"),
-        ({"Periodic": True, "StrangeAttr": True},
-         "Periodic and Strange Attractor"),
-        ({"Chaotic": True, "PosLyap": False},
-         "Chaotic but without positive Lyapunov exponent"),
-        # v2.3 new predicate inconsistencies
-        ({"Conservative": True, "Dissipative": True},
-         "Conservative and Dissipative"),
-        ({"Conservative": True, "StrangeAttr": True},
-         "Conservative and having a Strange Attractor"),
-        ({"HyperChaotic": True, "Conservative": True},
-         "HyperChaotic and Conservative"),
-        ({"ContinuousTime": True, "DiscreteTime": True},
-         "Continuous-Time and Discrete-Time"),
-        ({"Forced": True, "Autonomous": True},
-         "Externally Forced and Autonomous"),
-        ({"HyperChaotic": True, "Periodic": True},
-         "HyperChaotic and Periodic"),
-        ({"StrongMixing": True, "Periodic": True},
-         "Strongly Mixing and Periodic"),
-        ({"WeakMixing": True, "QuasiPeriodic": True},
-         "Weakly Mixing and Quasi-Periodic"),
-        ({"DelaySystem": True, "DiscreteTime": True},
-         "Delay System and Discrete-Time"),
-        ({"Mixing": True, "Periodic": True},
-         "Mixing and Periodic"),
+        # Canonical v2 core inconsistencies
+        (
+            {"Chaotic": True, "Periodic": True, "Deterministic": True},
+            "Chaotic, Periodic, and Deterministic",
+        ),
+        ({"Chaotic": True, "Random": True}, "Chaotic and Random"),
+        ({"Chaotic": True, "Deterministic": False}, "Chaotic but not Deterministic"),
+        ({"QuasiPeriodic": True, "Periodic": True}, "Quasi-Periodic and Periodic"),
+        ({"Random": True, "Deterministic": True}, "Random and Deterministic"),
+        (
+            {"Chaotic": True, "FixedPointAttr": True},
+            "Chaotic and Fixed Point Attractor",
+        ),
+        ({"Chaotic": True, "QuasiPeriodic": True}, "Chaotic and Quasi-Periodic"),
+        (
+            {"FixedPointAttr": True, "Periodic": True},
+            "Fixed Point Attractor and Periodic",
+        ),
+        ({"Periodic": True, "StrangeAttr": True}, "Periodic and Strange Attractor"),
+        (
+            {"Chaotic": True, "PosLyap": False},
+            "Chaotic but without positive Lyapunov exponent",
+        ),
+        # Canonical v2 structural-predicate inconsistencies
+        ({"Conservative": True, "Dissipative": True}, "Conservative and Dissipative"),
+        (
+            {"Conservative": True, "StrangeAttr": True},
+            "Conservative and having a Strange Attractor",
+        ),
+        ({"HyperChaotic": True, "Conservative": True}, "HyperChaotic and Conservative"),
+        (
+            {"ContinuousTime": True, "DiscreteTime": True},
+            "Continuous-Time and Discrete-Time",
+        ),
+        ({"Forced": True, "Autonomous": True}, "Externally Forced and Autonomous"),
+        ({"HyperChaotic": True, "Periodic": True}, "HyperChaotic and Periodic"),
+        ({"StrongMixing": True, "Periodic": True}, "Strongly Mixing and Periodic"),
+        (
+            {"WeakMixing": True, "QuasiPeriodic": True},
+            "Weakly Mixing and Quasi-Periodic",
+        ),
+        ({"DelaySystem": True, "DiscreteTime": True}, "Delay System and Discrete-Time"),
+        ({"Mixing": True, "Periodic": True}, "Mixing and Periodic"),
     ]
 
     for assignment, desc in inconsistent_sets:
         counter[0] += 1
-        questions.append(Question(
-            item_id=f"fol_consist_{counter[0]:04d}",
-            question_text=(
-                f"Is the assignment {{{desc}}} logically consistent "
-                f"under the dynamical systems ontology?"
-            ),
-            system_id="generic",
-            task_family="fol_inference",
-            ground_truth="NO",
-            predicates=list(assignment.keys()),
-            metadata={
-                "question_type": "consistency",
-                "assignment": {k: v for k, v in assignment.items()},
-            },
-        ))
+        questions.append(
+            Question(
+                item_id=f"fol_consist_{counter[0]:04d}",
+                question_text=(
+                    f"Is the assignment {{{desc}}} logically consistent "
+                    f"under the dynamical systems ontology?"
+                ),
+                system_id="generic",
+                task_family="fol_inference",
+                ground_truth="NO",
+                predicates=list(assignment.keys()),
+                metadata={
+                    "question_type": "consistency",
+                    "assignment": {k: v for k, v in assignment.items()},
+                },
+            )
+        )
 
     consistent_sets = [
-        # v2.0 / v2.2 core consistencies
-        ({"Chaotic": True, "Deterministic": True, "PosLyap": True,
-          "Sensitive": True},
-         "Chaotic, Deterministic, Positive Lyapunov, and Sensitive"),
-        ({"Periodic": True, "Deterministic": True},
-         "Periodic and Deterministic"),
-        ({"QuasiPeriodic": True, "Deterministic": True},
-         "Quasi-Periodic and Deterministic"),
-        ({"FixedPointAttr": True, "Deterministic": True},
-         "Fixed Point Attractor and Deterministic"),
-        ({"Random": True, "Chaotic": False, "Deterministic": False},
-         "Random but not Chaotic and not Deterministic"),
-        ({"Deterministic": True, "Chaotic": False, "Periodic": True},
-         "Deterministic, not Chaotic, and Periodic"),
-        ({"Chaotic": True, "Deterministic": True, "Sensitive": True,
-          "PosLyap": True, "PointUnpredictable": True, "StatPredictable": True},
-         "Chaotic with all required properties"),
-        ({"Deterministic": True, "Periodic": False, "Chaotic": False,
-          "QuasiPeriodic": True},
-         "Deterministic and Quasi-Periodic but not Periodic or Chaotic"),
-        ({"FixedPointAttr": True, "Deterministic": True, "Chaotic": False},
-         "Fixed Point Attractor, Deterministic, and not Chaotic"),
-        ({"Deterministic": True, "Chaotic": False, "Random": False},
-         "Deterministic, not Chaotic, not Random"),
-        # v2.3 new predicate consistencies
-        ({"Chaotic": True, "Dissipative": True, "StrangeAttr": True,
-          "Conservative": False},
-         "Chaotic, Dissipative, Strange Attractor, and not Conservative"),
-        ({"Conservative": True, "Bounded": True, "Ergodic": True,
-          "Dissipative": False},
-         "Conservative, Bounded, Ergodic, and not Dissipative"),
-        ({"HyperChaotic": True, "Chaotic": True, "Dissipative": True,
-          "Conservative": False},
-         "HyperChaotic, Chaotic, Dissipative, and not Conservative"),
-        ({"ContinuousTime": True, "DiscreteTime": False, "Autonomous": True},
-         "Continuous-Time, not Discrete-Time, and Autonomous"),
-        ({"DiscreteTime": True, "ContinuousTime": False, "Chaotic": True},
-         "Discrete-Time, not Continuous-Time, and Chaotic"),
-        ({"StrongMixing": True, "WeakMixing": True, "Ergodic": True},
-         "Strongly Mixing, Weakly Mixing, and Ergodic"),
-        ({"DelaySystem": True, "ContinuousTime": True},
-         "Delay System and Continuous-Time"),
-        ({"Forced": True, "Autonomous": False, "ContinuousTime": True},
-         "Forced, not Autonomous, and Continuous-Time"),
-        ({"Chaotic": True, "Mixing": True, "Ergodic": True, "Periodic": False},
-         "Chaotic, Mixing, Ergodic, and not Periodic"),
-        ({"HighDimSystem": True, "ContinuousTime": True, "Chaotic": True},
-         "High-Dimensional System, Continuous-Time, and Chaotic"),
+        # Canonical v2 core consistencies
+        (
+            {
+                "Chaotic": True,
+                "Deterministic": True,
+                "PosLyap": True,
+                "Sensitive": True,
+            },
+            "Chaotic, Deterministic, Positive Lyapunov, and Sensitive",
+        ),
+        ({"Periodic": True, "Deterministic": True}, "Periodic and Deterministic"),
+        (
+            {"QuasiPeriodic": True, "Deterministic": True},
+            "Quasi-Periodic and Deterministic",
+        ),
+        (
+            {"FixedPointAttr": True, "Deterministic": True},
+            "Fixed Point Attractor and Deterministic",
+        ),
+        (
+            {"Random": True, "Chaotic": False, "Deterministic": False},
+            "Random but not Chaotic and not Deterministic",
+        ),
+        (
+            {"Deterministic": True, "Chaotic": False, "Periodic": True},
+            "Deterministic, not Chaotic, and Periodic",
+        ),
+        (
+            {
+                "Chaotic": True,
+                "Deterministic": True,
+                "Sensitive": True,
+                "PosLyap": True,
+                "PointUnpredictable": True,
+                "StatPredictable": True,
+            },
+            "Chaotic with all required properties",
+        ),
+        (
+            {
+                "Deterministic": True,
+                "Periodic": False,
+                "Chaotic": False,
+                "QuasiPeriodic": True,
+            },
+            "Deterministic and Quasi-Periodic but not Periodic or Chaotic",
+        ),
+        (
+            {"FixedPointAttr": True, "Deterministic": True, "Chaotic": False},
+            "Fixed Point Attractor, Deterministic, and not Chaotic",
+        ),
+        (
+            {"Deterministic": True, "Chaotic": False, "Random": False},
+            "Deterministic, not Chaotic, not Random",
+        ),
+        # Canonical v2 structural-predicate consistencies
+        (
+            {
+                "Chaotic": True,
+                "Dissipative": True,
+                "StrangeAttr": True,
+                "Conservative": False,
+            },
+            "Chaotic, Dissipative, Strange Attractor, and not Conservative",
+        ),
+        (
+            {
+                "Conservative": True,
+                "Bounded": True,
+                "Ergodic": True,
+                "Dissipative": False,
+            },
+            "Conservative, Bounded, Ergodic, and not Dissipative",
+        ),
+        (
+            {
+                "HyperChaotic": True,
+                "Chaotic": True,
+                "Dissipative": True,
+                "Conservative": False,
+            },
+            "HyperChaotic, Chaotic, Dissipative, and not Conservative",
+        ),
+        (
+            {"ContinuousTime": True, "DiscreteTime": False, "Autonomous": True},
+            "Continuous-Time, not Discrete-Time, and Autonomous",
+        ),
+        (
+            {"DiscreteTime": True, "ContinuousTime": False, "Chaotic": True},
+            "Discrete-Time, not Continuous-Time, and Chaotic",
+        ),
+        (
+            {"StrongMixing": True, "WeakMixing": True, "Ergodic": True},
+            "Strongly Mixing, Weakly Mixing, and Ergodic",
+        ),
+        (
+            {"DelaySystem": True, "ContinuousTime": True},
+            "Delay System and Continuous-Time",
+        ),
+        (
+            {"Forced": True, "Autonomous": False, "ContinuousTime": True},
+            "Forced, not Autonomous, and Continuous-Time",
+        ),
+        (
+            {"Chaotic": True, "Mixing": True, "Ergodic": True, "Periodic": False},
+            "Chaotic, Mixing, Ergodic, and not Periodic",
+        ),
+        (
+            {"HighDimSystem": True, "ContinuousTime": True, "Chaotic": True},
+            "High-Dimensional System, Continuous-Time, and Chaotic",
+        ),
     ]
 
     for assignment, desc in consistent_sets:
         counter[0] += 1
-        questions.append(Question(
-            item_id=f"fol_consist_{counter[0]:04d}",
-            question_text=(
-                f"Is the assignment {{{desc}}} logically consistent "
-                f"under the dynamical systems ontology?"
-            ),
-            system_id="generic",
-            task_family="fol_inference",
-            ground_truth="YES",
-            predicates=list(assignment.keys()),
-            metadata={
-                "question_type": "consistency",
-                "assignment": {k: v for k, v in assignment.items()},
-            },
-        ))
+        questions.append(
+            Question(
+                item_id=f"fol_consist_{counter[0]:04d}",
+                question_text=(
+                    f"Is the assignment {{{desc}}} logically consistent "
+                    f"under the dynamical systems ontology?"
+                ),
+                system_id="generic",
+                task_family="fol_inference",
+                ground_truth="YES",
+                predicates=list(assignment.keys()),
+                metadata={
+                    "question_type": "consistency",
+                    "assignment": {k: v for k, v in assignment.items()},
+                },
+            )
+        )
 
     rng.shuffle(questions)
     return questions[:cap]
@@ -564,18 +645,28 @@ def generate_fol_questions(
     counter = [0]
 
     # Distribute target_count proportionally across question types
-    cap_impl    = int(target_count * 0.35)  # implication  35%
-    cap_chain   = int(target_count * 0.30)  # chain        30%
-    cap_contra  = int(target_count * 0.20)  # contrapositive 20%
-    cap_excl    = int(target_count * 0.10)  # exclusion    10%
+    cap_impl = int(target_count * 0.35)  # implication  35%
+    cap_chain = int(target_count * 0.30)  # chain        30%
+    cap_contra = int(target_count * 0.20)  # contrapositive 20%
+    cap_excl = int(target_count * 0.10)  # exclusion    10%
     cap_consist = max(20, target_count - cap_impl - cap_chain - cap_contra - cap_excl)
 
     questions: List[Question] = []
-    questions.extend(_generate_implication_questions(systems, rules, rng, counter, cap=cap_impl))
-    questions.extend(_generate_exclusion_questions(systems, rules, rng, counter, cap=cap_excl))
-    questions.extend(_generate_contrapositive_questions(systems, rules, rng, counter, cap=cap_contra))
-    questions.extend(_generate_chain_questions(systems, rules, rng, counter, cap=cap_chain))
-    questions.extend(_generate_consistency_questions(rules, rng, counter, cap=cap_consist))
+    questions.extend(
+        _generate_implication_questions(systems, rules, rng, counter, cap=cap_impl)
+    )
+    questions.extend(
+        _generate_exclusion_questions(systems, rules, rng, counter, cap=cap_excl)
+    )
+    questions.extend(
+        _generate_contrapositive_questions(systems, rules, rng, counter, cap=cap_contra)
+    )
+    questions.extend(
+        _generate_chain_questions(systems, rules, rng, counter, cap=cap_chain)
+    )
+    questions.extend(
+        _generate_consistency_questions(rules, rng, counter, cap=cap_consist)
+    )
 
     rng.shuffle(questions)
     return questions
@@ -634,9 +725,7 @@ class FOLInferenceTask:
                 by_type[qtype] = []
             by_type[qtype].append(is_correct)
 
-        type_accuracy = {
-            k: sum(v) / len(v) for k, v in sorted(by_type.items())
-        }
+        type_accuracy = {k: sum(v) / len(v) for k, v in sorted(by_type.items())}
 
         return {
             "accuracy": correct / total if total > 0 else None,

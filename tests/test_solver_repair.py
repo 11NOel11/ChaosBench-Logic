@@ -108,7 +108,13 @@ class TestEncodeFolToCnf:
         rules = get_fol_rules()
         clauses, var_map = encode_fol_to_cnf(rules, list(PREDICATES))
         chaotic_id = var_map["Chaotic"]
-        for req in ["Deterministic", "PosLyap", "Sensitive", "PointUnpredictable", "StatPredictable"]:
+        for req in [
+            "Deterministic",
+            "PosLyap",
+            "Sensitive",
+            "PointUnpredictable",
+            "StatPredictable",
+        ]:
             assert [-chaotic_id, var_map[req]] in clauses
 
     def test_empty_rules_no_clauses(self):
@@ -172,9 +178,7 @@ class TestAllGroundTruthSystems:
             if system_id in self.KNOWN_INCONSISTENT:
                 continue
             repaired, n_flips = repair_assignment(assignment)
-            assert n_flips == 0, (
-                f"System {system_id} required {n_flips} flips"
-            )
+            assert n_flips == 0, f"System {system_id} required {n_flips} flips"
             assert repaired == assignment
 
     def test_consistent_systems_validate(self):
@@ -183,12 +187,10 @@ class TestAllGroundTruthSystems:
         for system_id, assignment in systems.items():
             if system_id in self.KNOWN_INCONSISTENT:
                 continue
-            assert validate_repair(assignment), (
-                f"System {system_id} failed validation"
-            )
+            assert validate_repair(assignment), f"System {system_id} failed validation"
 
     def test_standard_map_now_consistent(self):
-        """standard_map was updated in v2.2 to resolve the mixed phase space inconsistency."""
+        """standard_map is consistent in the official v2 release."""
         systems = _load_all_systems()
         sm = systems["standard_map"]
         assert sm["Chaotic"] == "YES"
@@ -325,7 +327,9 @@ class TestPerformance:
 
     def test_repair_under_one_second_mixed(self):
         """Repairing a contradictory mixed assignment completes in under 1 second."""
-        assignment = {p: ("YES" if i % 2 == 0 else "NO") for i, p in enumerate(ALL_PREDICATES)}
+        assignment = {
+            p: ("YES" if i % 2 == 0 else "NO") for i, p in enumerate(ALL_PREDICATES)
+        }
         start = time.monotonic()
         repair_assignment(assignment)
         elapsed = time.monotonic() - start

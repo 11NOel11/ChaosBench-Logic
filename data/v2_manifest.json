@@ -1,7 +1,7 @@
 {
   "schema_version": "v2",
   "dataset_release": "v2",
-  "version": "2.3.0",
+  "version": "2.0.0",
   "timestamp": "2026-02-18T21:12:39.423387+00:00",
   "generation_config": {
     "seed": 42,
@@ -17,7 +17,7 @@
       "batch2_take": 50,
       "paraphrase_variants": 3
     },
-    "version": "2.3.0",
+    "version": "2.0.0",
     "max_systems": null,
     "templates_per_predicate": 2,
     "enable_multiframe": true,

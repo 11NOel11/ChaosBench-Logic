@@ -91,12 +91,12 @@ PREDICATE_DISPLAY = {
     "Random": "random",
     "FixedPointAttr": "having a fixed point attractor",
     "Periodic": "periodic",
-    # v2.2 Extension: New predicates for 4-5 hop chains
+    # Canonical v2 extension predicates for longer reasoning chains
     "Dissipative": "dissipative (volume-contracting)",
     "Bounded": "bounded",
     "Mixing": "mixing",
     "Ergodic": "ergodic",
-    # v2.3 Extension: 12 new predicates from metadata dimensions
+    # Canonical v2 structural extension predicates
     "HyperChaotic": "hyperchaotic",
     "Conservative": "conservative (Hamiltonian)",
     "HighDimensional": "high-dimensional (high Kaplan-Yorke dimension)",
@@ -201,7 +201,7 @@ TEMPLATES = TEMPLATES_A
 ALL_TEMPLATE_FRAMES = [
     (TEMPLATES_A, "A", False),  # (templates, frame_id, invert_ground_truth)
     (TEMPLATES_B, "B", False),
-    (TEMPLATES_C, "C", True),   # Frame C inverts ground truth
+    (TEMPLATES_C, "C", True),  # Frame C inverts ground truth
     (TEMPLATES_D, "D", False),
 ]
 
@@ -313,7 +313,9 @@ def generate_atomic_questions(
                         _key_bytes = f"{sid}:{pred}:{frame_id}".encode()
                         _stable_int = int(hashlib.sha256(_key_bytes).hexdigest(), 16)
                         local_rng = random.Random(seed ^ (_stable_int & 0xFFFFFFFF))
-                        frame_templates = local_rng.sample(tmpl_list, templates_per_predicate)
+                        frame_templates = local_rng.sample(
+                            tmpl_list, templates_per_predicate
+                        )
 
                 for template in frame_templates:
                     counter[0] += 1
@@ -336,22 +338,24 @@ def generate_atomic_questions(
                     except ValueError:
                         tmpl_idx = 0
 
-                    questions.append(Question(
-                        item_id=f"atomic_{counter[0]:04d}",
-                        question_text=q_text,
-                        system_id=sid,
-                        task_family="atomic",
-                        ground_truth=ground_truth,
-                        predicates=[pred],
-                        metadata={
-                            "question_type": "atomic_predicate",
-                            "predicate": pred,
-                            "template_frame": frame_id,
-                            "template_index": tmpl_idx,
-                            "template_id": f"{frame_id}{tmpl_idx:02d}",
-                            "negated": invert_gt,
-                        },
-                    ))
+                    questions.append(
+                        Question(
+                            item_id=f"atomic_{counter[0]:04d}",
+                            question_text=q_text,
+                            system_id=sid,
+                            task_family="atomic",
+                            ground_truth=ground_truth,
+                            predicates=[pred],
+                            metadata={
+                                "question_type": "atomic_predicate",
+                                "predicate": pred,
+                                "template_frame": frame_id,
+                                "template_index": tmpl_idx,
+                                "template_id": f"{frame_id}{tmpl_idx:02d}",
+                                "negated": invert_gt,
+                            },
+                        )
+                    )
 
     # Enforce strict 50/50 YES/NO balance by downsampling the majority class.
     yes_questions = [q for q in questions if q.ground_truth == "YES"]

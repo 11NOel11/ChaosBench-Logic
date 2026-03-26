@@ -1,10 +1,21 @@
+---
+language:
+  - en
+license: cc-by-4.0
+task_categories:
+  - text-classification
+pretty_name: ChaosBench-Logic
+size_categories:
+  - 10K<n<100K
+---
+
 # Dataset Card: ChaosBench-Logic
 
 ## Dataset Summary
 
 ChaosBench-Logic is a benchmark dataset for evaluating Large Language Model reasoning capabilities on dynamical systems and chaos theory. The dataset tests logical inference, symbolic manipulation, multi-hop reasoning, indicator diagnostics, regime transitions, and FOL consistency through binary classification questions.
 
-**Version 2.0.0** (default) consists of **40,886 questions** spanning 30 core manually-curated dynamical systems and 135 systems imported from the dysts library (165 total). Questions are organized into 10 task families, testing diverse reasoning capabilities from basic atomic queries to complex multi-indicator cross-validation.
+**Version 2.0.0** (default) consists of **40,886 questions** spanning 30 core manually curated dynamical systems and 135 systems imported from the dysts library (165 total). Questions are organized into 10 task families, testing diverse reasoning capabilities from basic atomic queries to complex multi-indicator cross-validation.
 
 **Version 1** (621 questions, archived in `data/archive/v1/`) established baseline performance metrics. Total dataset: 41,507 questions.
 
@@ -133,7 +144,7 @@ ChaosBench-Logic was created to evaluate LLM reasoning on scientific domains req
 - Landmark papers (Lorenz 1963, Rössler 1976)
 - Standard benchmarks in chaos theory
 
-Each system includes verified ground truth for 15 predicates based on mathematical analysis.
+Each system includes verified ground truth for 27 predicates based on mathematical analysis.
 
 #### Extended Systems
 

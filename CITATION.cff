@@ -31,7 +31,7 @@ abstract: >
   + 135 from dysts library) across 10 task families: atomic, multi-hop,
   indicator diagnostics, regime transition, FOL inference, cross-indicator,
   extended systems, consistency paraphrase, adversarial, and perturbation
-  robustness. The ontology covers 15 predicates with first-order logic axioms
+  robustness. The ontology covers 27 predicates with first-order logic axioms
   enabling up to 4-hop reasoning chains. The codebase supports multiple
   state-of-the-art LLMs (GPT-4, Claude-3.5, Gemini-2.5, LLaMA-3 70B) in
   both zero-shot and chain-of-thought modes, providing comprehensive metrics

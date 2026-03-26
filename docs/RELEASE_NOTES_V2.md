@@ -1,10 +1,10 @@
-# ChaosBench-Logic v2 — Release Notes
+# ChaosBench-Logic v2.0.0 — Release Notes
 
 ## Dataset Identity
 
 | Field | Value |
 |-------|-------|
-| **Release** | v2 |
+| **Release** | v2.0.0 |
 | **Total questions** | 40,886 |
 | **Global SHA256** | `cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279` |
 | **Canonical files** | 10 (`data/v22_*.jsonl`) |
@@ -56,8 +56,8 @@
 
 ### Freeze (verify dataset identity)
 ```bash
-python scripts/freeze_v2_dataset.py
-# Compare: artifacts/freeze/v2_freeze_manifest.json → global_sha256
+uv run python scripts/freeze_v2_dataset.py
+# Compare: artifacts/freeze/v2_freeze_manifest.json -> global_sha256
 ```
 
 ### Evaluation (local Ollama)
@@ -74,7 +74,7 @@ chaosbench eval --provider ollama --model qwen2.5:7b \
 
 ### Verify Tests
 ```bash
-python -m pytest -q   # should be 673 passed
+uv run pytest -q
 ```
 
 ---

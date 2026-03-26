@@ -1,6 +1,6 @@
 [project]
 name = "chaos-logic-bench"
-version = "2.2.0"
+version = "2.0.0"
 description = "ChaosBench-Logic: Benchmarking LLMs on complex reasoning about dynamical systems"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -51,7 +51,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["chaosbench", "chaosbench.data", "chaosbench.data.indicators", "chaosbench.data.systems", "chaosbench.logic", "chaosbench.tasks", "chaosbench.eval", "chaosbench.eval.providers", "chaosbench.models", "chaosbench.models.adapters", "chaosbench.quality"]
+packages = ["chaosbench", "chaosbench.data", "chaosbench.data.indicators", "chaosbench.data.systems", "chaosbench.logic", "chaosbench.tasks", "chaosbench.eval", "chaosbench.eval.providers", "chaosbench.models", "chaosbench.models.adapters", "chaosbench.quality", "chaosbench.repair"]
 py-modules = ["eval_chaosbench", "clients", "run_benchmark"]
 
 [project.scripts]

@@ -4,7 +4,7 @@
 Supports both core (30 systems) and expanded (dysts) system pools.
 
 v2.1 mode (default): Batches 8-14 use core systems. Batches 15-18 use dysts.
-v2.2 mode (--config v2_2_scale.yaml): Per-system quota generation across all
+Canonical v2 mode (--config v2_2_scale.yaml): Per-system quota generation across all
     165 systems for scalable families. Replaces batches 8-18 with unified
     family-based output files.
 """
@@ -27,7 +27,10 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from chaosbench.data.schemas import Question
 from chaosbench.data.adversarial import generate_adversarial_set
-from chaosbench.data.eligibility import get_eligible_systems, generate_eligibility_report
+from chaosbench.data.eligibility import (
+    get_eligible_systems,
+    generate_eligibility_report,
+)
 from chaosbench.data.indicators.populate import populate_all_systems
 from chaosbench.tasks.regime_transition import RegimeTransitionTask
 from chaosbench.tasks.indicator_diagnostics import generate_indicator_questions
@@ -60,18 +63,18 @@ def dedupe_exact(questions: list, dedupe_log_path: str = None) -> tuple:
 
     for i, q in enumerate(questions):
         # Handle both Question dataclass and dict
-        if hasattr(q, 'question_text'):
+        if hasattr(q, "question_text"):
             q_text = q.question_text
             sys_id = q.system_id
             gt = q.ground_truth
             q_id = q.item_id
             family = q.task_family
         else:
-            q_text = q.get('question', '')
-            sys_id = q.get('system_id', '')
-            gt = q.get('ground_truth', '')
-            q_id = q.get('id', '')
-            family = q.get('type', '')
+            q_text = q.get("question", "")
+            sys_id = q.get("system_id", "")
+            gt = q.get("ground_truth", "")
+            q_id = q.get("id", "")
+            family = q.get("type", "")
 
         # Compute uniqueness key
         norm_text = _normalize_text(q_text)
@@ -79,27 +82,30 @@ def dedupe_exact(questions: list, dedupe_log_path: str = None) -> tuple:
 
         if key in seen_keys:
             # Duplicate found - log it
-            removed.append({
-                'removed_id': q_id,
-                'kept_id': seen_keys[key]['id'],
-                'key': key,
-                'family': family,
-                'system_id': sys_id,
-                'question': q_text,
-            })
+            removed.append(
+                {
+                    "removed_id": q_id,
+                    "kept_id": seen_keys[key]["id"],
+                    "key": key,
+                    "family": family,
+                    "system_id": sys_id,
+                    "question": q_text,
+                }
+            )
         else:
             # First occurrence - keep it
-            seen_keys[key] = {'id': q_id, 'index': i}
+            seen_keys[key] = {"id": q_id, "index": i}
             kept.append(q)
 
     # Write dedupe log if requested
     if dedupe_log_path and removed:
         import json
         import os
+
         os.makedirs(os.path.dirname(dedupe_log_path), exist_ok=True)
-        with open(dedupe_log_path, 'w') as f:
+        with open(dedupe_log_path, "w") as f:
             for item in removed:
-                f.write(json.dumps(item) + '\n')
+                f.write(json.dumps(item) + "\n")
 
     return kept, len(removed), removed
 
@@ -134,7 +140,9 @@ def question_to_jsonl(q: Question, template: str = "V2") -> dict:
     }
 
 
-def write_batch(questions: list, filepath: str, template: str = "V2", dedupe: bool = False) -> tuple:
+def write_batch(
+    questions: list, filepath: str, template: str = "V2", dedupe: bool = False
+) -> tuple:
     """Write questions to a JSONL file.
 
     Args:
@@ -150,11 +158,15 @@ def write_batch(questions: list, filepath: str, template: str = "V2", dedupe: bo
 
     if dedupe:
         # Dedupe before writing
-        batch_name = os.path.basename(filepath).replace('.jsonl', '')
+        batch_name = os.path.basename(filepath).replace(".jsonl", "")
         dedupe_log = f"reports/dedupe/{batch_name}_removed.jsonl"
-        questions, removed_count, _ = dedupe_exact(questions, dedupe_log_path=dedupe_log)
+        questions, removed_count, _ = dedupe_exact(
+            questions, dedupe_log_path=dedupe_log
+        )
         if removed_count > 0:
-            print(f"    [DEDUPE] Removed {removed_count} duplicates (logged to {dedupe_log})")
+            print(
+                f"    [DEDUPE] Removed {removed_count} duplicates (logged to {dedupe_log})"
+            )
 
     with open(filepath, "w") as f:
         for q in questions:
@@ -279,7 +291,7 @@ def load_generation_config(config_path: str | None) -> Dict[str, Any]:
 
 
 def _is_v22_config(cfg: Dict[str, Any]) -> bool:
-    """Check if config is v2.2 format (has family_targets or per_system_items_by_family)."""
+    """Check if config uses canonical v2 family-target format."""
     return "family_targets" in cfg or "per_system_items_by_family" in cfg
 
 
@@ -312,8 +324,9 @@ def _balance_and_shuffle(
 
 
 # ============================================================================
-# v2.2 Scaled Generation Functions
+# Canonical v2 Scaled Generation Functions
 # ============================================================================
+
 
 def _generate_v22_atomic(
     all_systems: Dict[str, Dict],
@@ -345,12 +358,16 @@ def _generate_v22_consistency(
     """Generate consistency paraphrase questions scaled to all eligible systems."""
     seed = cfg["seed"]
     target = cfg.get("family_targets", {}).get("consistency_paraphrase", 3300)
-    n_variants = cfg.get("paraphrase_variants", cfg.get("consistency", {}).get("paraphrase_variants", 3))
+    n_variants = cfg.get(
+        "paraphrase_variants", cfg.get("consistency", {}).get("paraphrase_variants", 3)
+    )
 
     # Use atomic questions as base for paraphrasing across all systems
     # Use only Frame A for consistency base (simpler, more natural paraphrase targets)
     eligible_systems = {sid: all_systems[sid] for sid in eligible_ids}
-    base_atomic = generate_atomic_questions(eligible_systems, seed=seed + 100, enable_multiframe=False)
+    base_atomic = generate_atomic_questions(
+        eligible_systems, seed=seed + 100, enable_multiframe=False
+    )
 
     para_questions = []
     for bq in base_atomic:
@@ -373,7 +390,9 @@ def _generate_v22_perturbation(
     target = cfg.get("family_targets", {}).get("perturbation_robustness", 5280)
     eligible_systems = {sid: all_systems[sid] for sid in eligible_ids}
     questions = generate_perturbation_questions(
-        eligible_systems, seed=seed, target_count=target,
+        eligible_systems,
+        seed=seed,
+        target_count=target,
     )
     return questions
 
@@ -386,7 +405,7 @@ def _generate_v22_multi_hop(
     """Generate multi-hop questions across all eligible systems."""
     seed = cfg["seed"]
     target = cfg.get("family_targets", {}).get("multi_hop", 1650)
-    # v2.3: default to 6-hop when config supports it (new axiom edges)
+    # Canonical v2: default to 6-hop when config supports extended axiom edges
     max_hop_count = cfg.get("max_hop_count", 4)
     eligible_systems = {sid: all_systems[sid] for sid in eligible_ids}
     questions = generate_multi_hop_questions(
@@ -407,7 +426,9 @@ def _generate_v22_fol(
     seed = cfg["seed"]
     target = cfg.get("family_targets", {}).get("fol_inference", 1000)
     eligible_systems = {sid: all_systems[sid] for sid in eligible_ids}
-    fol_task = FOLInferenceTask(systems=eligible_systems, seed=seed, target_count=target)
+    fol_task = FOLInferenceTask(
+        systems=eligible_systems, seed=seed, target_count=target
+    )
     questions = fol_task.generate_items()
     if len(questions) > target:
         questions = questions[:target]
@@ -464,8 +485,12 @@ def _generate_v22_indicator_diagnostics(
     seed = cfg["seed"]
     target = cfg.get("family_targets", {}).get("indicator_diagnostics", 1500)
     eligible_systems = {sid: all_systems[sid] for sid in eligible_ids}
-    eligible_indicators = {sid: all_indicators[sid] for sid in eligible_ids if sid in all_indicators}
-    questions = generate_indicator_questions(eligible_systems, eligible_indicators, seed=seed)
+    eligible_indicators = {
+        sid: all_indicators[sid] for sid in eligible_ids if sid in all_indicators
+    }
+    questions = generate_indicator_questions(
+        eligible_systems, eligible_indicators, seed=seed
+    )
     if len(questions) > target:
         questions = questions[:target]
     return questions
@@ -481,9 +506,13 @@ def _generate_v22_cross_indicator(
     seed = cfg["seed"]
     target = cfg.get("family_targets", {}).get("cross_indicator", 400)
     eligible_systems = {sid: all_systems[sid] for sid in eligible_ids}
-    eligible_indicators = {sid: all_indicators[sid] for sid in eligible_ids if sid in all_indicators}
+    eligible_indicators = {
+        sid: all_indicators[sid] for sid in eligible_ids if sid in all_indicators
+    }
     cross_task = CrossIndicatorTask(
-        systems=eligible_systems, indicators=eligible_indicators, seed=seed,
+        systems=eligible_systems,
+        indicators=eligible_indicators,
+        seed=seed,
     )
     questions = cross_task.generate_items()
     if len(questions) > target:
@@ -522,8 +551,14 @@ def _generate_v22_extended_systems(
     return questions
 
 
-def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: bool = False, args=None):
-    """Build v2.2 scaled dataset with per-system quota generation.
+def build_v22(
+    cfg: Dict[str, Any],
+    data_dir: str,
+    systems_dir: str,
+    verbose: bool = False,
+    args=None,
+):
+    """Build canonical v2 dataset with per-system quota generation.
 
     Generates one output file per family instead of numbered batches.
     All 165 systems are used where eligible.
@@ -532,7 +567,7 @@ def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: boo
     template = cfg.get("template", "V2")
 
     print("\n" + "=" * 70)
-    print("  ChaosBench-Logic v2.2 Scaled Dataset Builder")
+    print("  ChaosBench-Logic v2 Canonical Dataset Builder")
     print("=" * 70)
     print(f"  Seed: {seed}")
 
@@ -557,7 +592,9 @@ def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: boo
         report = generate_eligibility_report(all_systems, all_indicators)
         print("\n  Eligibility Report:")
         for family, info in sorted(report["per_family"].items()):
-            print(f"    {family}: {info['eligible_count']}/{info['total_systems']} eligible")
+            print(
+                f"    {family}: {info['eligible_count']}/{info['total_systems']} eligible"
+            )
 
     # Define generation pipeline
     families = [
@@ -582,17 +619,27 @@ def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: boo
         eligible_ids = get_eligible_systems(all_systems, family_name, all_indicators)
         target = cfg.get("family_targets", {}).get(family_name, 0)
 
-        print(f"\n  Generating {family_name} ({len(eligible_ids)} eligible systems, target={target})...")
+        print(
+            f"\n  Generating {family_name} ({len(eligible_ids)} eligible systems, target={target})..."
+        )
 
         if family_name == "consistency_paraphrase":
-            questions = _generate_v22_consistency(all_systems, eligible_ids, cfg, data_dir)
+            questions = _generate_v22_consistency(
+                all_systems, eligible_ids, cfg, data_dir
+            )
         elif family_name == "indicator_diagnostics":
             questions = _generate_v22_indicator_diagnostics(
-                all_systems, all_indicators, eligible_ids, cfg,
+                all_systems,
+                all_indicators,
+                eligible_ids,
+                cfg,
             )
         elif family_name == "cross_indicator":
             questions = _generate_v22_cross_indicator(
-                all_systems, all_indicators, eligible_ids, cfg,
+                all_systems,
+                all_indicators,
+                eligible_ids,
+                cfg,
             )
         elif generator is not None:
             questions = generator(all_systems, eligible_ids, cfg)
@@ -616,7 +663,12 @@ def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: boo
         output_name = f"v22_{family_name}"
         filepath = os.path.join(data_dir, f"{output_name}.jsonl")
         generated_count = len(questions)
-        count, removed = write_batch(questions, filepath, template=template, dedupe=args.dedupe_exact if args else False)
+        count, removed = write_batch(
+            questions,
+            filepath,
+            template=template,
+            dedupe=args.dedupe_exact if args else False,
+        )
         batch_counts[output_name] = count
         total_removed += removed
 
@@ -665,6 +717,7 @@ def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: boo
     print("=" * 70)
 
     from chaosbench.quality.gates import run_all_gates
+
     gate_config = cfg.get("quality_gates", {})
     gate_results = run_all_gates(all_questions, gate_config)
 
@@ -696,7 +749,7 @@ def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: boo
     new_total = sum(batch_counts.values())
     manifest = {
         "schema_version": "v2",
-        "version": cfg.get("version", "2.3.0"),
+        "version": cfg.get("version", "2.0.0"),
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "generation_config": cfg,
         "batches": {},
@@ -705,7 +758,9 @@ def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: boo
         "total_questions": existing_total + new_total,
         "dedupe_exact_enabled": args.dedupe_exact if args else False,
         "dedupe_exact_removed": total_removed,
-        "dedupe_policy": "keep_first_sorted_by_id" if (args and args.dedupe_exact) else "none",
+        "dedupe_policy": "keep_first_sorted_by_id"
+        if (args and args.dedupe_exact)
+        else "none",
         "quality_gates": {
             r.gate_name: {"passed": r.passed, "details": r.details}
             for r in gate_results
@@ -728,16 +783,24 @@ def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: boo
     os.makedirs(stats_dir, exist_ok=True)
     stats_path = os.path.join(stats_dir, "generation_stats.json")
     with open(stats_path, "w") as f:
-        json.dump({
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "config_file": args.config if args and args.config else "default",
-            "seed": seed,
-            "total_requested": sum(s["requested_target"] for s in generation_stats.values()),
-            "total_generated": sum(s["generated_count"] for s in generation_stats.values()),
-            "total_final": sum(s["final_count"] for s in generation_stats.values()),
-            "total_dedupe_removed": total_removed,
-            "per_family": generation_stats,
-        }, f, indent=2)
+        json.dump(
+            {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "config_file": args.config if args and args.config else "default",
+                "seed": seed,
+                "total_requested": sum(
+                    s["requested_target"] for s in generation_stats.values()
+                ),
+                "total_generated": sum(
+                    s["generated_count"] for s in generation_stats.values()
+                ),
+                "total_final": sum(s["final_count"] for s in generation_stats.values()),
+                "total_dedupe_removed": total_removed,
+                "per_family": generation_stats,
+            },
+            f,
+            indent=2,
+        )
     print(f"\n  Generation statistics saved to: {stats_path}")
 
     # Summary
@@ -745,12 +808,14 @@ def build_v22(cfg: Dict[str, Any], data_dir: str, systems_dir: str, verbose: boo
     print("  SUMMARY")
     print("=" * 70)
     print(f"  Existing questions (batch1-7): {existing_total}")
-    print(f"  New v2.2 questions:            {new_total}")
+    print(f"  New canonical v2 questions:    {new_total}")
     print(f"  Total questions:               {manifest['total_questions']}")
     print(f"  Families generated:            {len(batch_counts)}")
     print(f"  Manifest:                      {manifest_path}")
     print(f"  All valid:                     {all_valid}")
-    print(f"  Quality gates:                 {'ALL PASSED' if all_gates_passed else 'SOME FAILED'}")
+    print(
+        f"  Quality gates:                 {'ALL PASSED' if all_gates_passed else 'SOME FAILED'}"
+    )
 
     if not all_valid:
         sys.exit(1)
@@ -833,7 +898,9 @@ def build_v21(cfg: Dict[str, Any], data_dir: str, systems_dir: str, args=None):
             seen_texts.add(norm)
             deduped.append(q)
     if len(deduped) < len(adv_questions):
-        print(f"  Deduped: {len(adv_questions)} -> {len(deduped)} (removed {len(adv_questions) - len(deduped)} duplicates)")
+        print(
+            f"  Deduped: {len(adv_questions)} -> {len(deduped)} (removed {len(adv_questions) - len(deduped)} duplicates)"
+        )
     adv_questions = deduped
     count, removed = write_batch(
         adv_questions,
@@ -953,9 +1020,15 @@ def build_v21(cfg: Dict[str, Any], data_dir: str, systems_dir: str, args=None):
 
         print("\n[8/11] Generating batch15_atomic_dysts...")
         dysts_only = {sid: s for sid, s in all_systems.items() if sid not in systems}
-        atomic_target = cfg.get("batches", {}).get("batch15_atomic_dysts", {}).get("target_count", 3000)
+        atomic_target = (
+            cfg.get("batches", {})
+            .get("batch15_atomic_dysts", {})
+            .get("target_count", 3000)
+        )
         atomic_qs = generate_atomic_questions(
-            dysts_only, seed=cfg["seed"], target_count=atomic_target,
+            dysts_only,
+            seed=cfg["seed"],
+            target_count=atomic_target,
         )
         count, removed = write_batch(
             atomic_qs,
@@ -968,10 +1041,16 @@ def build_v21(cfg: Dict[str, Any], data_dir: str, systems_dir: str, args=None):
         print(f"  Wrote {count} questions")
 
         print("\n[9/11] Generating batch16_multi_hop_dysts...")
-        mh_target = cfg.get("batches", {}).get("batch16_multi_hop_dysts", {}).get("target_count", 500)
+        mh_target = (
+            cfg.get("batches", {})
+            .get("batch16_multi_hop_dysts", {})
+            .get("target_count", 500)
+        )
         dysts_only_mh = {sid: s for sid, s in all_systems.items() if sid not in systems}
         mh_qs = generate_multi_hop_questions(
-            dysts_only_mh, seed=cfg["seed"], target_count=mh_target,
+            dysts_only_mh,
+            seed=cfg["seed"],
+            target_count=mh_target,
         )
         for q in mh_qs:
             q.item_id = f"dysts_{q.item_id}"
@@ -986,9 +1065,15 @@ def build_v21(cfg: Dict[str, Any], data_dir: str, systems_dir: str, args=None):
         print(f"  Wrote {count} questions")
 
         print("\n[10/11] Generating batch17_perturbation_robustness...")
-        perturb_target = cfg.get("batches", {}).get("batch17_perturbation_robustness", {}).get("target_count", 3000)
+        perturb_target = (
+            cfg.get("batches", {})
+            .get("batch17_perturbation_robustness", {})
+            .get("target_count", 3000)
+        )
         perturb_qs = generate_perturbation_questions(
-            all_systems, seed=cfg["seed"], target_count=perturb_target,
+            all_systems,
+            seed=cfg["seed"],
+            target_count=perturb_target,
         )
         count, removed = write_batch(
             perturb_qs,
@@ -1001,8 +1086,14 @@ def build_v21(cfg: Dict[str, Any], data_dir: str, systems_dir: str, args=None):
         print(f"  Wrote {count} questions")
 
         print("\n[11/11] Generating batch18_fol_dysts...")
-        fol_dysts_target = cfg.get("batches", {}).get("batch18_fol_dysts", {}).get("target_count", 2500)
-        dysts_only_systems = {sid: s for sid, s in all_systems.items() if sid not in systems}
+        fol_dysts_target = (
+            cfg.get("batches", {})
+            .get("batch18_fol_dysts", {})
+            .get("target_count", 2500)
+        )
+        dysts_only_systems = {
+            sid: s for sid, s in all_systems.items() if sid not in systems
+        }
         fol_dysts_task = FOLInferenceTask(systems=dysts_only_systems, seed=cfg["seed"])
         fol_dysts_qs = fol_dysts_task.generate_items()
         if fol_dysts_target and len(fol_dysts_qs) > fol_dysts_target:
@@ -1047,7 +1138,9 @@ def build_v21(cfg: Dict[str, Any], data_dir: str, systems_dir: str, args=None):
         "total_new_questions": sum(batch_counts.values()),
         "dedupe_exact_enabled": args.dedupe_exact if args else False,
         "dedupe_exact_removed": total_removed,
-        "dedupe_policy": "keep_first_sorted_by_id" if (args and args.dedupe_exact) else "none",
+        "dedupe_policy": "keep_first_sorted_by_id"
+        if (args and args.dedupe_exact)
+        else "none",
     }
 
     existing_total = 0
@@ -1086,7 +1179,9 @@ def build_v21(cfg: Dict[str, Any], data_dir: str, systems_dir: str, args=None):
     print("\n" + "=" * 70)
     print("  SUMMARY")
     print("=" * 70)
-    max_batch = max(int(k.split("_")[0].replace("batch", "")) for k in batch_counts.keys())
+    max_batch = max(
+        int(k.split("_")[0].replace("batch", "")) for k in batch_counts.keys()
+    )
     print(f"  Existing questions (batch1-7): {existing_total}")
     print(f"  New questions (batch8-{max_batch}):    {sum(batch_counts.values())}")
     print(f"  Total questions:               {manifest['total_questions']}")
@@ -1164,7 +1259,9 @@ def main():
     print("=" * 70)
     print(f"  Config: {args.config if args.config else '<defaults>'}")
     print(f"  Seed:   {cfg['seed']}")
-    print(f"  Mode:   {'v2.2 (scaled)' if _is_v22_config(cfg) else 'v2.1 (batch-based)'}")
+    print(
+        f"  Mode:   {'v2 canonical (v22 files)' if _is_v22_config(cfg) else 'v2.1 (batch-based)'}"
+    )
 
     if args.dry_run:
         print("\n  [DRY RUN] Config validated.")
@@ -1176,16 +1273,19 @@ def main():
         print(f"  Dysts systems: {n_dysts}")
         print(f"  Total systems: {len(all_systems)}")
         if _is_v22_config(cfg):
-            print(f"\n  v2.2 Family Targets:")
+            print("\n  Canonical v2 Family Targets:")
             for family, target in sorted(cfg.get("family_targets", {}).items()):
                 eligible = get_eligible_systems(all_systems, family, all_indicators)
-                print(f"    {family}: target={target}, eligible={len(eligible)} systems")
+                print(
+                    f"    {family}: target={target}, eligible={len(eligible)} systems"
+                )
         sys.exit(0)
 
     if args.manifest_only:
         print("\n  [MANIFEST ONLY] Regenerating manifest from existing files...")
         # Regenerate manifest from existing JSONL files
         import glob
+
         batch_counts = {}
         for fpath in sorted(glob.glob(os.path.join(data_dir, "*.jsonl"))):
             fname = os.path.basename(fpath).replace(".jsonl", "")
@@ -1194,7 +1294,7 @@ def main():
             batch_counts[fname] = n
 
         manifest = {
-            "version": cfg.get("version", "2.3.0"),
+            "version": cfg.get("version", "2.0.0"),
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "batches": {},
             "total_questions": sum(batch_counts.values()),
@@ -1209,7 +1309,9 @@ def main():
         with open(manifest_path, "w") as f:
             json.dump(manifest, f, indent=2)
         print(f"  Manifest: {manifest_path}")
-        print(f"  Total: {sum(batch_counts.values())} questions across {len(batch_counts)} files")
+        print(
+            f"  Total: {sum(batch_counts.values())} questions across {len(batch_counts)} files"
+        )
         sys.exit(0)
 
     # Route to appropriate builder

@@ -63,7 +63,12 @@ class TestProviderConfigsLoad:
     """Providers must instantiate without API keys and return error responses."""
 
     def _unset_keys(self):
-        for var in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY"):
+        for var in (
+            "OPENAI_API_KEY",
+            "ANTHROPIC_API_KEY",
+            "GEMINI_API_KEY",
+            "GOOGLE_API_KEY",
+        ):
             os.environ.pop(var, None)
 
     def test_openai_name_and_no_key_error(self):
@@ -100,7 +105,11 @@ class TestProviderConfigsLoad:
         assert "GEMINI_API_KEY" in resp.error
 
     def test_providers_exported_from_package(self):
-        from chaosbench.eval.providers import AnthropicProvider, GeminiProvider, OpenAIProvider
+        from chaosbench.eval.providers import (
+            AnthropicProvider,
+            GeminiProvider,
+            OpenAIProvider,
+        )
 
         assert OpenAIProvider is not None
         assert AnthropicProvider is not None
@@ -256,9 +265,12 @@ class TestLaunchScriptDryRunOutputsCommands:
         mod = _load_script("launch_proprietary_runs")
         mod.main(
             [
-                "--provider", "anthropic",
-                "--model", "claude-sonnet-4-6",
-                "--phase", "P1",
+                "--provider",
+                "anthropic",
+                "--model",
+                "claude-sonnet-4-6",
+                "--phase",
+                "P1",
                 "--dry-run",
             ]
         )
@@ -281,9 +293,12 @@ class TestLaunchScriptDryRunOutputsCommands:
 
         mod.main(
             [
-                "--provider", "openai",
-                "--model", "gpt-4o",
-                "--phase", "P0",
+                "--provider",
+                "openai",
+                "--model",
+                "gpt-4o",
+                "--phase",
+                "P0",
                 "--dry-run",
             ]
         )
@@ -295,9 +310,12 @@ class TestLaunchScriptDryRunOutputsCommands:
         mod = _load_script("launch_proprietary_runs")
         mod.main(
             [
-                "--provider", "gemini",
-                "--model", "gemini-2.0-flash",
-                "--phase", "P0",
+                "--provider",
+                "gemini",
+                "--model",
+                "gemini-2.0-flash",
+                "--phase",
+                "P0",
                 "--dry-run",
             ]
         )

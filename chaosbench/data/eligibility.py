@@ -1,4 +1,4 @@
-"""System eligibility checking for v2.2 scaled generation.
+"""System eligibility checking for canonical v2 generation.
 
 Determines which systems are eligible for each question family based on
 their available metadata (truth_assignment, indicators, regime metadata).
@@ -25,19 +25,31 @@ from chaosbench.logic.ontology import PREDICATES
 
 # Original 11 predicates used for eligibility checks.
 # Systems must have these 11 in their truth_assignment to be eligible.
-# The full PREDICATES list (15) includes v2.2 extensions (Dissipative, Bounded,
-# Mixing, Ergodic) which are NOT required for eligibility.
+# The full predicate inventory includes structural extensions, which are not
+# required for baseline eligibility checks.
 ELIGIBILITY_PREDICATES = [
-    "Chaotic", "Deterministic", "PosLyap", "Sensitive", "StrangeAttr",
-    "PointUnpredictable", "StatPredictable", "QuasiPeriodic", "Random",
-    "FixedPointAttr", "Periodic",
+    "Chaotic",
+    "Deterministic",
+    "PosLyap",
+    "Sensitive",
+    "StrangeAttr",
+    "PointUnpredictable",
+    "StatPredictable",
+    "QuasiPeriodic",
+    "Random",
+    "FixedPointAttr",
+    "Periodic",
 ]
 
 # Core indicators used by indicator-dependent families
 CORE_INDICATOR_KEYS = {
-    "zero_one_K", "permutation_entropy", "megno",
-    "lyapunov_spectrum", "kaplan_yorke_dimension",
-    "correlation_dimension", "multiscale_entropy",
+    "zero_one_K",
+    "permutation_entropy",
+    "megno",
+    "lyapunov_spectrum",
+    "kaplan_yorke_dimension",
+    "correlation_dimension",
+    "multiscale_entropy",
     "maximum_lyapunov_estimated",
 }
 
@@ -59,15 +71,53 @@ REGIME_ELIGIBLE_SYSTEMS: Set[str] = set(BIFURCATION_DATA.keys())
 # Families and their requirements
 FAMILY_REQUIREMENTS = {
     "atomic": {"truth_assignment": True, "indicators": False, "regime_metadata": False},
-    "consistency_paraphrase": {"truth_assignment": True, "indicators": False, "regime_metadata": False},
-    "perturbation_robustness": {"truth_assignment": True, "indicators": False, "regime_metadata": False},
-    "multi_hop": {"truth_assignment": True, "indicators": False, "regime_metadata": False},
-    "fol_inference": {"truth_assignment": True, "indicators": False, "regime_metadata": False},
-    "adversarial": {"truth_assignment": True, "indicators": False, "regime_metadata": False},
-    "indicator_diagnostics": {"truth_assignment": True, "indicators": True, "min_indicators": 1, "regime_metadata": False},
-    "cross_indicator": {"truth_assignment": True, "indicators": True, "min_indicators": 2, "regime_metadata": False},
-    "regime_transition": {"truth_assignment": True, "indicators": False, "regime_metadata": True},
-    "extended_systems": {"truth_assignment": True, "indicators": False, "regime_metadata": False},
+    "consistency_paraphrase": {
+        "truth_assignment": True,
+        "indicators": False,
+        "regime_metadata": False,
+    },
+    "perturbation_robustness": {
+        "truth_assignment": True,
+        "indicators": False,
+        "regime_metadata": False,
+    },
+    "multi_hop": {
+        "truth_assignment": True,
+        "indicators": False,
+        "regime_metadata": False,
+    },
+    "fol_inference": {
+        "truth_assignment": True,
+        "indicators": False,
+        "regime_metadata": False,
+    },
+    "adversarial": {
+        "truth_assignment": True,
+        "indicators": False,
+        "regime_metadata": False,
+    },
+    "indicator_diagnostics": {
+        "truth_assignment": True,
+        "indicators": True,
+        "min_indicators": 1,
+        "regime_metadata": False,
+    },
+    "cross_indicator": {
+        "truth_assignment": True,
+        "indicators": True,
+        "min_indicators": 2,
+        "regime_metadata": False,
+    },
+    "regime_transition": {
+        "truth_assignment": True,
+        "indicators": False,
+        "regime_metadata": True,
+    },
+    "extended_systems": {
+        "truth_assignment": True,
+        "indicators": False,
+        "regime_metadata": False,
+    },
 }
 
 
@@ -95,8 +145,8 @@ def _count_numeric_indicators(
 def _has_complete_truth_assignment(system: Dict[str, Any]) -> bool:
     """Check if a system has a complete truth_assignment with all 11 core predicates.
 
-    Uses ELIGIBILITY_PREDICATES (original 11) rather than full PREDICATES (15)
-    to avoid breaking eligibility when v2.2 extension predicates are absent.
+    Uses ELIGIBILITY_PREDICATES (original 11) rather than the full predicate
+    inventory to avoid breaking eligibility when structural extensions are absent.
 
     Args:
         system: System data dict.
@@ -136,7 +186,9 @@ def check_system_eligibility(
     # Check truth_assignment
     if reqs["truth_assignment"]:
         if not _has_complete_truth_assignment(system):
-            missing = set(ELIGIBILITY_PREDICATES) - set(system.get("truth_assignment", {}).keys())
+            missing = set(ELIGIBILITY_PREDICATES) - set(
+                system.get("truth_assignment", {}).keys()
+            )
             return False, f"missing predicates in truth_assignment: {sorted(missing)}"
 
     # Check indicators
