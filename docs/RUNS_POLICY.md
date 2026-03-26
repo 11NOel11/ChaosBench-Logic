@@ -1,175 +1,110 @@
-# ChaosBench-Logic — Runs Storage Policy
+# Runs Policy (v2.0.0)
 
-_Last updated: 2026-02-20_
+This document defines storage, publication, and audit rules for evaluation runs
+in ChaosBench-Logic v2.
 
----
+## Purpose
 
-## 1. What Is an "Official" Run?
+- Keep live evaluation outputs reproducible but out of git.
+- Keep published artifacts lightweight and auditable.
+- Separate official benchmark evidence from exploratory experiments.
 
-A run is **official** when all of the following hold:
+## Official Run Criteria
 
-| Criterion | Required value |
-|-----------|---------------|
-| `canonical_selector` | `data/canonical_v2_files.json` |
-| `dataset_global_sha256` | matches `artifacts/freeze/v2_freeze_manifest.json → global_sha256` |
-| `prompt_hash` | matches current `chaosbench/eval/prompts.py → get_prompt_hash()` |
-| `max_items` | `null` (full dataset) **or** a documented subset size |
-| `git_commit` | traceable to a tagged commit on `master` |
+A run is considered official only if all conditions below are satisfied.
 
-Runs that fail any criterion are labeled **exploratory** and must not appear
-in paper tables or leaderboard entries.
+| Criterion | Requirement |
+|----------|-------------|
+| Dataset selector | `canonical_selector == data/canonical_v2_files.json` |
+| Dataset fingerprint | `dataset_global_sha256` matches `artifacts/freeze/v2_freeze_manifest.json -> global_sha256` |
+| Prompt provenance | `prompt_version` and `prompt_hash` recorded in `run_manifest.json` |
+| Reproducibility metadata | `run_manifest.json` includes `git_commit`, runtime settings, and run scope |
+| Scope labeling | run is clearly marked as full canonical or documented subset |
 
-> **Note on SHA matching**: `dataset_global_sha256` is now computed by
-> `chaosbench.data.hashing.dataset_global_sha256` (formula:
-> `sha256(path:file_sha:line_count\n)` over sorted files). Both the eval
-> runner and the freeze script use this module, so their hashes agree.
+Runs that fail any criterion are exploratory and must not be used as headline
+paper or leaderboard evidence.
 
----
+## Storage Layout
 
-## 2. Where Runs Are Stored
+### Live Runs (gitignored)
 
-### 2a. Live run data (gitignored)
+`runs/` is for active/local execution only.
 
-```
-runs/
-  <run_id>/
-    run_manifest.json     — metadata + SHA + git commit
-    predictions.jsonl     — per-item model outputs (~18 MB for full run)
-    metrics.json          — aggregate metrics
-    summary.md            — markdown summary
-    .eval_checkpoint.jsonl — resume checkpoint (deleted on completion)
-```
-
-- `runs/` is in `.gitignore` and is never committed directly.
-- The full-scale llama3.1:8b run under `runs/llama31_8b_full/` was committed
-  during initial development; it should be `git rm --cached` before the next PR.
-
-### 2b. Published artifacts (tracked, lightweight)
-
-```
-published_results/
-  runs/
-    <run_id>/
-      run_manifest.json
-      metrics.json
-      summary.md
-      publish_receipt.json
-      [predictions_subset.jsonl.gz]  — subset runs only
-    README.md             — auto-generated index
+```text
+runs/<run_id>/
+  predictions.jsonl
+  metrics.json
+  summary.md
+  run_manifest.json
+  .eval_checkpoint.jsonl   # transient, removed on successful completion
 ```
 
-Only published artifacts are committed to the repository.
-They contain no raw model completions (for full runs) to keep the repo lightweight.
+### Published Runs (tracked)
 
----
+Only lightweight artifacts are tracked in git.
 
-## 3. Publishing a Run
+```text
+published_results/runs/<run_id>/
+  run_manifest.json
+  metrics.json
+  summary.md
+  publish_receipt.json
+  [predictions_subset.jsonl.gz]   # optional, subset runs only
+```
 
-Use the `chaosbench publish-run` command:
+The maintained run registry is `published_results/runs/README.md`.
+
+## Standard Workflow
 
 ```bash
-# Publish a full run (no predictions)
-chaosbench publish-run --run runs/20260220T104105Z_ollama_llama3.1:8b
+# 1) Freeze and fingerprint canonical dataset
+uv run chaosbench freeze
 
-# Publish a 1k subset run with compressed predictions
-chaosbench publish-run \
-    --run runs/20260219T193151Z_ollama_qwen2.5:7b \
-    --compress-predictions
+# 2) Execute evaluation (example)
+uv run chaosbench eval --provider openai --model gpt-4o --dataset canonical --workers 4
 
-# Publish to a custom destination
-chaosbench publish-run \
-    --run runs/20260220T104105Z_ollama_llama3.1:8b \
-    --out published_results/runs/llama31_8b_canonical_v2 \
-    --force
+# 3) Publish lightweight run artifacts
+uv run chaosbench publish-run --run runs/<run_id>
+
+# 4) Audit runs and regenerate paper assets
+uv run python scripts/analyze_runs.py --runs_dir runs --out_dir artifacts/runs_audit --paper_assets_dir artifacts/paper_assets
 ```
 
-After publishing, `published_results/runs/README.md` is automatically regenerated.
+## Dataset Fingerprint Rule
 
----
-
-## 4. Dataset Fingerprinting
-
-The canonical dataset fingerprint is computed by
-**`chaosbench.data.hashing.dataset_global_sha256`**:
-
-```python
-from chaosbench.data.hashing import dataset_global_sha256
-sha = dataset_global_sha256(Path("data/canonical_v2_files.json"))
-```
+Canonical SHA is computed by `chaosbench.data.hashing.dataset_global_sha256`.
 
 Formula:
-```
-sha256(
-    concat over sorted(canonical_files) of:
-        "<rel_path>:<file_sha256>:<line_count>\n"
-)
+
+```text
+sha256(concat over sorted canonical files of "<rel_path>:<file_sha256>:<line_count>\n")
 ```
 
-The `:line_count` component binds the hash to the exact number of dataset
-rows, not just raw bytes.  This formula is used by **both**:
-- `scripts/freeze_v2_dataset.py` (produces `artifacts/freeze/v2_freeze_manifest.json`)
-- `chaosbench/eval/run.py` (stored in `run_manifest.json → dataset_global_sha256`)
+This same rule is used by both freeze artifacts and runtime manifests.
 
----
+## Resume and Checkpointing
 
-## 5. Resume / Checkpointing
+- The runner checkpoints to `.eval_checkpoint.jsonl` during execution.
+- Resume an interrupted run with `--resume <run_id>`.
+- On successful completion, checkpoint files are removed.
 
-The eval runner writes a per-item checkpoint file
-(`.eval_checkpoint.jsonl`) in the run directory every `_CHECKPOINT_INTERVAL`
-items.  To resume an interrupted run:
+## Reporting Rules
 
-```bash
-chaosbench eval \
-    --provider ollama \
-    --model llama3.1:8b \
-    --dataset canonical \
-    --resume 20260220T104105Z_ollama_llama3.1:8b
-```
+- Do not mix archived v1 results with v2 headline reporting.
+- Do not present subset runs as full-canonical runs.
+- Always report run ID, provider/model, and dataset scope.
+- Use audit outputs in `artifacts/runs_audit/` for verification narratives.
 
-On completion the checkpoint file is deleted.
+## Commit Checklist for Published Runs
 
----
+1. Confirm run meets official criteria.
+2. Publish run with `chaosbench publish-run`.
+3. Regenerate audit outputs.
+4. Stage only `published_results/runs/<run_id>/` and related docs.
+5. Use a clear commit message (for example: `results(<model>): add official v2 canonical run`).
 
-## 6. Worker Auto-Selection
+## Related Documents
 
-If `--workers` is not specified (defaults to 1), the CLI automatically selects
-a safe parallelism level based on model size:
-
-| Model parameter count | Default workers |
-|-----------------------|----------------|
-| ≤ 8B  | 4 |
-| 14B – 13B | 2 |
-| ≥ 30B | 2 |
-
-Override with `--workers N` at any time.
-
----
-
-## 7. Audit and Validation
-
-After every official run:
-
-```bash
-python scripts/analyze_runs.py --runs_dir runs --out_dir artifacts/runs_audit
-# or
-chaosbench analyze-runs
-```
-
-This produces `artifacts/runs_audit/RUNS_AUDIT.md` with:
-- SHA reconciliation verdict (OFFICIAL / EXPLORATORY)
-- Bias & confusion matrix (LABEL-BIASED / OK)
-- Per-family metrics with Wilson CIs for N < 100
-- What-could-have-gone-wrong checklist
-
-Paper tables are written to `artifacts/paper_assets/`.
-
----
-
-## 8. Commit Checklist for a New Official Run
-
-1. `chaosbench eval ...` — run evaluation
-2. Verify `artifacts/runs_audit/RUNS_AUDIT.md` shows SHA = OFFICIAL
-3. `chaosbench publish-run --run runs/<id>` — publish lightweight artifacts
-4. `git add published_results/runs/<id>/` — stage artifacts
-5. `git commit -m "results(<model>): add official v2 canonical run"`
-6. Open PR; link to `RUNS_AUDIT.md` section in PR description
+- `docs/EVAL_PROTOCOL.md`
+- `docs/RESULTS.md`
+- `docs/DATASET.md`
