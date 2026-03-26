@@ -74,7 +74,7 @@ uv run python scripts/pre_freeze_check.py
 
 **Run evaluation:**
 ```bash
-uv run python eval_chaosbench.py --config configs/eval/gpt4_zeroshot.yaml
+uv run chaosbench eval --provider mock --dataset canonical --max-items 50
 ```
 
 **Check repo hygiene:**

@@ -56,7 +56,7 @@ mkdir -p "$OUTPUT_DIR"
 cd $SLURM_SUBMIT_DIR || exit 1
 
 # Run benchmark
-python run_benchmark.py \
+python scripts/run_benchmark.py \
     --model "$MODEL" \
     --mode "$MODE" \
     --workers "$WORKERS" \

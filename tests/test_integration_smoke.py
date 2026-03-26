@@ -12,14 +12,10 @@ Tests cover:
 """
 
 import pytest
-import sys
-import os
 from dataclasses import dataclass
 from typing import Optional
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from eval_chaosbench import compute_summary, EvalResult
+from chaosbench.eval.metrics import compute_summary, EvalResult
 
 
 def make_result(
@@ -347,19 +343,13 @@ class TestBiasErrorIntegration:
         """Bias items should be correctly counted in bias_error metric."""
         results = [
             # chaos_random bias: 1 correct, 1 incorrect
-            make_result(
-                "q1", pred_norm="YES", gold="YES", bias_family="chaos_random"
-            ),
+            make_result("q1", pred_norm="YES", gold="YES", bias_family="chaos_random"),
             make_result(
                 "q2", pred_norm="NO", gold="YES", bias_family="chaos_random"
             ),  # Error
             # determ_random bias: 2 correct
-            make_result(
-                "q3", pred_norm="NO", gold="NO", bias_family="determ_random"
-            ),
-            make_result(
-                "q4", pred_norm="YES", gold="YES", bias_family="determ_random"
-            ),
+            make_result("q3", pred_norm="NO", gold="NO", bias_family="determ_random"),
+            make_result("q4", pred_norm="YES", gold="YES", bias_family="determ_random"),
         ]
 
         summary = compute_summary(results)

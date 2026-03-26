@@ -52,7 +52,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["chaosbench", "chaosbench.data", "chaosbench.data.indicators", "chaosbench.data.systems", "chaosbench.logic", "chaosbench.tasks", "chaosbench.eval", "chaosbench.eval.providers", "chaosbench.models", "chaosbench.models.adapters", "chaosbench.quality", "chaosbench.repair"]
-py-modules = ["eval_chaosbench", "clients", "run_benchmark"]
 
 [project.scripts]
 chaosbench = "chaosbench.cli:main"

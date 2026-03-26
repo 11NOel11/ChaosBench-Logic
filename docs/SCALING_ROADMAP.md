@@ -70,7 +70,7 @@ Many original v2.x scaling targets have been surpassed.
 
 ### Deliverables
 
-- Shard-aware runner CLI (`run_benchmark.py`).
+- Shard-aware runner CLI (`scripts/run_benchmark.py` legacy runner + `chaosbench eval`).
 - Shard-aware cluster script (`scripts/run_cluster_eval.py`).
 - Canonical merge utility (`scripts/merge_sharded_runs.py`).
 

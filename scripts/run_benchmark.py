@@ -318,8 +318,12 @@ Supported models: gpt4, claude3, gemini, llama3, mixtral, openhermes, dummy, all
     parser.add_argument("--num-shards", type=int, default=1)
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--max-items", type=int, default=None)
-    parser.add_argument("--cache-dir", type=str, default=None, help="Directory for response cache")
-    parser.add_argument("--split", type=str, default=None, help="Split name for data filtering")
+    parser.add_argument(
+        "--cache-dir", type=str, default=None, help="Directory for response cache"
+    )
+    parser.add_argument(
+        "--split", type=str, default=None, help="Split name for data filtering"
+    )
     args = parser.parse_args()
 
     if args.num_shards < 1:

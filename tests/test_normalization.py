@@ -12,12 +12,8 @@ These tests ensure robustness across diverse model output formats.
 """
 
 import pytest
-import sys
-import os
 
-# Add parent directory to path to import eval_chaosbench
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from eval_chaosbench import normalize_label
+from chaosbench.eval.metrics import normalize_label
 
 
 class TestStandardFormats:

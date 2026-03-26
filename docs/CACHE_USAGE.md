@@ -13,10 +13,10 @@ Enable caching by providing the `--cache-dir` argument:
 
 ```bash
 # Basic usage with cache
-python run_benchmark.py --model gpt4 --mode zeroshot --cache-dir ./cache
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --cache-dir ./cache
 
 # Subsequent runs will use cached responses
-python run_benchmark.py --model gpt4 --mode zeroshot --cache-dir ./cache
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --cache-dir ./cache
 ```
 
 ### Python API
@@ -123,13 +123,13 @@ The cache uses SQLite with `check_same_thread=False` for thread-safe access duri
 
 ```bash
 # First run - populates cache
-python run_benchmark.py --model gpt4 --mode zeroshot --cache-dir ./gpt4_cache --max-items 100
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --cache-dir ./gpt4_cache --max-items 100
 
 # Debug run - uses cache for completed items
-python run_benchmark.py --model gpt4 --mode zeroshot --cache-dir ./gpt4_cache --max-items 100
+uv run python scripts/run_benchmark.py --model gpt4 --mode zeroshot --cache-dir ./gpt4_cache --max-items 100
 
 # Different mode - separate cache entries
-python run_benchmark.py --model gpt4 --mode cot --cache-dir ./gpt4_cache --max-items 100
+uv run python scripts/run_benchmark.py --model gpt4 --mode cot --cache-dir ./gpt4_cache --max-items 100
 ```
 
 ## Troubleshooting
