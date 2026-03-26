@@ -5,7 +5,7 @@
 <p>
   <a href="https://github.com/11NOel11/ChaosBench-Logic/actions"><img src="https://img.shields.io/badge/tests-863%20passed-2ea44f" alt="Tests"></a>
   <a href="./pyproject.toml"><img src="https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python"></a>
-  <a href="https://github.com/11NOel11/ChaosBench-Logic/releases/tag/v2.0.0"><img src="https://img.shields.io/badge/release-v2.0.0-b5651d" alt="Release"></a>
+  <a href="https://github.com/11NOel11/ChaosBench-Logic/tree/v2.0.0"><img src="https://img.shields.io/badge/release-v2.0.0-b5651d" alt="Release"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="License"></a>
 </p>
 
