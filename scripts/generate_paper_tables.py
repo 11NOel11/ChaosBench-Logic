@@ -15,10 +15,10 @@ from pathlib import Path
 
 
 def load_all_questions(data_dir: str):
-    """Load all v2.2 questions from JSONL files."""
+    """Load all canonical v2 questions from JSONL files."""
     questions = []
     for fname in sorted(os.listdir(data_dir)):
-        if fname.startswith('v22_') and fname.endswith('.jsonl'):
+        if fname.startswith("v22_") and fname.endswith(".jsonl"):
             with open(os.path.join(data_dir, fname)) as f:
                 for line in f:
                     if line.strip():
@@ -28,12 +28,12 @@ def load_all_questions(data_dir: str):
 
 def generate_family_table(questions, output_dir):
     """Generate per-family counts and balance table."""
-    family_stats = defaultdict(lambda: {'count': 0, 'TRUE': 0, 'FALSE': 0})
+    family_stats = defaultdict(lambda: {"count": 0, "TRUE": 0, "FALSE": 0})
 
     for q in questions:
-        family = q['type']
-        family_stats[family]['count'] += 1
-        family_stats[family][q['ground_truth']] += 1
+        family = q["type"]
+        family_stats[family]["count"] += 1
+        family_stats[family][q["ground_truth"]] += 1
 
     # Markdown table
     md_lines = [
@@ -47,16 +47,18 @@ def generate_family_table(questions, output_dir):
 
     for family in sorted(family_stats.keys()):
         stats = family_stats[family]
-        count = stats['count']
-        true_count = stats['TRUE']
-        false_count = stats['FALSE']
+        count = stats["count"]
+        true_count = stats["TRUE"]
+        false_count = stats["FALSE"]
         true_pct = true_count / count * 100 if count > 0 else 0
         balance = "Good" if 30 <= true_pct <= 70 else "Skewed"
 
         md_lines.append(
             f"| {family} | {count} | {true_count} | {false_count} | {true_pct:.1f}% | {balance} |"
         )
-        csv_lines.append(f"{family},{count},{true_count},{false_count},{true_pct:.1f},{balance}")
+        csv_lines.append(
+            f"{family},{count},{true_count},{false_count},{true_pct:.1f},{balance}"
+        )
 
     # Write files
     with open(os.path.join(output_dir, "family_stats.md"), "w") as f:
@@ -72,12 +74,12 @@ def generate_split_table(questions, output_dir):
     """Generate per-split counts table."""
     from chaosbench.data.splits import assign_split_v22
 
-    split_stats = defaultdict(lambda: {'count': 0, 'TRUE': 0, 'FALSE': 0})
+    split_stats = defaultdict(lambda: {"count": 0, "TRUE": 0, "FALSE": 0})
 
     for q in questions:
         split = assign_split_v22(q)
-        split_stats[split]['count'] += 1
-        split_stats[split][q['ground_truth']] += 1
+        split_stats[split]["count"] += 1
+        split_stats[split][q["ground_truth"]] += 1
 
     # Markdown table
     md_lines = [
@@ -91,9 +93,9 @@ def generate_split_table(questions, output_dir):
 
     for split in sorted(split_stats.keys()):
         stats = split_stats[split]
-        count = stats['count']
-        true_count = stats['TRUE']
-        false_count = stats['FALSE']
+        count = stats["count"]
+        true_count = stats["TRUE"]
+        false_count = stats["FALSE"]
         true_pct = true_count / count * 100 if count > 0 else 0
 
         md_lines.append(
@@ -116,10 +118,12 @@ def generate_system_coverage_table(questions, output_dir):
     # Count per system
     system_counts = defaultdict(int)
     for q in questions:
-        system_counts[q['system_id']] += 1
+        system_counts[q["system_id"]] += 1
 
     # Filter real systems (not "vs" synthetic)
-    real_systems = {sid: count for sid, count in system_counts.items() if '_vs_' not in sid}
+    real_systems = {
+        sid: count for sid, count in system_counts.items() if "_vs_" not in sid
+    }
 
     # Compute stats
     counts = list(real_systems.values())
@@ -129,10 +133,10 @@ def generate_system_coverage_table(questions, output_dir):
 
     # Coverage bins
     bins = {
-        '<10': sum(1 for c in counts if c < 10),
-        '10-49': sum(1 for c in counts if 10 <= c < 50),
-        '50-99': sum(1 for c in counts if 50 <= c < 100),
-        '100+': sum(1 for c in counts if c >= 100),
+        "<10": sum(1 for c in counts if c < 10),
+        "10-49": sum(1 for c in counts if 10 <= c < 50),
+        "50-99": sum(1 for c in counts if 50 <= c < 100),
+        "100+": sum(1 for c in counts if c >= 100),
     }
 
     # Markdown table
@@ -199,7 +203,9 @@ def generate_duplicate_summary_table(output_dir):
 def main():
     parser = argparse.ArgumentParser(description="Generate publication-ready tables")
     parser.add_argument("--data-dir", default="data", help="Path to data directory")
-    parser.add_argument("--output-dir", default="reports/paper_assets", help="Output directory")
+    parser.add_argument(
+        "--output-dir", default="reports/paper_assets", help="Output directory"
+    )
     args = parser.parse_args()
 
     # Create output directory

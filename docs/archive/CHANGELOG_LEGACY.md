@@ -1,4 +1,4 @@
-# Changelog
+# Legacy Changelog
 
 All notable changes to ChaosBench-Logic are documented in this file.
 

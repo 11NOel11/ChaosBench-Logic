@@ -6,7 +6,7 @@ into evaluation subsets with controlled system overlap.
 v2.1 Protocol (batch-based):
     Assigns items to splits based on batch membership.
 
-v2.2 Protocol (hybrid system-based + template-based):
+Canonical v2 protocol (hybrid system-based + template-based):
     1. Heldout systems: reserved system IDs (15 dysts systems)
     2. Heldout templates: reserved template hashes
     3. Hard: by construction (multi-hop >=3 steps, FOL >=3 premises, adversarial)
@@ -64,7 +64,7 @@ VALID_SPLITS = {"core", "robustness", "heldout_systems", "heldout_templates", "h
 CORE_SYSTEM_PREFIX_EXCLUDE = "dysts_"
 
 # ============================================================================
-# v2.2 Heldout System IDs (15 dysts systems)
+# Canonical v2 heldout system IDs (15 dysts systems)
 # ============================================================================
 
 HELDOUT_SYSTEM_IDS: Set[str] = {
@@ -92,7 +92,7 @@ HELDOUT_TEMPLATE_HASHES: Set[str] = set()
 
 
 # ============================================================================
-# v2.2 Hybrid Split Assignment
+# Canonical v2 hybrid split assignment
 # ============================================================================
 
 HARD_FAMILIES = {
@@ -133,8 +133,7 @@ def _is_hard_by_construction(item: Dict[str, Any]) -> bool:
     if item_type == "multi_hop":
         question = item.get("question", "")
         # Heuristic: 3-hop questions mention 3+ predicate transitions
-        if ("therefore" in question.lower() and
-                question.lower().count("must be") >= 2):
+        if "therefore" in question.lower() and question.lower().count("must be") >= 2:
             return True
 
     # FOL with >=3 predicates in assignment
@@ -147,7 +146,7 @@ def _is_hard_by_construction(item: Dict[str, Any]) -> bool:
 
 
 def assign_split_v22(item: Dict[str, Any]) -> str:
-    """Assign a split to an item using v2.2 hybrid protocol.
+    """Assign a split to an item using canonical v2 hybrid protocol.
 
     Args:
         item: Question dict with at least 'system_id', 'type', 'question' fields.
@@ -163,9 +162,7 @@ def assign_split_v22(item: Dict[str, Any]) -> str:
 
     # 2. Heldout templates: reserved template hashes
     if HELDOUT_TEMPLATE_HASHES:
-        template_hash = _hash_template(
-            item.get("question", ""), system_id
-        )
+        template_hash = _hash_template(item.get("question", ""), system_id)
         if template_hash in HELDOUT_TEMPLATE_HASHES:
             return "heldout_templates"
 
@@ -183,8 +180,9 @@ def assign_split_v22(item: Dict[str, Any]) -> str:
 
 
 # ============================================================================
-# Common functions (work with both v2.1 and v2.2)
+# Common functions (work with both v2.1 and canonical v2)
 # ============================================================================
+
 
 def get_split_for_batch(batch_name: str) -> str:
     """Return the split name for a batch (v2.1 protocol).
@@ -213,7 +211,7 @@ def assign_splits(
     Args:
         data_dir: Directory containing batch JSONL files.
         seed: Random seed (used for deterministic heldout_templates assignment).
-        use_v22: If True, use v2.2 hybrid protocol instead of batch-based.
+        use_v22: If True, use canonical v2 hybrid protocol instead of batch-based.
 
     Returns:
         Dict mapping split name to list of item dicts.
@@ -256,20 +254,12 @@ def assign_splits(
 
 def _collect_system_ids(items: List[Dict[str, Any]]) -> Set[str]:
     """Extract unique system IDs from a list of items."""
-    return {
-        item.get("system_id", "")
-        for item in items
-        if item.get("system_id")
-    }
+    return {item.get("system_id", "") for item in items if item.get("system_id")}
 
 
 def _collect_item_ids(items: List[Dict[str, Any]]) -> Set[str]:
     """Extract unique item IDs from a list of items."""
-    return {
-        item.get("id", "")
-        for item in items
-        if item.get("id")
-    }
+    return {item.get("id", "") for item in items if item.get("id")}
 
 
 def validate_splits(
@@ -299,7 +289,7 @@ def validate_splits(
 
     split_names = list(all_ids_by_split.keys())
     for i, name_a in enumerate(split_names):
-        for name_b in split_names[i + 1:]:
+        for name_b in split_names[i + 1 :]:
             overlap = all_ids_by_split[name_a] & all_ids_by_split[name_b]
             if overlap:
                 sample = list(overlap)[:3]
@@ -315,13 +305,13 @@ def validate_splits(
     # Check that heldout system IDs don't appear in core
     leakage = core_systems & HELDOUT_SYSTEM_IDS
     if leakage:
-        errors.append(
-            f"Heldout system leakage into core: {sorted(leakage)[:3]}"
-        )
+        errors.append(f"Heldout system leakage into core: {sorted(leakage)[:3]}")
 
     # Also check the old dysts_ prefix heuristic
-    dysts_in_core = {s for s in core_systems if s.startswith(CORE_SYSTEM_PREFIX_EXCLUDE)}
-    # Filter out systems not in HELDOUT_SYSTEM_IDS (they're allowed in core for v2.2)
+    dysts_in_core = {
+        s for s in core_systems if s.startswith(CORE_SYSTEM_PREFIX_EXCLUDE)
+    }
+    # Filter out systems not in HELDOUT_SYSTEM_IDS (they are allowed in core)
     dysts_in_core_heldout = dysts_in_core & HELDOUT_SYSTEM_IDS
     if dysts_in_core_heldout:
         errors.append(
@@ -373,9 +363,7 @@ def compute_split_stats(
             "content_hash": content_hash,
         }
 
-    stats["total_items"] = sum(
-        stats[s]["item_count"] for s in VALID_SPLITS
-    )
+    stats["total_items"] = sum(stats[s]["item_count"] for s in VALID_SPLITS)
 
     return stats
 

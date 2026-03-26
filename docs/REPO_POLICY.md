@@ -18,7 +18,7 @@ outputs should go, and how to regenerate paper assets and reports.
 | Configuration | `configs/**/*.yaml`, `pyproject.toml`, `uv.lock` |
 | System definitions | `systems/**/*.json` |
 | Canonical documentation | `docs/*.md` (not `docs/archive/`) |
-| Root documentation | `README.md`, `DATASET_CARD.md`, `CHANGELOG.md`, `CITATION.cff` |
+| Root documentation | `README.md`, `DATASET_CARD.md`, `CITATION.cff`, `SECURITY.md` |
 | Licensing | `LICENSE`, `LICENSE_DATA` |
 | Published results | `published_results/` |
 | CI configuration | `.github/workflows/` |
@@ -32,6 +32,7 @@ value but are not canonical documentation:
 - `docs/archive/V2_COMPLETION_SUMMARY.md`
 - `docs/archive/V2_UPGRADE_SUMMARY.md`
 - `docs/archive/ONTOLOGY_V2_EXTENSION.md`
+- `docs/archive/CHANGELOG_LEGACY.md`
 
 Add new archive entries when completing a major version cycle.
 

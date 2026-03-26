@@ -46,7 +46,7 @@ class TestGetFOLRules:
         """
         Test Chaotic axiom matches user specification.
 
-        From Phase 2 spec (v2.3 extended):
+        From the canonical v2 extended ontology specification:
         - Requires: Deterministic, PosLyap, Sensitive, PointUnpredictable, StatPredictable,
                     Mixing, StrongMixing
         - Excludes: Random, Periodic, QuasiPeriodic, FixedPointAttr
@@ -55,7 +55,7 @@ class TestGetFOLRules:
         rules = get_fol_rules()
         chaotic = rules["Chaotic"]
 
-        # Check required predicates are a superset of the core v2.2 set
+        # Check required predicates are a superset of the core predicate set
         core_requires = {
             "Deterministic",
             "PosLyap",
@@ -66,8 +66,9 @@ class TestGetFOLRules:
         }
         expected_excludes = {"Random", "Periodic", "QuasiPeriodic", "FixedPointAttr"}
 
-        assert core_requires.issubset(set(chaotic["requires"])), \
+        assert core_requires.issubset(set(chaotic["requires"])), (
             f"Chaotic missing core requires: {core_requires - set(chaotic['requires'])}"
+        )
         assert set(chaotic["excludes"]) == expected_excludes
         # Verify StrangeAttr is NOT required
         assert "StrangeAttr" not in chaotic["requires"]
@@ -167,23 +168,43 @@ class TestLoadSystemOntology:
         assert cm["Random"] == False
 
     def test_all_systems_have_required_predicates(self):
-        """Each system should have at least the 27 predicates defined (v2.3)."""
+        """Each system should have at least the 27 canonical v2 predicates."""
         ontology = load_system_ontology("systems")
-        # Core 15 predicates (v2.2)
+        # Core predicate set
         required_predicates = {
-            "Chaotic", "Deterministic", "PosLyap", "Sensitive", "StrangeAttr",
-            "PointUnpredictable", "StatPredictable", "QuasiPeriodic", "Random",
-            "FixedPointAttr", "Periodic", "Dissipative", "Bounded", "Mixing", "Ergodic",
-            # v2.3 new predicates
-            "HyperChaotic", "Conservative", "HighDimensional", "Multifractal",
-            "HighDimSystem", "ContinuousTime", "DiscreteTime", "DelaySystem",
-            "Forced", "Autonomous", "StrongMixing", "WeakMixing",
+            "Chaotic",
+            "Deterministic",
+            "PosLyap",
+            "Sensitive",
+            "StrangeAttr",
+            "PointUnpredictable",
+            "StatPredictable",
+            "QuasiPeriodic",
+            "Random",
+            "FixedPointAttr",
+            "Periodic",
+            "Dissipative",
+            "Bounded",
+            "Mixing",
+            "Ergodic",
+            # Structural extension predicates
+            "HyperChaotic",
+            "Conservative",
+            "HighDimensional",
+            "Multifractal",
+            "HighDimSystem",
+            "ContinuousTime",
+            "DiscreteTime",
+            "DelaySystem",
+            "Forced",
+            "Autonomous",
+            "StrongMixing",
+            "WeakMixing",
         }
 
         for system_id, truth_assignment in ontology.items():
             missing = required_predicates - set(truth_assignment.keys())
-            assert not missing, \
-                f"System {system_id} missing predicates: {missing}"
+            assert not missing, f"System {system_id} missing predicates: {missing}"
 
     def test_handles_missing_directory(self):
         """Should handle missing directory gracefully."""
@@ -421,9 +442,9 @@ class TestFOLIntegration:
 
             # Ground truth should never violate FOL rules
             violations = check_fol_violations(predictions)
-            assert (
-                violations == []
-            ), f"Ground truth for {system_id} violates FOL: {violations}"
+            assert violations == [], (
+                f"Ground truth for {system_id} violates FOL: {violations}"
+            )
 
 
 # Summary test

@@ -2,11 +2,11 @@
 
 ## 1. Overview
 
-This document specifies the canonical evaluation protocol for producing paper-quality results on ChaosBench-Logic v2.2.
+This document specifies the canonical evaluation protocol for producing paper-quality results on ChaosBench-Logic v2.0.0.
 
 | Item | Value |
 |------|-------|
-| Dataset version | v2.2.0 |
+| Dataset version | v2.0.0 |
 | Canonical selector | `data/canonical_v2_files.json` |
 | Standard subsets | `data/subsets/subset_1k_armored.jsonl`, `data/subsets/subset_5k_armored.jsonl` |
 | Family diagnostics | `data/subsets/subset_family_suites/<family>.jsonl` |
@@ -23,7 +23,7 @@ This document specifies the canonical evaluation protocol for producing paper-qu
 |------|---------|---------|
 | **P0** | Sanity smoke — verify pipeline works end-to-end | `subset_1k_armored`, `--max-items 50` |
 | **P1** | 5k armored baselines — compare all models head-to-head | `subset_5k_armored` |
-| **P2** | Full canonical — top 2–3 models only, for paper | canonical (all ~25k items) |
+| **P2** | Full canonical — top 2–3 models only, for paper | canonical (all 40,886 v2 items) |
 | **P3** | Large model — qwen2.5:32b if 32 GB VRAM available | canonical |
 | **P4** | Family diagnostics — per-family deep dive | `subset_family_suites/<family>` |
 
@@ -103,7 +103,7 @@ Every paper-quality run must satisfy all of the following before being included 
 
 Verification command:
 ```bash
-python scripts/freeze_v2_dataset.py   # re-compute SHA → compare with manifest
+uv run python scripts/freeze_v2_dataset.py   # re-compute SHA -> compare with manifest
 ```
 
 ---

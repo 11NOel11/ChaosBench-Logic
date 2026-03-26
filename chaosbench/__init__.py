@@ -24,7 +24,12 @@ from chaosbench.eval.belief_dynamics import (
     belief_divergence_curve,
     instability_score,
 )
-from chaosbench.models.prompt import ModelConfig, ModelClient, DummyEchoModel, make_model_client
+from chaosbench.models.prompt import (
+    ModelConfig,
+    ModelClient,
+    DummyEchoModel,
+    make_model_client,
+)
 from chaosbench.data.indicators.zero_one_test import zero_one_test
 from chaosbench.data.indicators.permutation_entropy import permutation_entropy
 from chaosbench.data.indicators.megno import compute_megno
@@ -35,11 +40,20 @@ from chaosbench.tasks.indicator_diagnostics import IndicatorDiagnosticTask
 from chaosbench.data.adversarial import generate_adversarial_set, CONFUSABLE_PAIRS
 from chaosbench.tasks.hard_split import identify_hard_items, create_hard_split
 from chaosbench.tasks.fol_inference import FOLInferenceTask, generate_fol_questions
-from chaosbench.tasks.extended_systems import ExtendedSystemsTask, generate_extended_system_questions
-from chaosbench.tasks.cross_indicator import CrossIndicatorTask, generate_cross_indicator_questions
+from chaosbench.tasks.extended_systems import (
+    ExtendedSystemsTask,
+    generate_extended_system_questions,
+)
+from chaosbench.tasks.cross_indicator import (
+    CrossIndicatorTask,
+    generate_cross_indicator_questions,
+)
 from chaosbench.tasks.atomic import AtomicTask, generate_atomic_questions
 from chaosbench.tasks.multi_hop import MultiHopTask, generate_multi_hop_questions
-from chaosbench.tasks.perturbation_robustness import PerturbationRobustnessTask, generate_perturbation_questions
+from chaosbench.tasks.perturbation_robustness import (
+    PerturbationRobustnessTask,
+    generate_perturbation_questions,
+)
 from chaosbench.data.splits import assign_splits, validate_splits, get_split_items
 from chaosbench.eval.cache import ResponseCache
 from chaosbench.eval.metrics import compute_axis_metrics, AxisMetricResult

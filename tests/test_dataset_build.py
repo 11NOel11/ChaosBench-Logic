@@ -7,7 +7,10 @@ import pytest
 
 from chaosbench.data.schemas import Question
 from chaosbench.data.bifurcations import BIFURCATION_DATA
-from chaosbench.tasks.regime_transition import RegimeTransitionTask, SYSTEM_DISPLAY_NAMES
+from chaosbench.tasks.regime_transition import (
+    RegimeTransitionTask,
+    SYSTEM_DISPLAY_NAMES,
+)
 from chaosbench.tasks.fol_inference import generate_fol_questions
 from chaosbench.tasks.extended_systems import generate_extended_system_questions
 from chaosbench.tasks.cross_indicator import generate_cross_indicator_questions
@@ -33,6 +36,7 @@ class TestBifurcationDataExpansion:
     def test_vdp_is_nonchaotic(self):
         """VDP transitions do not contain any chaotic regimes."""
         from chaosbench.data.bifurcations import is_chaotic_regime
+
         vdp = BIFURCATION_DATA["vdp"]
         for t in vdp.transitions:
             assert not is_chaotic_regime(t.regime), (
@@ -64,6 +68,7 @@ class TestQuestionToJSONLConversion:
     def test_basic_conversion(self):
         """Converts YES/NO to TRUE/FALSE correctly."""
         from scripts.build_v2_dataset import question_to_jsonl
+
         q = Question(
             item_id="test_001",
             question_text="Is the system chaotic?",
@@ -82,6 +87,7 @@ class TestQuestionToJSONLConversion:
     def test_no_conversion(self):
         """NO maps to FALSE."""
         from scripts.build_v2_dataset import question_to_jsonl
+
         q = Question(
             item_id="test_002",
             question_text="Is it periodic?",
@@ -98,18 +104,19 @@ class TestJSONLValidation:
 
     @pytest.fixture
     def batch_files(self):
-        """Return paths to canonical v2.2 dataset files."""
+        """Return paths to canonical v2 dataset files."""
         import glob
+
         return sorted(glob.glob("data/v22_*.jsonl"))
 
     def test_batch_files_exist(self, batch_files):
-        """Canonical v2.2 dataset files are present."""
+        """Canonical v2 dataset files are present."""
         assert len(batch_files) >= 10, (
             f"Expected at least 10 v22_*.jsonl files, found {len(batch_files)}"
         )
 
     def test_valid_json_lines(self, batch_files):
-        """Every line in each v2.2 batch file is valid JSON."""
+        """Every line in each canonical v2 batch file is valid JSON."""
         for path in batch_files:
             with open(path, "r") as f:
                 for i, line in enumerate(f, 1):
@@ -146,6 +153,4 @@ class TestJSONLValidation:
                         continue
                     record = json.loads(line)
                     missing = required - set(record.keys())
-                    assert not missing, (
-                        f"{path}:{i} missing fields: {missing}"
-                    )
+                    assert not missing, f"{path}:{i} missing fields: {missing}"

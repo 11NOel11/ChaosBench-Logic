@@ -74,7 +74,7 @@ figures/
 data/batch*.jsonl
 !data/ci_smoke/
 # Note: data/v2_manifest.json is tracked (do NOT ignore)
-# Note: data/v22_*.jsonl are tracked (canonical v2.2 dataset)
+# Note: data/v22_*.jsonl are tracked (canonical v2 dataset)
 
 # Backup directories (local only)
 data/backup_*/

@@ -86,12 +86,12 @@ PREDICATE_DISPLAY = {
     "Random": "random",
     "FixedPointAttr": "having a fixed point attractor",
     "Periodic": "periodic",
-    # v2.2 Extension: New predicates for 4-5 hop chains
+    # Canonical v2 extension: predicates for longer reasoning chains
     "Dissipative": "dissipative (volume-contracting)",
     "Bounded": "bounded",
     "Mixing": "mixing",
     "Ergodic": "ergodic",
-    # v2.3 Extension: 12 new predicates from metadata dimensions
+    # Canonical v2 structural extension predicates
     "HyperChaotic": "hyperchaotic",
     "Conservative": "conservative (Hamiltonian)",
     "HighDimensional": "high-dimensional (high Kaplan-Yorke dimension)",
@@ -132,7 +132,7 @@ def _load_systems(systems_dir: str = "systems") -> Dict[str, Dict]:
 
 
 def _find_2hop_chains(
-    rules: Dict[str, Dict[str, List[str]]]
+    rules: Dict[str, Dict[str, List[str]]],
 ) -> List[Tuple[str, str, str, str]]:
     """Find all valid 2-hop reasoning chains in the FOL rules.
 
@@ -165,7 +165,7 @@ def _find_2hop_chains(
 
 
 def _find_3hop_chains(
-    rules: Dict[str, Dict[str, List[str]]]
+    rules: Dict[str, Dict[str, List[str]]],
 ) -> List[Tuple[str, str, str, str, str]]:
     """Find all valid 3-hop reasoning chains in the FOL rules.
 
@@ -202,7 +202,7 @@ def _find_3hop_chains(
 
 
 def _find_4hop_chains(
-    rules: Dict[str, Dict[str, List[str]]]
+    rules: Dict[str, Dict[str, List[str]]],
 ) -> List[Tuple[str, str, str, str, str, str]]:
     """Find all valid 4-hop reasoning chains in the FOL rules.
 
@@ -329,19 +329,21 @@ def _generate_5hop_questions(
                 )
                 ground_truth = "NO"
 
-            questions.append(Question(
-                item_id=f"mhop_{counter[0]:04d}",
-                question_text=question_text,
-                system_id=sid,
-                task_family="multi_hop",
-                ground_truth=ground_truth,
-                predicates=[p, q, r, s, t, u],
-                metadata={
-                    "hop_count": 5,
-                    "chain": [p, q, r, s, t, u],
-                    "reasoning_type": chain_type,
-                },
-            ))
+            questions.append(
+                Question(
+                    item_id=f"mhop_{counter[0]:04d}",
+                    question_text=question_text,
+                    system_id=sid,
+                    task_family="multi_hop",
+                    ground_truth=ground_truth,
+                    predicates=[p, q, r, s, t, u],
+                    metadata={
+                        "hop_count": 5,
+                        "chain": [p, q, r, s, t, u],
+                        "reasoning_type": chain_type,
+                    },
+                )
+            )
 
     rng.shuffle(questions)
     return questions
@@ -397,19 +399,21 @@ def _generate_2hop_questions(
                 )
                 ground_truth = "NO"
 
-            questions.append(Question(
-                item_id=f"mhop_{counter[0]:04d}",
-                question_text=question_text,
-                system_id=sid,
-                task_family="multi_hop",
-                ground_truth=ground_truth,
-                predicates=[p, q, r],
-                metadata={
-                    "hop_count": 2,
-                    "chain": [p, q, r],
-                    "reasoning_type": chain_type,
-                },
-            ))
+            questions.append(
+                Question(
+                    item_id=f"mhop_{counter[0]:04d}",
+                    question_text=question_text,
+                    system_id=sid,
+                    task_family="multi_hop",
+                    ground_truth=ground_truth,
+                    predicates=[p, q, r],
+                    metadata={
+                        "hop_count": 2,
+                        "chain": [p, q, r],
+                        "reasoning_type": chain_type,
+                    },
+                )
+            )
 
     rng.shuffle(questions)
     return questions
@@ -471,19 +475,21 @@ def _generate_3hop_questions(
                 )
                 ground_truth = "NO"
 
-            questions.append(Question(
-                item_id=f"mhop_{counter[0]:04d}",
-                question_text=question_text,
-                system_id=sid,
-                task_family="multi_hop",
-                ground_truth=ground_truth,
-                predicates=[p, q, r, s],
-                metadata={
-                    "hop_count": 3,
-                    "chain": [p, q, r, s],
-                    "reasoning_type": chain_type,
-                },
-            ))
+            questions.append(
+                Question(
+                    item_id=f"mhop_{counter[0]:04d}",
+                    question_text=question_text,
+                    system_id=sid,
+                    task_family="multi_hop",
+                    ground_truth=ground_truth,
+                    predicates=[p, q, r, s],
+                    metadata={
+                        "hop_count": 3,
+                        "chain": [p, q, r, s],
+                        "reasoning_type": chain_type,
+                    },
+                )
+            )
 
     rng.shuffle(questions)
     return questions
@@ -548,19 +554,21 @@ def _generate_4hop_questions(
                 )
                 ground_truth = "NO"
 
-            questions.append(Question(
-                item_id=f"mhop_{counter[0]:04d}",
-                question_text=question_text,
-                system_id=sid,
-                task_family="multi_hop",
-                ground_truth=ground_truth,
-                predicates=[p, q, r, s, t],
-                metadata={
-                    "hop_count": 4,
-                    "chain": [p, q, r, s, t],
-                    "reasoning_type": chain_type,
-                },
-            ))
+            questions.append(
+                Question(
+                    item_id=f"mhop_{counter[0]:04d}",
+                    question_text=question_text,
+                    system_id=sid,
+                    task_family="multi_hop",
+                    ground_truth=ground_truth,
+                    predicates=[p, q, r, s, t],
+                    metadata={
+                        "hop_count": 4,
+                        "chain": [p, q, r, s, t],
+                        "reasoning_type": chain_type,
+                    },
+                )
+            )
 
     rng.shuffle(questions)
     return questions
@@ -608,19 +616,21 @@ def _generate_contrapositive_fallacy_questions(
                     f"whether it is {q_disp}?"
                 )
 
-                questions.append(Question(
-                    item_id=f"mhop_{counter[0]:04d}",
-                    question_text=question_text,
-                    system_id=sid,
-                    task_family="multi_hop",
-                    ground_truth="NO",
-                    predicates=[p, q],
-                    metadata={
-                        "hop_count": 2,
-                        "chain": [p, q],
-                        "reasoning_type": "contrapositive_fallacy",
-                    },
-                ))
+                questions.append(
+                    Question(
+                        item_id=f"mhop_{counter[0]:04d}",
+                        question_text=question_text,
+                        system_id=sid,
+                        task_family="multi_hop",
+                        ground_truth="NO",
+                        predicates=[p, q],
+                        metadata={
+                            "hop_count": 2,
+                            "chain": [p, q],
+                            "reasoning_type": "contrapositive_fallacy",
+                        },
+                    )
+                )
 
     rng.shuffle(questions)
     return questions
@@ -667,19 +677,21 @@ def _generate_modus_tollens_questions(
                     f"being {q_disp}, can it be {p_disp}?"
                 )
 
-                questions.append(Question(
-                    item_id=f"mhop_{counter[0]:04d}",
-                    question_text=question_text,
-                    system_id=sid,
-                    task_family="multi_hop",
-                    ground_truth="NO",
-                    predicates=[p, q],
-                    metadata={
-                        "hop_count": 2,
-                        "chain": [p, q],
-                        "reasoning_type": "modus_tollens",
-                    },
-                ))
+                questions.append(
+                    Question(
+                        item_id=f"mhop_{counter[0]:04d}",
+                        question_text=question_text,
+                        system_id=sid,
+                        task_family="multi_hop",
+                        ground_truth="NO",
+                        predicates=[p, q],
+                        metadata={
+                            "hop_count": 2,
+                            "chain": [p, q],
+                            "reasoning_type": "modus_tollens",
+                        },
+                    )
+                )
 
     rng.shuffle(questions)
     return questions
@@ -741,19 +753,21 @@ def _generate_affirmative_chain_questions(
                         f"Systems that are {q_disp} must be {r_disp}. Is the {name} {r_disp}?"
                     )
 
-                    questions.append(Question(
-                        item_id=f"mhop_{counter[0]:04d}",
-                        question_text=question_text,
-                        system_id=sid,
-                        task_family="multi_hop",
-                        ground_truth="YES",
-                        predicates=[p, q, r],
-                        metadata={
-                            "hop_count": 2,
-                            "chain": [p, q, r],
-                            "reasoning_type": "affirmative_2hop",
-                        },
-                    ))
+                    questions.append(
+                        Question(
+                            item_id=f"mhop_{counter[0]:04d}",
+                            question_text=question_text,
+                            system_id=sid,
+                            task_family="multi_hop",
+                            ground_truth="YES",
+                            predicates=[p, q, r],
+                            metadata={
+                                "hop_count": 2,
+                                "chain": [p, q, r],
+                                "reasoning_type": "affirmative_2hop",
+                            },
+                        )
+                    )
 
         # Generate affirmative 3-hop chains if max_hop_count >= 3
         if max_hop_count >= 3:
@@ -783,19 +797,21 @@ def _generate_affirmative_chain_questions(
                                 f"must be {s_disp}. Is the {name} {s_disp}?"
                             )
 
-                            questions.append(Question(
-                                item_id=f"mhop_{counter[0]:04d}",
-                                question_text=question_text,
-                                system_id=sid,
-                                task_family="multi_hop",
-                                ground_truth="YES",
-                                predicates=[p, q, r, s],
-                                metadata={
-                                    "hop_count": 3,
-                                    "chain": [p, q, r, s],
-                                    "reasoning_type": "affirmative_3hop",
-                                },
-                            ))
+                            questions.append(
+                                Question(
+                                    item_id=f"mhop_{counter[0]:04d}",
+                                    question_text=question_text,
+                                    system_id=sid,
+                                    task_family="multi_hop",
+                                    ground_truth="YES",
+                                    predicates=[p, q, r, s],
+                                    metadata={
+                                        "hop_count": 3,
+                                        "chain": [p, q, r, s],
+                                        "reasoning_type": "affirmative_3hop",
+                                    },
+                                )
+                            )
 
     rng.shuffle(questions)
     return questions
@@ -838,10 +854,16 @@ def generate_multi_hop_questions(
     if max_hop_count >= 5:
         questions.extend(_generate_5hop_questions(systems, rules, rng, counter))
 
-    # Add affirmative chain questions to balance TRUE/FALSE (v2.2 fix for 23.4% TRUE issue)
-    questions.extend(_generate_affirmative_chain_questions(systems, rules, rng, counter, max_hop_count))
+    # Add affirmative chain questions to balance TRUE/FALSE in canonical v2
+    questions.extend(
+        _generate_affirmative_chain_questions(
+            systems, rules, rng, counter, max_hop_count
+        )
+    )
 
-    questions.extend(_generate_contrapositive_fallacy_questions(systems, rules, rng, counter))
+    questions.extend(
+        _generate_contrapositive_fallacy_questions(systems, rules, rng, counter)
+    )
     questions.extend(_generate_modus_tollens_questions(systems, rules, rng, counter))
 
     # Shuffle all questions together
@@ -884,7 +906,9 @@ def generate_multi_hop_questions(
         questions = balanced[:target_count]
 
         # Log balance for debugging
-        final_true_count = sum(1 for q in questions if q.ground_truth in ("YES", "TRUE"))
+        final_true_count = sum(
+            1 for q in questions if q.ground_truth in ("YES", "TRUE")
+        )
         final_true_pct = final_true_count / len(questions) * 100 if questions else 0
 
     return questions
@@ -960,13 +984,11 @@ class MultiHopTask:
             by_hop[hop_count].append(is_correct)
 
         type_accuracy = {
-            k: sum(v) / len(v) if v else 0.0
-            for k, v in sorted(by_type.items())
+            k: sum(v) / len(v) if v else 0.0 for k, v in sorted(by_type.items())
         }
 
         hop_accuracy = {
-            k: sum(v) / len(v) if v else 0.0
-            for k, v in sorted(by_hop.items())
+            k: sum(v) / len(v) if v else 0.0 for k, v in sorted(by_hop.items())
         }
 
         return {

@@ -15,6 +15,13 @@ This directory contains canonical documentation for ChaosBench-Logic v2.
 | [QUALITY_STANDARD.md](QUALITY_STANDARD.md) | Quality gates and validation standards |
 | [FREEZE_PLAN.md](FREEZE_PLAN.md) | Dataset freezing plan and criteria |
 | [RELEASE_NOTES_V2.md](RELEASE_NOTES_V2.md) | v2 release notes: what changed, dataset hash, baseline results |
+| [CAMERA_READY_SUBMISSION.md](CAMERA_READY_SUBMISSION.md) | Final camera-ready submission text package |
+| [CAMERA_READY_LINKS.md](CAMERA_READY_LINKS.md) | Final repo and dataset links for camera-ready insertion |
+| [CAMERA_READY_REPO.md](CAMERA_READY_REPO.md) | Build command and outputs for camera-ready repository bundle |
+| [CAMERA_READY_REPO_STATUS.md](CAMERA_READY_REPO_STATUS.md) | Current readiness status and output artifact locations |
+| [CAMERA_READY_PUSH_PLAN.md](CAMERA_READY_PUSH_PLAN.md) | Exact include/exclude scope for camera-ready push |
+| [CLAIM_EVIDENCE_MATRIX.md](CLAIM_EVIDENCE_MATRIX.md) | Mapping from paper claims to verifiable artifacts |
+| [OFFICIAL_REPO_V2_PLAN.md](OFFICIAL_REPO_V2_PLAN.md) | Planned official public layout for v2 repository release |
 | [REPO_POLICY.md](REPO_POLICY.md) | Repository hygiene: what belongs in git, where outputs go |
 | [FUTURE_WORK.md](FUTURE_WORK.md) | Deferred items and v3 candidates |
 
@@ -42,6 +49,7 @@ reference but are **not** canonical documentation:
 | [archive/V2_COMPLETION_SUMMARY.md](archive/V2_COMPLETION_SUMMARY.md) | V2 completion notes |
 | [archive/V2_UPGRADE_SUMMARY.md](archive/V2_UPGRADE_SUMMARY.md) | V2 upgrade notes |
 | [archive/ONTOLOGY_V2_EXTENSION.md](archive/ONTOLOGY_V2_EXTENSION.md) | Ontology v2 extension design notes |
+| [archive/CHANGELOG_LEGACY.md](archive/CHANGELOG_LEGACY.md) | Legacy changelog moved from repo root |
 
 ---
 
@@ -49,30 +57,30 @@ reference but are **not** canonical documentation:
 
 **Build dataset:**
 ```bash
-python scripts/build_v2_dataset.py --config configs/generation/v2_2_scale_full.yaml
+uv run python scripts/build_v2_dataset.py --config configs/generation/v2_2_scale_full.yaml
 ```
 
 **Validate dataset:**
 ```bash
-python scripts/heavy_verify_dataset.py
-python scripts/heavy_verify_splits.py
-python scripts/heavy_verify_ontology.py
+uv run python scripts/heavy_verify_dataset.py
+uv run python scripts/heavy_verify_splits.py
+uv run python scripts/heavy_verify_ontology.py
 ```
 
 **Run pre-freeze check:**
 ```bash
-python scripts/pre_freeze_check.py
+uv run python scripts/pre_freeze_check.py
 ```
 
 **Run evaluation:**
 ```bash
-python eval_chaosbench.py --config configs/eval/gpt4_zeroshot.yaml
+uv run python eval_chaosbench.py --config configs/eval/gpt4_zeroshot.yaml
 ```
 
 **Check repo hygiene:**
 ```bash
-python scripts/repo_hygiene.py
-python -m pytest tests/test_repo_hygiene.py -v
+uv run python scripts/repo_hygiene.py
+uv run python -m pytest tests/test_repo_hygiene.py -v
 ```
 
 See [../README.md](../README.md) for main repository documentation.

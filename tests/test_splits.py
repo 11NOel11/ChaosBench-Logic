@@ -58,8 +58,18 @@ def _make_test_data_dir(tmp_path):
 
     # Core batch
     items_core = [
-        {"id": "core_1", "question": "Is X chaotic?", "ground_truth": "TRUE", "system_id": "lorenz63"},
-        {"id": "core_2", "question": "Is Y periodic?", "ground_truth": "FALSE", "system_id": "shm"},
+        {
+            "id": "core_1",
+            "question": "Is X chaotic?",
+            "ground_truth": "TRUE",
+            "system_id": "lorenz63",
+        },
+        {
+            "id": "core_2",
+            "question": "Is Y periodic?",
+            "ground_truth": "FALSE",
+            "system_id": "shm",
+        },
     ]
     with open(os.path.join(data_dir, "batch1_atomic_implication.jsonl"), "w") as f:
         for item in items_core:
@@ -67,7 +77,12 @@ def _make_test_data_dir(tmp_path):
 
     # Adversarial (hard split)
     items_hard = [
-        {"id": "adv_1", "question": "Tricky Q?", "ground_truth": "TRUE", "system_id": "lorenz63"},
+        {
+            "id": "adv_1",
+            "question": "Tricky Q?",
+            "ground_truth": "TRUE",
+            "system_id": "lorenz63",
+        },
     ]
     with open(os.path.join(data_dir, "batch10_adversarial.jsonl"), "w") as f:
         for item in items_hard:
@@ -75,8 +90,18 @@ def _make_test_data_dir(tmp_path):
 
     # Heldout systems
     items_heldout = [
-        {"id": "dysts_1", "question": "Is Z chaotic?", "ground_truth": "TRUE", "system_id": "dysts_halvorsen"},
-        {"id": "dysts_2", "question": "Is W periodic?", "ground_truth": "FALSE", "system_id": "dysts_rossler"},
+        {
+            "id": "dysts_1",
+            "question": "Is Z chaotic?",
+            "ground_truth": "TRUE",
+            "system_id": "dysts_halvorsen",
+        },
+        {
+            "id": "dysts_2",
+            "question": "Is W periodic?",
+            "ground_truth": "FALSE",
+            "system_id": "dysts_rossler",
+        },
     ]
     with open(os.path.join(data_dir, "batch15_atomic_dysts.jsonl"), "w") as f:
         for item in items_heldout:
@@ -84,7 +109,12 @@ def _make_test_data_dir(tmp_path):
 
     # Robustness
     items_robust = [
-        {"id": "para_1", "question": "Paraphrase Q?", "ground_truth": "TRUE", "system_id": "lorenz63"},
+        {
+            "id": "para_1",
+            "question": "Paraphrase Q?",
+            "ground_truth": "TRUE",
+            "system_id": "lorenz63",
+        },
     ]
     with open(os.path.join(data_dir, "batch11_consistency_paraphrase.jsonl"), "w") as f:
         for item in items_robust:
@@ -130,7 +160,9 @@ def test_validate_splits_detects_overlap():
 def test_validate_splits_detects_leakage():
     """validate_splits detects heldout dysts systems in core split."""
     splits = {
-        "core": [{"id": "x", "system_id": "dysts_sprotta"}],  # leakage! (heldout system in core)
+        "core": [
+            {"id": "x", "system_id": "dysts_sprotta"}
+        ],  # leakage! (heldout system in core)
         "hard": [],
         "robustness": [],
         "heldout_systems": [],
@@ -177,16 +209,20 @@ def test_get_split_items_invalid():
 
 
 # ============================================================================
-# v2.2 Split Protocol Tests
+# Canonical v2 Split Protocol Tests
 # ============================================================================
 
 
 class TestAssignSplitV22:
-    """Tests for the v2.2 hybrid split assignment."""
+    """Tests for the canonical v2 hybrid split assignment."""
 
     def test_heldout_system_assigned_correctly(self):
         """Items from heldout systems go to heldout_systems split."""
-        item = {"system_id": "dysts_sprotta", "type": "atomic", "question": "Is it chaotic?"}
+        item = {
+            "system_id": "dysts_sprotta",
+            "type": "atomic",
+            "question": "Is it chaotic?",
+        }
         assert assign_split_v22(item) == "heldout_systems"
 
     def test_all_heldout_systems_recognized(self):
@@ -197,7 +233,11 @@ class TestAssignSplitV22:
 
     def test_adversarial_goes_to_hard(self):
         """Adversarial items go to hard split."""
-        for adv_type in ("adversarial_misleading", "adversarial_nearmiss", "adversarial_confusion"):
+        for adv_type in (
+            "adversarial_misleading",
+            "adversarial_nearmiss",
+            "adversarial_confusion",
+        ):
             item = {"system_id": "lorenz63", "type": adv_type, "question": "Tricky?"}
             assert assign_split_v22(item) == "hard"
 
@@ -213,22 +253,38 @@ class TestAssignSplitV22:
 
     def test_consistency_goes_to_robustness(self):
         """Consistency paraphrase items go to robustness split."""
-        item = {"system_id": "lorenz63", "type": "consistency_paraphrase", "question": "Q?"}
+        item = {
+            "system_id": "lorenz63",
+            "type": "consistency_paraphrase",
+            "question": "Q?",
+        }
         assert assign_split_v22(item) == "robustness"
 
     def test_atomic_goes_to_core(self):
         """Atomic items on non-heldout systems go to core."""
-        item = {"system_id": "lorenz63", "type": "atomic", "question": "Is Lorenz chaotic?"}
+        item = {
+            "system_id": "lorenz63",
+            "type": "atomic",
+            "question": "Is Lorenz chaotic?",
+        }
         assert assign_split_v22(item) == "core"
 
     def test_indicator_diagnostics_goes_to_core(self):
         """Indicator diagnostics items go to core."""
-        item = {"system_id": "lorenz63", "type": "indicator_diagnostics", "question": "Q?"}
+        item = {
+            "system_id": "lorenz63",
+            "type": "indicator_diagnostics",
+            "question": "Q?",
+        }
         assert assign_split_v22(item) == "core"
 
     def test_heldout_system_overrides_hard_type(self):
         """Heldout system assignment takes priority over hard family type."""
-        item = {"system_id": "dysts_sprottb", "type": "adversarial_misleading", "question": "Q?"}
+        item = {
+            "system_id": "dysts_sprottb",
+            "type": "adversarial_misleading",
+            "question": "Q?",
+        }
         assert assign_split_v22(item) == "heldout_systems"
 
     def test_heldout_system_overrides_robustness_type(self):
@@ -246,7 +302,11 @@ class TestIsHardByConstruction:
     """Tests for the hard-by-construction heuristic."""
 
     def test_adversarial_types_are_hard(self):
-        for t in ("adversarial_misleading", "adversarial_nearmiss", "adversarial_confusion"):
+        for t in (
+            "adversarial_misleading",
+            "adversarial_nearmiss",
+            "adversarial_confusion",
+        ):
             assert _is_hard_by_construction({"type": t})
 
     def test_cross_indicator_is_hard(self):
@@ -289,14 +349,32 @@ class TestAssignSplitsV22Mode:
     """Tests for assign_splits with use_v22=True and v22_ file prefix."""
 
     def test_v22_prefix_files_use_v22_protocol(self, tmp_path):
-        """Files prefixed with v22_ use the v2.2 split protocol."""
+        """Files prefixed with v22_ use the canonical v2 split protocol."""
         data_dir = str(tmp_path / "data")
         os.makedirs(data_dir)
 
         items = [
-            {"id": "a1", "question": "Q?", "ground_truth": "TRUE", "type": "atomic", "system_id": "lorenz63"},
-            {"id": "a2", "question": "Q?", "ground_truth": "FALSE", "type": "perturbation", "system_id": "lorenz63"},
-            {"id": "a3", "question": "Q?", "ground_truth": "TRUE", "type": "atomic", "system_id": "dysts_sprotta"},
+            {
+                "id": "a1",
+                "question": "Q?",
+                "ground_truth": "TRUE",
+                "type": "atomic",
+                "system_id": "lorenz63",
+            },
+            {
+                "id": "a2",
+                "question": "Q?",
+                "ground_truth": "FALSE",
+                "type": "perturbation",
+                "system_id": "lorenz63",
+            },
+            {
+                "id": "a3",
+                "question": "Q?",
+                "ground_truth": "TRUE",
+                "type": "atomic",
+                "system_id": "dysts_sprotta",
+            },
         ]
         with open(os.path.join(data_dir, "v22_atomic.jsonl"), "w") as f:
             for item in items:
@@ -311,19 +389,25 @@ class TestAssignSplitsV22Mode:
         assert splits["heldout_systems"][0]["id"] == "a3"
 
     def test_use_v22_flag_overrides_batch_protocol(self, tmp_path):
-        """use_v22=True forces v2.2 protocol even for batch-named files."""
+        """use_v22=True forces canonical v2 protocol even for batch-named files."""
         data_dir = str(tmp_path / "data")
         os.makedirs(data_dir)
 
         # Write an adversarial item in a batch file; normally batch10 -> "hard"
-        # With v2.2, an atomic item on a non-heldout system -> "core"
+        # In canonical v2, an atomic item on a non-heldout system -> "core"
         items = [
-            {"id": "x1", "question": "Q?", "ground_truth": "TRUE", "type": "atomic", "system_id": "lorenz63"},
+            {
+                "id": "x1",
+                "question": "Q?",
+                "ground_truth": "TRUE",
+                "type": "atomic",
+                "system_id": "lorenz63",
+            },
         ]
         with open(os.path.join(data_dir, "batch10_adversarial.jsonl"), "w") as f:
             for item in items:
                 f.write(json.dumps(item) + "\n")
 
         splits = assign_splits(data_dir=data_dir, use_v22=True)
-        # v2.2 protocol: atomic on lorenz63 -> core (not "hard" from batch assignment)
+        # Canonical v2 protocol: atomic on lorenz63 -> core (not "hard" from batch assignment)
         assert len(splits["core"]) == 1

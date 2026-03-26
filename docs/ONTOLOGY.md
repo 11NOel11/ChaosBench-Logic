@@ -2,13 +2,13 @@
 
 ## Overview
 
-This document defines the formal ontology used in ChaosBench-Logic: the 15 logical predicates that characterize dynamical systems and the First-Order Logic (FOL) axioms that govern their relationships.
+This document defines the formal ontology used in ChaosBench-Logic: a 27-predicate logical ontology (15 core predicates plus structural extensions) and the First-Order Logic (FOL) axioms that govern their relationships.
 
 ---
 
-## The 15 Predicates
+## Core Predicate Set (15)
 
-Each dynamical system in ChaosBench-Logic is characterized by 15 boolean predicates representing key mathematical and behavioral properties. The original 11 predicates (1-11) are required for system eligibility; the 4 extension predicates (12-15) were added in v2 for deeper reasoning chains.
+Each dynamical system in ChaosBench-Logic is characterized by a predicate inventory that includes a core 15-predicate set plus additional structural predicates used for extended reasoning. The original 11 predicates (1-11) are required for system eligibility; the 4 extension predicates (12-15) were added in v2 for deeper reasoning chains. The full 27-predicate inventory is defined in `chaosbench/logic/ontology.py`.
 
 ### 1. Chaotic
 

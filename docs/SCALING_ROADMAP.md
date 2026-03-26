@@ -8,14 +8,14 @@ Many original v2.x scaling targets have been surpassed.
 - Dataset scaled to 40,886 questions (target was 15,000+)
 - System coverage expanded to 165 systems (30 core + 135 dysts; target was 80+)
 - Quality gates enforced: near-duplicate detection, label leakage scan, class balance
-- 15 predicates with up to 4-hop reasoning chains
+- 27-predicate ontology with up to 4-hop reasoning chains
 
 ## v3 North Star
 
 - 5-hop reasoning chains (requires new axiom edges, e.g., Recurrent predicate)
 - Heldout template population (currently empty set)
 - Extended systems expansion to all 30 core systems
-- Full 15-predicate atomic coverage (regeneration with new predicates)
+- Full 27-predicate atomic coverage (regeneration with structural predicate families)
 - Model evaluation campaign on v2 dataset
 - Distributed evaluation with shard-native orchestration and canonical merge.
 

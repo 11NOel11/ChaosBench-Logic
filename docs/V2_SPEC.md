@@ -81,7 +81,7 @@ System definitions are stored as individual JSON files in `systems/` directory:
 - **equations** (list[string], required): Mathematical equations defining the system.
 - **parameters** (dict, required): Default parameter values used for computations.
 - **dimension** (integer, required): State space dimension.
-- **truth_assignment** (dict, required): Ground truth for 15 predicates (11 core + 4 extension; see Ontology).
+- **truth_assignment** (dict, required): Ground truth predicate assignment (core 15 plus structural extensions; see Ontology and `chaosbench/logic/ontology.py`).
 - **provenance** (dict, nullable): For dysts-imported systems only (see Provenance section).
 
 ### Dysts-Imported Systems
@@ -343,7 +343,7 @@ CI runs validation on every commit:
 
 ## Version History
 
-- **v2.0.0** (February 2026): Scaled release with 40,886 v2 questions across 10 families, 165 systems, 15 predicates
+- **v2.0.0** (February 2026): Scaled release with 40,886 v2 questions across 10 families, 165 systems, 27-predicate ontology
 - **v2.1.0** (February 2026): Intermediate scaling with 11 batches (archived to data/archive/v21_intermediate/)
 - **v1.0.0** (2025): Original 621-question benchmark (archived to data/archive/v1/)
 

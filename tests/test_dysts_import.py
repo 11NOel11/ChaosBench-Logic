@@ -23,7 +23,7 @@ class TestDystsImport:
 
     @pytest.mark.skipif(
         not os.path.isdir("systems/dysts") or len(os.listdir("systems/dysts")) == 0,
-        reason="systems/dysts directory is empty (dysts not installed or not imported)"
+        reason="systems/dysts directory is empty (dysts not installed or not imported)",
     )
     def test_dysts_json_schema(self):
         """Load a sample JSON from systems/dysts/, verify required fields."""
@@ -45,29 +45,51 @@ class TestDystsImport:
         assert "provenance" in data, "Missing provenance field"
 
         # Verify system_id starts with dysts_
-        assert data["system_id"].startswith("dysts_"), "system_id should start with dysts_"
+        assert data["system_id"].startswith("dysts_"), (
+            "system_id should start with dysts_"
+        )
 
     @pytest.mark.skipif(
         not os.path.isdir("systems/dysts") or len(os.listdir("systems/dysts")) == 0,
-        reason="systems/dysts directory is empty (dysts not installed or not imported)"
+        reason="systems/dysts directory is empty (dysts not installed or not imported)",
     )
     def test_truth_assignment_complete(self):
-        """Verify all 27 predicates present in truth_assignment (v2.3)."""
+        """Verify all 27 canonical v2 predicates are in truth_assignment."""
         dysts_dir = "systems/dysts"
         json_files = [f for f in os.listdir(dysts_dir) if f.endswith(".json")]
 
         assert len(json_files) > 0, "No JSON files found in systems/dysts/"
 
-        # Required predicates (v2.3: 27 predicates)
+        # Required canonical v2 predicate inventory (27 predicates)
         required_predicates = {
-            "Chaotic", "Deterministic", "PosLyap", "Sensitive", "StrangeAttr",
-            "PointUnpredictable", "StatPredictable", "QuasiPeriodic",
-            "Random", "FixedPointAttr", "Periodic",
-            "Dissipative", "Bounded", "Mixing", "Ergodic",
-            # v2.3 new predicates
-            "HyperChaotic", "Conservative", "HighDimensional", "Multifractal",
-            "HighDimSystem", "ContinuousTime", "DiscreteTime", "DelaySystem",
-            "Forced", "Autonomous", "StrongMixing", "WeakMixing",
+            "Chaotic",
+            "Deterministic",
+            "PosLyap",
+            "Sensitive",
+            "StrangeAttr",
+            "PointUnpredictable",
+            "StatPredictable",
+            "QuasiPeriodic",
+            "Random",
+            "FixedPointAttr",
+            "Periodic",
+            "Dissipative",
+            "Bounded",
+            "Mixing",
+            "Ergodic",
+            # Structural extension predicates
+            "HyperChaotic",
+            "Conservative",
+            "HighDimensional",
+            "Multifractal",
+            "HighDimSystem",
+            "ContinuousTime",
+            "DiscreteTime",
+            "DelaySystem",
+            "Forced",
+            "Autonomous",
+            "StrongMixing",
+            "WeakMixing",
         }
 
         # Load first JSON file
@@ -81,7 +103,7 @@ class TestDystsImport:
 
     @pytest.mark.skipif(
         not os.path.isdir("systems/dysts") or len(os.listdir("systems/dysts")) == 0,
-        reason="systems/dysts directory is empty (dysts not installed or not imported)"
+        reason="systems/dysts directory is empty (dysts not installed or not imported)",
     )
     def test_provenance_fields(self):
         """Verify provenance has source='dysts' and cite='2110.05266'."""
@@ -99,11 +121,13 @@ class TestDystsImport:
         assert "source" in provenance, "Missing source field in provenance"
         assert provenance["source"] == "dysts", "source should be 'dysts'"
         assert "cite" in provenance, "Missing cite field in provenance"
-        assert "2110.05266" in provenance["cite"], "cite should contain arXiv ID 2110.05266"
+        assert "2110.05266" in provenance["cite"], (
+            "cite should contain arXiv ID 2110.05266"
+        )
 
     @pytest.mark.skipif(
         not os.path.isdir("systems/dysts") or len(os.listdir("systems/dysts")) == 0,
-        reason="systems/dysts directory is empty (dysts not installed or not imported)"
+        reason="systems/dysts directory is empty (dysts not installed or not imported)",
     )
     def test_fol_consistency(self):
         """Load a dysts system, run check_fol_violations on its truth_assignment."""

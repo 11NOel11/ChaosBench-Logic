@@ -9,13 +9,9 @@ from typing import Any, Dict, List, Optional
 def get_fol_rules() -> Dict[str, Dict[str, List[str]]]:
     """Returns FOL axioms defining relationships between dynamical system predicates.
 
-    v2.2 Extension: Added 4 new predicates (Dissipative, Bounded, Mixing, Ergodic)
-    and 12 new edges to enable 4-5 hop reasoning chains.
-
-    v2.3 Extension: Added 12 new predicates (HyperChaotic, Conservative,
-    HighDimensional, Multifractal, HighDimSystem, ContinuousTime, DiscreteTime,
-    DelaySystem, Forced, Autonomous, StrongMixing, WeakMixing) and ~40 new
-    requires/excludes edges to enable 5-6 hop reasoning chains.
+    Canonical v2 ontology includes core predicates plus structural extensions
+    (e.g., Dissipative/Bounded/Mixing/Ergodic and additional system-structure
+    predicates) to support longer reasoning chains.
 
     Returns:
         Dict mapping predicate names to {'requires': [...], 'excludes': [...]}.
@@ -29,7 +25,7 @@ def get_fol_rules() -> Dict[str, Dict[str, List[str]]]:
                 "PointUnpredictable",
                 "StatPredictable",
                 # NOTE: Chaotic → Dissipative removed (conservative chaotic systems exist)
-                "Mixing",       # Chaotic systems exhibit mixing
+                "Mixing",  # Chaotic systems exhibit mixing
                 # NOTE: Chaotic → StrongMixing removed — conservative chaotic systems
                 # (Arnold cat map) are strongly mixing but the proxy computation may
                 # not detect this. Avoid breaking the axiom for edge cases.
@@ -84,7 +80,7 @@ def get_fol_rules() -> Dict[str, Dict[str, List[str]]]:
             "excludes": [
                 "Periodic",
                 "FixedPointAttr",
-                "Conservative",  # v2.3: strange attractors are not conservative
+                "Conservative",  # strange attractors are not conservative
             ],
         },
         "PointUnpredictable": {
@@ -99,13 +95,13 @@ def get_fol_rules() -> Dict[str, Dict[str, List[str]]]:
             ],
             "excludes": [],
         },
-        # v2.2 Extension predicates
+        # Canonical v2 extension predicates
         "Dissipative": {
             "requires": [
                 "Bounded",
             ],
             "excludes": [
-                "Conservative",  # v2.3: conservative ↔ dissipative are mutually exclusive
+                "Conservative",  # conservative and dissipative are mutually exclusive
             ],
         },
         "Bounded": {
@@ -127,7 +123,7 @@ def get_fol_rules() -> Dict[str, Dict[str, List[str]]]:
             ],
             "excludes": ["Periodic"],
         },
-        # v2.3 Extension predicates
+        # Canonical v2 structural extension predicates
         "HyperChaotic": {
             "requires": [
                 "Chaotic",
@@ -145,12 +141,12 @@ def get_fol_rules() -> Dict[str, Dict[str, List[str]]]:
         },
         "Conservative": {
             "requires": [
-                "Bounded",       # bounded Hamiltonian systems
-                "Ergodic",       # ergodic on energy surfaces (KAM theory)
+                "Bounded",  # bounded Hamiltonian systems
+                "Ergodic",  # ergodic on energy surfaces (KAM theory)
             ],
             "excludes": [
                 "Dissipative",
-                "StrangeAttr",   # Hamiltonian systems don't have strange attractors
+                "StrangeAttr",  # Hamiltonian systems don't have strange attractors
             ],
         },
         "HighDimensional": {
@@ -200,8 +196,8 @@ def get_fol_rules() -> Dict[str, Dict[str, List[str]]]:
         },
         "StrongMixing": {
             "requires": [
-                "WeakMixing",   # StrongMixing ⊃ WeakMixing (ergodic hierarchy)
-                "Ergodic",      # StrongMixing ⊃ Ergodic
+                "WeakMixing",  # StrongMixing ⊃ WeakMixing (ergodic hierarchy)
+                "Ergodic",  # StrongMixing ⊃ Ergodic
                 # NOTE: StrongMixing → Mixing removed to avoid circular dependency
                 # (Mixing → Ergodic and StrongMixing → Mixing would create long
                 # chains but also StrongMixing → Mixing → Ergodic vs
@@ -214,7 +210,7 @@ def get_fol_rules() -> Dict[str, Dict[str, List[str]]]:
         },
         "WeakMixing": {
             "requires": [
-                "Ergodic",      # WeakMixing ⊃ Ergodic (ergodic hierarchy)
+                "Ergodic",  # WeakMixing ⊃ Ergodic (ergodic hierarchy)
             ],
             "excludes": [
                 "Periodic",
@@ -262,9 +258,7 @@ def check_fol_violations(
             for excluded_pred in rules.get("excludes", []):
                 if excluded_pred in pred_bool:
                     if pred_bool[excluded_pred]:
-                        violations.append(
-                            f"{predicate} \u2192 \u00ac{excluded_pred}"
-                        )
+                        violations.append(f"{predicate} \u2192 \u00ac{excluded_pred}")
 
     return violations
 

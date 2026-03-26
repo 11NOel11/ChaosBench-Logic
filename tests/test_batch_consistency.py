@@ -1,4 +1,4 @@
-"""Test that v2.2 canonical dataset files are consistent and valid.
+"""Test that canonical v2 dataset files are consistent and valid.
 
 Verifies that the dataset files are stable, reproducible, and well-formed.
 """
@@ -10,7 +10,7 @@ import pytest
 
 
 class TestV22FileExistence:
-    """Verify all v2.2 canonical files exist."""
+    """Verify all canonical v2 files exist."""
 
     EXPECTED_FILES = [
         "data/v22_adversarial.jsonl",
@@ -26,21 +26,24 @@ class TestV22FileExistence:
     ]
 
     def test_all_v22_files_exist(self):
-        """All 10 v2.2 canonical files exist in data directory."""
+        """All 10 canonical v2 files exist in data directory."""
         for path in self.EXPECTED_FILES:
             assert os.path.isfile(path), f"Missing canonical file: {path}"
 
     def test_v22_file_count(self):
         """Exactly 10 v22_*.jsonl files exist."""
         v22_files = [
-            f for f in os.listdir("data")
+            f
+            for f in os.listdir("data")
             if f.startswith("v22_") and f.endswith(".jsonl")
         ]
-        assert len(v22_files) == 10, f"Expected 10 v22_*.jsonl files, found {len(v22_files)}"
+        assert len(v22_files) == 10, (
+            f"Expected 10 v22_*.jsonl files, found {len(v22_files)}"
+        )
 
 
 class TestV22FileCounts:
-    """Verify v2.2 files have expected minimum counts."""
+    """Verify canonical v2 files have expected minimum counts."""
 
     MIN_COUNTS = {
         "v22_adversarial.jsonl": 500,
@@ -56,7 +59,7 @@ class TestV22FileCounts:
     }
 
     def test_file_counts_meet_minimums(self):
-        """Each v2.2 file has at least the expected minimum count."""
+        """Each canonical v2 file has at least the expected minimum count."""
         for filename, min_count in self.MIN_COUNTS.items():
             path = f"data/{filename}"
             if not os.path.isfile(path):
@@ -71,7 +74,7 @@ class TestV22FileCounts:
             )
 
     def test_total_question_count(self):
-        """Total across all v2.2 files should be at least 18000.
+        """Total across all canonical v2 files should be at least 18000.
 
         After enforcing strict 50/50 balance on the atomic task (which reduces
         the natural ~70% TRUE pool from 10890 to ~8808), the expected total is
@@ -88,16 +91,19 @@ class TestV22FileCounts:
 
 
 class TestV22ValidJsonl:
-    """Verify all v2.2 files are valid JSONL."""
+    """Verify all canonical v2 files are valid JSONL."""
 
     def test_all_v22_valid_jsonl(self):
-        """Every v2.2 file is valid JSONL with required fields."""
+        """Every canonical v2 file is valid JSONL with required fields."""
         v22_files = [
-            f for f in os.listdir("data")
+            f
+            for f in os.listdir("data")
             if f.startswith("v22_") and f.endswith(".jsonl")
         ]
 
-        assert len(v22_files) >= 10, f"Expected at least 10 v22 files, found {len(v22_files)}"
+        assert len(v22_files) >= 10, (
+            f"Expected at least 10 v22 files, found {len(v22_files)}"
+        )
 
         for v22_file in v22_files:
             path = os.path.join("data", v22_file)
@@ -115,9 +121,13 @@ class TestV22ValidJsonl:
                     assert has_id, f"{v22_file} line {i}: Missing item_id/id"
 
                     has_question = "question_text" in item or "question" in item
-                    assert has_question, f"{v22_file} line {i}: Missing question_text/question"
+                    assert has_question, (
+                        f"{v22_file} line {i}: Missing question_text/question"
+                    )
 
-                    assert "ground_truth" in item, f"{v22_file} line {i}: Missing ground_truth"
+                    assert "ground_truth" in item, (
+                        f"{v22_file} line {i}: Missing ground_truth"
+                    )
 
                     gt = item["ground_truth"]
                     assert isinstance(gt, str) and len(gt) > 0, (
@@ -125,9 +135,10 @@ class TestV22ValidJsonl:
                     )
 
     def test_item_ids_unique_within_file(self):
-        """All item IDs are unique within each v2.2 file."""
+        """All item IDs are unique within each canonical v2 file."""
         v22_files = [
-            f for f in os.listdir("data")
+            f
+            for f in os.listdir("data")
             if f.startswith("v22_") and f.endswith(".jsonl")
         ]
 
@@ -149,10 +160,10 @@ class TestV22ValidJsonl:
 
 
 class TestManifestIntegrity:
-    """Verify manifest matches v2.2 files."""
+    """Verify manifest matches canonical v2 files."""
 
     def test_manifest_exists_and_valid(self):
-        """v2_manifest.json exists and contains v2.2 batch metadata."""
+        """v2_manifest.json exists and contains canonical v2 batch metadata."""
         manifest_path = "data/v2_manifest.json"
 
         if not os.path.isfile(manifest_path):
@@ -161,8 +172,8 @@ class TestManifestIntegrity:
         with open(manifest_path) as f:
             manifest = json.load(f)
 
-        assert manifest.get("version") in ("2.2.0", "2.3.0"), (
-            f"Expected manifest version 2.2.0 or 2.3.0, got {manifest.get('version')}"
+        assert manifest.get("version") == "2.0.0", (
+            f"Expected manifest version 2.0.0, got {manifest.get('version')}"
         )
 
         if "batches" in manifest:
@@ -173,12 +184,13 @@ class TestManifestIntegrity:
 
 
 class TestGroundTruthBalance:
-    """Verify ground truth distribution across v2.2 files."""
+    """Verify ground truth distribution across canonical v2 files."""
 
     def test_files_not_all_same_label(self):
-        """Each v2.2 file has mix of TRUE/FALSE (not all one label)."""
+        """Each canonical v2 file has mix of TRUE/FALSE (not all one label)."""
         v22_files = [
-            f for f in os.listdir("data")
+            f
+            for f in os.listdir("data")
             if f.startswith("v22_") and f.endswith(".jsonl")
         ]
 

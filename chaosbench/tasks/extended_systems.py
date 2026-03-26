@@ -91,7 +91,7 @@ PREDICATE_DISPLAY = {
     "Random": "random",
     "FixedPointAttr": "having a fixed point attractor",
     "Periodic": "periodic",
-    # v2.2 Extension: New predicates for 4-5 hop chains
+    # Canonical v2 extension predicates
     "Dissipative": "dissipative (volume-contracting)",
     "Bounded": "bounded",
     "Mixing": "mixing",
@@ -194,21 +194,23 @@ def generate_extended_system_questions(
             ground_truth = "YES" if gt_val else "NO"
 
             counter[0] += 1
-            questions.append(Question(
-                item_id=f"ext_sys_{counter[0]:04d}",
-                question_text=template.format(
-                    name=name,
-                    predicate_display=pred_disp,
-                ),
-                system_id=sid,
-                task_family="extended_systems",
-                ground_truth=ground_truth,
-                predicates=[pred],
-                metadata={
-                    "question_type": "atomic_predicate",
-                    "target_predicate": pred,
-                },
-            ))
+            questions.append(
+                Question(
+                    item_id=f"ext_sys_{counter[0]:04d}",
+                    question_text=template.format(
+                        name=name,
+                        predicate_display=pred_disp,
+                    ),
+                    system_id=sid,
+                    task_family="extended_systems",
+                    ground_truth=ground_truth,
+                    predicates=[pred],
+                    metadata={
+                        "question_type": "atomic_predicate",
+                        "target_predicate": pred,
+                    },
+                )
+            )
 
     return questions
 
