@@ -21,7 +21,6 @@ DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "workspace" / "camera_ready_repo_v2.0.0"
 
 
 INCLUDE_PATTERNS = [
-    ".github/workflows/*.yml",
     "README.md",
     "DATASET_CARD.md",
     "CITATION.cff",
@@ -42,6 +41,8 @@ INCLUDE_PATTERNS = [
     "data/archive/v1/**/*.jsonl",
     "docs/**/*.md",
     "scripts/**/*.py",
+    "scripts/**/*.md",
+    "scripts/**/*.sh",
     "systems/**/*.json",
     "tests/**/*.py",
 ]

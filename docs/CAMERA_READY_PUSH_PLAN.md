@@ -36,9 +36,9 @@ Push only release-facing cleanup and metadata alignment:
   - `docs/CLAIM_EVIDENCE_MATRIX.md`
   - `docs/OFFICIAL_REPO_V2_PLAN.md`
 - CI/hygiene/test wording and repo-bundle builder
-  - `.github/workflows/ci.yml`
   - `.gitignore`
   - `scripts/repo_hygiene.py`
+  - `scripts/cluster/slurm_template.sh`
   - `scripts/build_v2_dataset.py`
   - `scripts/build_camera_ready_repo.py`
   - `tests/test_batch_consistency.py`

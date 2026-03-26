@@ -11,17 +11,17 @@ outputs should go, and how to regenerate paper assets and reports.
 
 | Category | Examples |
 |----------|---------|
-| Source code | `chaosbench/**/*.py`, `scripts/*.py`, `tests/*.py` |
+| Source code | `chaosbench/**/*.py`, `scripts/**/*.py`, `tests/**/*.py` |
 | Canonical dataset files | `data/v22_*.jsonl`, `data/v2_manifest.json` |
 | Archived dataset batches | `data/archive/**/*.jsonl` |
 | CI smoke data | `data/ci_smoke/` |
 | Configuration | `configs/**/*.yaml`, `pyproject.toml`, `uv.lock` |
+| Cluster templates | `scripts/cluster/*` |
 | System definitions | `systems/**/*.json` |
 | Canonical documentation | `docs/*.md` (not `docs/archive/`) |
 | Root documentation | `README.md`, `DATASET_CARD.md`, `CITATION.cff`, `SECURITY.md` |
 | Licensing | `LICENSE`, `LICENSE_DATA` |
 | Published results | `published_results/` |
-| CI configuration | `.github/workflows/` |
 
 ### Historical Notes (Tracked in docs/archive/)
 
@@ -88,42 +88,42 @@ artifacts/
 
 ```bash
 # Regenerate v2 dataset
-python scripts/build_v2_dataset.py --config configs/generation/v2_2_scale_full.yaml
+uv run python scripts/build_v2_dataset.py --config configs/generation/v2_2_scale_full.yaml
 
 # Run CI smoke build
-python scripts/build_v2_dataset.py --config configs/generation/ci_smoke.yaml
+uv run python scripts/build_v2_dataset.py --config configs/generation/ci_smoke.yaml
 ```
 
 ### Quality Reports
 
 ```bash
 # Pre-freeze quality gates
-python scripts/pre_freeze_check.py
+uv run python scripts/pre_freeze_check.py
 
 # Heavy verification (schema, duplicates, splits, ontology)
-python scripts/heavy_verify_dataset.py
-python scripts/heavy_verify_splits.py
-python scripts/heavy_verify_ontology.py
+uv run python scripts/heavy_verify_dataset.py
+uv run python scripts/heavy_verify_splits.py
+uv run python scripts/heavy_verify_ontology.py
 ```
 
 ### Paper Tables and Figures
 
 ```bash
 # Generate paper tables (outputs to artifacts/paper_assets/)
-python scripts/generate_paper_tables.py --output artifacts/paper_assets/
+uv run python scripts/generate_paper_tables.py --output artifacts/paper_assets/
 
 # Generate figures (outputs to artifacts/paper_assets/)
-python scripts/generate_figures.py --output artifacts/paper_assets/
+uv run python scripts/generate_figures.py --output artifacts/paper_assets/
 ```
 
 ### Evaluation Reports
 
 ```bash
 # Aggregate evaluation results
-python scripts/aggregate_results.py --results-dir results/ --output artifacts/reports/
+uv run python scripts/aggregate_results.py --results-dir results/ --output artifacts/reports/
 
 # Merge sharded evaluation runs
-python scripts/merge_sharded_runs.py --runs-dir runs/ --output artifacts/reports/
+uv run python scripts/merge_sharded_runs.py --runs-dir runs/ --output artifacts/reports/
 ```
 
 ---
@@ -164,13 +164,13 @@ Run the hygiene checker before any commit that touches `docs/` or the root:
 
 ```bash
 # Dry run (shows what would be flagged)
-python scripts/repo_hygiene.py
+uv run python scripts/repo_hygiene.py
 
 # Apply moves
-python scripts/repo_hygiene.py --apply
+uv run python scripts/repo_hygiene.py --apply
 
 # CI check (exits non-zero if violations found)
-python -m pytest tests/test_repo_hygiene.py -v
+uv run python -m pytest tests/test_repo_hygiene.py -v
 ```
 
 The hygiene checker enforces:
