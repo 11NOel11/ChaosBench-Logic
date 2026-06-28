@@ -9,76 +9,68 @@
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="License"></a>
 </p>
 
-<p><strong>Official v2.0.0 release for evaluating LLM logical reasoning on dynamical systems.</strong></p>
-
-<p>
-  <a href="https://huggingface.co/datasets/11NOel11/ChaosBench-Logic">Dataset</a> |
-  <a href="./published_results/README.md">Published Runs</a> |
-  <a href="./docs/CAMERA_READY_SUBMISSION.md">Camera-Ready</a> |
-  <a href="./CITATION.cff">Citation</a>
-</p>
+**Can LLMs reason about chaotic dynamical systems — or just pattern-match the leaderboard?**
 
 </div>
 
-## Workshop Acceptance
+ChaosBench-Logic tests LLM logical reasoning on dynamical systems (chaos, bifurcations,
+attractors, Lyapunov exponents) with TRUE/FALSE questions grounded in a formal ontology — so
+every answer is checkable against axioms, not vibes.
 
-- v1 accepted at AAAI 2026 BridgeLM Reasoning Workshop.
-- v2 accepted at ICLR 2026 LLM Reasoning Workshop.
+[Dataset](https://huggingface.co/datasets/11NOel11/ChaosBench-Logic) ·
+[Published runs](./published_results/README.md) ·
+[Docs](#documentation) ·
+[Citation](./CITATION.cff)
 
-## Release Snapshot
+- **Accepted:** v1 — AAAI 2026 BridgeLM workshop · v2 — ICLR 2026 LLM Reasoning workshop
 
-- Official release: `v2.0.0`
-- Canonical v2 questions: `40,886`
-- Archived v1 questions: `621`
-- Total questions: `41,507`
-- Task families: `10`
-- Systems: `165` (`30` core + `135` dysts)
-- Ontology size: `27` predicates with axiom constraints
+## Release snapshot (v2.0.0)
 
-## Repository Layout
+- **40,886** canonical questions (+ 621 archived v1 = **41,507** total)
+- **10** task families · **165** systems (30 core + 135 dysts)
+- **27**-predicate ontology with axiom constraints
 
-- `chaosbench/` - core package (data, tasks, eval, repair)
-- `data/` - canonical v2 files (`v22_*.jsonl`), manifest, selectors, archive
-- `systems/` - system metadata for core and dysts imports
-- `scripts/` - build, validation, analysis, and release tooling
-- `published_results/runs/` - published evaluation runs and manifests
-- `docs/` - dataset, protocol, ontology, and camera-ready documentation
-
-## Quick Start
+## Quick start
 
 ```bash
 uv sync --all-groups
 uv run pytest -q
-uv run chaosbench eval --provider mock --dataset canonical --max-items 50
+uv run chaosbench eval --provider mock --dataset canonical --max-items 50   # no API key needed
 ```
 
-## Validate v2 and Runs
+## Validate the dataset and runs
 
 ```bash
-# Validate canonical v2 dataset
 uv run python scripts/validate_v2.py --strict --max-duplicate-questions 200
 uv run chaosbench freeze
-
-# Validate published runs and generate audit tables
 uv run chaosbench analyze-runs --runs-dir published_results/runs --out-dir artifacts/runs_audit
-uv run python scripts/analyze_runs.py --published_dir published_results/runs --out_dir artifacts/runs_audit --paper_assets_dir artifacts/paper_assets
 ```
 
-## Dataset Identity
+## Layout
 
-- Canonical files: `data/v22_*.jsonl`
-- Canonical selector: `data/canonical_v2_files.json`
-- Manifest: `data/v2_manifest.json`
-- Global SHA256: `cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279`
+```
+chaosbench/          core package (data, tasks, eval, repair)
+data/                canonical v2 files (v22_*.jsonl), manifest, selectors, archive
+systems/             system metadata (core + dysts imports)
+scripts/             build, validation, analysis, release tooling
+published_results/   evaluation runs + manifests
+docs/                dataset, protocol, ontology, camera-ready
+```
+
+## Dataset
+
+- Canonical files: `data/v22_*.jsonl` (selector `data/canonical_v2_files.json`, manifest `data/v2_manifest.json`)
+- SHA256: `cfcfcc739988ad99c38d47dd171ff39f67df3ddca7d8d452e8c77b30f14e7279`
+- Schema, counts, hashes: [docs/DATASET.md](./docs/DATASET.md)
+- Hugging Face: [11NOel11/ChaosBench-Logic](https://huggingface.co/datasets/11NOel11/ChaosBench-Logic)
 
 ## Documentation
 
-- `docs/DATASET.md` - dataset schema, counts, hashes
-- `docs/EVAL_PROTOCOL.md` - metrics and evaluation protocol
-- `docs/ONTOLOGY.md` - ontology and predicate constraints
-- `docs/CAMERA_READY_REPO.md` - camera-ready repo bundle workflow
+- [DATASET.md](./docs/DATASET.md) — dataset schema, counts, hashes
+- [EVAL_PROTOCOL.md](./docs/EVAL_PROTOCOL.md) — metrics and evaluation protocol
+- [ONTOLOGY.md](./docs/ONTOLOGY.md) — ontology and predicate constraints
+- [CAMERA_READY_REPO.md](./docs/CAMERA_READY_REPO.md) — camera-ready bundle workflow
 
 ## License
 
-- Code: MIT (`LICENSE`)
-- Dataset: CC BY 4.0 (`LICENSE_DATA`)
+Code MIT (`LICENSE`) · dataset CC BY 4.0 (`LICENSE_DATA`).
